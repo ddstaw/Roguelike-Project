@@ -1,0 +1,151 @@
+[gd_scene load_steps=12 format=3 uid="uid://b8q2wpujk6qo6"]
+
+[ext_resource type="Script" path="res://scripts/NewGame.gd" id="1_8y014"]
+[ext_resource type="Texture2D" uid="uid://dllqx48crjd2b" path="res://assets/graphics/NewWorldBackground.png" id="1_hqxgx"]
+[ext_resource type="Theme" uid="uid://cmda6finr8anc" path="res://ui/main_menu_theme.tres" id="2_plkp8"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="3_oxbsf"]
+[ext_resource type="Script" path="res://scripts/BacktoMainMenu.gd" id="4_4ra5c"]
+[ext_resource type="Script" path="res://scripts/RandomizeMap.gd" id="6_21llb"]
+[ext_resource type="Script" path="res://scripts/Randomizer.gd" id="6_cqkvo"]
+[ext_resource type="Script" path="res://scripts/PlayMap.gd" id="6_ousdm"]
+[ext_resource type="Script" path="res://scripts/WorldNameGenerator.gd" id="7_3v4ie"]
+[ext_resource type="Script" path="res://scripts/RandomizeWorldName.gd" id="7_ix4sf"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bkk7q"]
+bg_color = Color(0.111245, 0.0539262, 0.00626623, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 1)
+
+[node name="NewGame" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_8y014")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("1_hqxgx")
+stretch_mode = 6
+
+[node name="BacktoMainMenu" type="Button" parent="."]
+z_index = 1
+layout_mode = 0
+offset_left = 178.0
+offset_top = 821.0
+offset_right = 663.0
+offset_bottom = 899.0
+theme = ExtResource("2_plkp8")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_oxbsf")
+theme_override_font_sizes/font_size = 44
+theme_override_styles/normal = SubResource("StyleBoxFlat_bkk7q")
+text = "Back to Main Menu"
+script = ExtResource("4_4ra5c")
+
+[node name="PlayMap" type="Button" parent="."]
+z_index = 1
+layout_mode = 0
+offset_left = 185.0
+offset_top = 521.0
+offset_right = 589.0
+offset_bottom = 599.0
+theme = ExtResource("2_plkp8")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_oxbsf")
+theme_override_font_sizes/font_size = 44
+theme_override_styles/normal = SubResource("StyleBoxFlat_bkk7q")
+text = "Play"
+script = ExtResource("6_ousdm")
+
+[node name="RandomizeMap" type="Button" parent="."]
+z_index = 1
+layout_mode = 0
+offset_left = 186.0
+offset_top = 270.0
+offset_right = 590.0
+offset_bottom = 348.0
+theme = ExtResource("2_plkp8")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_oxbsf")
+theme_override_font_sizes/font_size = 44
+theme_override_styles/normal = SubResource("StyleBoxFlat_bkk7q")
+text = "Randomize Map"
+script = ExtResource("6_21llb")
+
+[node name="RandomizeWorldName" type="Button" parent="."]
+z_index = 1
+layout_mode = 0
+offset_left = 186.0
+offset_top = 171.0
+offset_right = 590.0
+offset_bottom = 249.0
+theme = ExtResource("2_plkp8")
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_oxbsf")
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_bkk7q")
+text = "Randomize World Name"
+script = ExtResource("7_ix4sf")
+
+[node name="RandomizerNode" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("6_cqkvo")
+
+[node name="WorldNameGeneratorNode" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("7_3v4ie")
+
+[node name="Control" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 430.0
+offset_top = 249.0
+offset_right = 646.0
+offset_bottom = 465.0
+
+[node name="WorldNameLabel" type="Label" parent="Control"]
+z_index = 2
+layout_mode = 0
+offset_left = 479.0
+offset_top = 61.0
+offset_right = 1073.0
+offset_bottom = 177.0
+horizontal_alignment = 1
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="Control"]
+layout_mode = 0
+offset_left = 670.0
+offset_top = 178.0
+offset_right = 886.0
+offset_bottom = 394.0
+
+[node name="SubViewport" type="SubViewport" parent="Control/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(216, 216)
+render_target_update_mode = 4
+
+[node name="GridTextureRect" type="TextureRect" parent="Control/SubViewportContainer/SubViewport"]
+offset_right = 432.0
+offset_bottom = 432.0
+
+[node name="LoadingLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 773.0
+offset_top = 808.0
+offset_right = 1709.0
+offset_bottom = 917.0
+
+[connection signal="pressed" from="RandomizeMap" to="." method="_on_randomize_map_pressed"]
+[connection signal="pressed" from="RandomizeWorldName" to="." method="_on_randomize_map_pressed"]

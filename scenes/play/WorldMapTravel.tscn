@@ -1,0 +1,566 @@
+[gd_scene load_steps=45 format=3 uid="uid://vy7jwyntsqcn"]
+
+[ext_resource type="Texture2D" uid="uid://bfl3rd44mjfhg" path="res://ui/menus/bbg.png" id="1_mgy0d"]
+[ext_resource type="Script" path="res://scripts/worldmapscripts/WorldMapTravel.gd" id="1_nd738"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="1_ybkor"]
+[ext_resource type="Script" path="res://scripts/worldmapscripts/TravelLogControl.gd" id="3_aahxb"]
+[ext_resource type="Texture2D" uid="uid://f8vmg1bi13x6" path="res://assets/worldmap-graphics/flavor/ee.png" id="3_xs1qp"]
+[ext_resource type="Script" path="res://scripts/worldmapscripts/proceedbutton.gd" id="4_lwt0o"]
+[ext_resource type="Theme" uid="uid://ds5x2cgvx5ioq" path="res://ui/TravelLogTheme.tres" id="4_nu8k4"]
+[ext_resource type="Texture2D" uid="uid://gmxj5l4w35f4" path="res://assets/worldmap-graphics/buttons/char-prof.png" id="5_bkc3k"]
+[ext_resource type="Texture2D" uid="uid://b8wo01s4ebbm1" path="res://assets/worldmap-graphics/buttons/gear.png" id="6_8vcdr"]
+[ext_resource type="Script" path="res://scripts/worldmapscripts/CityControl.gd" id="7_b8ko2"]
+[ext_resource type="Texture2D" uid="uid://d0pyornv40pi4" path="res://assets/worldmap-graphics/buttons/inventory.png" id="7_jankv"]
+[ext_resource type="Script" path="res://ui/scripts/worldmap-Profilebutton.gd" id="7_vjadw"]
+[ext_resource type="Texture2D" uid="uid://i44qns7g4ues" path="res://assets/worldmap-graphics/buttons/char-prof-h.png" id="7_whcdo"]
+[ext_resource type="Texture2D" uid="uid://cwtdm74ewxxsb" path="res://assets/worldmap-graphics/meters/44x44-health.png" id="8_2oav4"]
+[ext_resource type="Script" path="res://scripts/worldmapscripts/WorldMapControl.gd" id="8_2quin"]
+[ext_resource type="Texture2D" uid="uid://c7h1sacfc3vp6" path="res://assets/worldmap-graphics/meters/44x44-stam.png" id="9_udnf4"]
+[ext_resource type="Texture2D" uid="uid://npuq64wwmj36" path="res://assets/worldmap-graphics/buttons/gear-h.png" id="10_e74u0"]
+[ext_resource type="Texture2D" uid="uid://bqkmpsu8jh8yv" path="res://assets/worldmap-graphics/meters/44x44-faitgue.png" id="10_i77u5"]
+[ext_resource type="Script" path="res://scripts/worldmapscripts/WorldMap-Gearbutton.gd" id="11_57b3e"]
+[ext_resource type="Texture2D" uid="uid://b2ud5d2dgta3d" path="res://assets/worldmap-graphics/meters/44x44-hunger.png" id="11_tlao7"]
+[ext_resource type="Texture2D" uid="uid://c5bcw6g5hdkq3" path="res://assets/worldmap-graphics/meters/44x44--sanity.png" id="12_g7csj"]
+[ext_resource type="Texture2D" uid="uid://cx16e3gshv07r" path="res://assets/worldmap-graphics/buttons/inventory-h.png" id="12_twbr0"]
+[ext_resource type="Script" path="res://scripts/worldmapscripts/WorldMap-Invbutton.gd" id="14_60qnd"]
+[ext_resource type="Script" path="res://scripts/worldmapscripts/WorldTravel-TextureRect.gd" id="15_25gvo"]
+[ext_resource type="Script" path="res://scripts/MovementAndRestControl.gd" id="22_hj6q4"]
+[ext_resource type="Script" path="res://scripts/TravelButton.gd" id="24_uf6bg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dqdc0"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rm2nt"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k0aev"]
+bg_color = Color(0.655953, 0.0880754, 0.886675, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t1tho"]
+bg_color = Color(0.835363, 0, 0.032074, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3xmnk"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3vdhh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_61xeq"]
+bg_color = Color(0.201527, 0.201527, 0.201526, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hv2c0"]
+bg_color = Color(0.929994, 0, 0.168617, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a5flh"]
+bg_color = Color(0.2, 0.2, 0.2, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gcf8n"]
+bg_color = Color(0.329412, 0.333333, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4e24w"]
+bg_color = Color(0.2, 0.2, 0.2, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_l3w3g"]
+bg_color = Color(1.72308e-05, 0.890359, 0.197859, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j4yfy"]
+bg_color = Color(0.2, 0.2, 0.2, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2luub"]
+bg_color = Color(0.976471, 0.819608, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_2prlm"]
+bg_color = Color(0.2, 0.2, 0.2, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_78apw"]
+bg_color = Color(0.975008, 0.000580264, 0.938412, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ex2m5"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0jctq"]
+bg_color = Color(0.638702, 0.115732, 0.531891, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[node name="WorldMapTravel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_nd738")
+
+[node name="LeftInfoContainer" type="VBoxContainer" parent="."]
+z_index = 2
+layout_mode = 0
+offset_left = 24.0
+offset_top = 29.0
+offset_right = 398.0
+offset_bottom = 1052.0
+
+[node name="WorldMapName" type="Label" parent="LeftInfoContainer"]
+z_index = 1
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_ybkor")
+theme_override_font_sizes/font_size = 35
+text = "ujujkgyukg y"
+autowrap_mode = 3
+
+[node name="Control" type="Control" parent="LeftInfoContainer"]
+custom_minimum_size = Vector2(1, 33)
+layout_mode = 2
+
+[node name="worldmapdate" type="Label" parent="LeftInfoContainer"]
+z_index = 1
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_ybkor")
+theme_override_font_sizes/font_size = 32
+text = "September 5, 1822"
+
+[node name="Control2" type="Control" parent="LeftInfoContainer"]
+custom_minimum_size = Vector2(1, 33)
+layout_mode = 2
+
+[node name="travel-log-label" type="Label" parent="LeftInfoContainer"]
+z_index = 4
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("1_ybkor")
+theme_override_font_sizes/font_size = 32
+text = " ====Travel Log===="
+
+[node name="Control3" type="Control" parent="LeftInfoContainer"]
+custom_minimum_size = Vector2(1, 6)
+layout_mode = 2
+
+[node name="TravelLogControl" type="Control" parent="LeftInfoContainer"]
+z_index = 2
+layout_mode = 2
+script = ExtResource("3_aahxb")
+
+[node name="TravelLogPanel" type="Panel" parent="LeftInfoContainer/TravelLogControl"]
+z_index = 1
+custom_minimum_size = Vector2(345, 663)
+layout_mode = 2
+offset_top = -54.0
+offset_right = 374.0
+offset_bottom = 667.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_dqdc0")
+
+[node name="TravelLogScrollContainer" type="ScrollContainer" parent="LeftInfoContainer/TravelLogControl/TravelLogPanel"]
+custom_minimum_size = Vector2(345, 589)
+layout_mode = 0
+offset_left = 15.0
+offset_top = 55.0
+offset_right = 360.0
+offset_bottom = 706.0
+mouse_filter = 0
+follow_focus = true
+horizontal_scroll_mode = 3
+vertical_scroll_mode = 3
+
+[node name="TravelLogRichTextLabel" type="RichTextLabel" parent="LeftInfoContainer/TravelLogControl/TravelLogPanel/TravelLogScrollContainer"]
+visibility_layer = 17
+z_index = 6
+custom_minimum_size = Vector2(340, 120)
+layout_mode = 2
+theme = ExtResource("4_nu8k4")
+bbcode_enabled = true
+fit_content = true
+scroll_following = true
+autowrap_mode = 2
+
+[node name="RightInfoContainerTime" type="VBoxContainer" parent="."]
+z_index = 2
+layout_mode = 0
+offset_left = 1500.0
+offset_top = 21.0
+offset_right = 1870.0
+offset_bottom = 61.0
+
+[node name="FlavorTime" type="Label" parent="RightInfoContainerTime"]
+z_index = 1
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "Early Evening"
+
+[node name="Control4" type="Control" parent="RightInfoContainerTime"]
+custom_minimum_size = Vector2(1, 3)
+layout_mode = 2
+
+[node name="FlavorTimeImage" type="TextureRect" parent="RightInfoContainerTime"]
+z_index = 1
+layout_mode = 2
+texture = ExtResource("3_xs1qp")
+
+[node name="WeatherLabel" type="Label" parent="RightInfoContainerTime"]
+z_index = 1
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "Clear Weather
+"
+
+[node name="TimeLabel" type="Label" parent="RightInfoContainerTime"]
+z_index = 1
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "16:00
+"
+
+[node name="RightInfoContainerBiome" type="VBoxContainer" parent="."]
+show_behind_parent = true
+top_level = true
+z_index = 2
+layout_mode = 0
+offset_left = 1500.0
+offset_top = 335.0
+offset_right = 1890.0
+offset_bottom = 492.0
+mouse_filter = 0
+
+[node name="BiomeLabel" type="Label" parent="RightInfoContainerBiome"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+text = "Grasslands"
+
+[node name="Control4" type="Control" parent="RightInfoContainerBiome"]
+custom_minimum_size = Vector2(1, 16)
+layout_mode = 2
+
+[node name="proceedbutton" type="Button" parent="."]
+top_level = true
+z_index = 4
+custom_minimum_size = Vector2(0, 96)
+layout_mode = 2
+offset_left = 1500.0
+offset_top = 425.0
+offset_right = 1890.0
+offset_bottom = 521.0
+theme_override_fonts/font = ExtResource("1_ybkor")
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_rm2nt")
+theme_override_styles/hover = SubResource("StyleBoxFlat_k0aev")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_t1tho")
+text = "PROCEED INWARD"
+script = ExtResource("4_lwt0o")
+
+[node name="CityControl" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("7_b8ko2")
+
+[node name="WorldMapControl" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("8_2quin")
+
+[node name="RightInfoContainerBasic" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 1485.0
+offset_top = 597.0
+offset_right = 1910.0
+offset_bottom = 688.0
+
+[node name="Control" type="Control" parent="RightInfoContainerBasic"]
+custom_minimum_size = Vector2(0, 11)
+layout_mode = 2
+
+[node name="Namelabel" type="Label" parent="RightInfoContainerBasic"]
+z_index = 1
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "Percievl Lighthall"
+
+[node name="Goldlabel" type="Label" parent="RightInfoContainerBasic"]
+z_index = 1
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "Gold: 612g"
+
+[node name="Profilebutton" type="TextureButton" parent="."]
+top_level = true
+z_index = 4
+layout_mode = 0
+offset_left = 1486.0
+offset_top = 690.0
+offset_right = 1610.0
+offset_bottom = 816.0
+texture_normal = ExtResource("5_bkc3k")
+texture_hover = ExtResource("7_whcdo")
+script = ExtResource("7_vjadw")
+
+[node name="Gearbutton" type="TextureButton" parent="."]
+top_level = true
+z_index = 2
+layout_mode = 0
+offset_left = 1626.0
+offset_top = 690.0
+offset_right = 1750.0
+offset_bottom = 816.0
+texture_normal = ExtResource("6_8vcdr")
+texture_hover = ExtResource("10_e74u0")
+script = ExtResource("11_57b3e")
+
+[node name="Invbutton" type="TextureButton" parent="."]
+top_level = true
+z_index = 2
+layout_mode = 0
+offset_left = 1766.0
+offset_top = 690.0
+offset_right = 1890.0
+offset_bottom = 816.0
+texture_normal = ExtResource("7_jankv")
+texture_hover = ExtResource("12_twbr0")
+script = ExtResource("14_60qnd")
+
+[node name="leftcol" type="Panel" parent="."]
+z_index = 1
+layout_mode = 0
+offset_left = 11.0
+offset_top = 11.0
+offset_right = 410.0
+offset_bottom = 1067.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_3xmnk")
+metadata/_edit_lock_ = true
+
+[node name="rightcol-top" type="Panel" parent="."]
+z_index = 1
+layout_mode = 0
+offset_left = 1485.0
+offset_top = 11.0
+offset_right = 1908.0
+offset_bottom = 319.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_3xmnk")
+
+[node name="rightcol-med" type="Panel" parent="."]
+z_index = 1
+layout_mode = 0
+offset_left = 1485.0
+offset_top = 328.0
+offset_right = 1908.0
+offset_bottom = 594.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_3xmnk")
+
+[node name="MapPlaceHolder" type="Panel" parent="."]
+visible = false
+z_index = 1
+custom_minimum_size = Vector2(1044, 1044)
+layout_mode = 0
+offset_left = 426.0
+offset_top = 16.0
+offset_right = 1470.0
+offset_bottom = 1060.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_3vdhh")
+
+[node name="BlackBackground" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+texture = ExtResource("1_mgy0d")
+metadata/_edit_lock_ = true
+
+[node name="MapControl" type="Control" parent="."]
+z_index = 3
+anchors_preset = 0
+offset_left = 7.0
+offset_top = 4.0
+offset_right = 47.0
+offset_bottom = 44.0
+metadata/_edit_lock_ = true
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MapControl"]
+layout_mode = 0
+offset_left = 426.0
+offset_top = 16.0
+offset_right = 1470.0
+offset_bottom = 1060.0
+
+[node name="SubViewport" type="SubViewport" parent="MapControl/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(1044, 1044)
+render_target_update_mode = 4
+
+[node name="WorldTextureRect" type="TextureRect" parent="MapControl/SubViewportContainer/SubViewport"]
+z_index = 3
+custom_minimum_size = Vector2(1044, 1044)
+offset_right = 40.0
+offset_bottom = 40.0
+mouse_filter = 0
+script = ExtResource("15_25gvo")
+
+[node name="MetersContainer" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 1485.0
+offset_top = 827.0
+offset_right = 1905.0
+offset_bottom = 1063.0
+
+[node name="Hboxhealth" type="HBoxContainer" parent="MetersContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="health" type="TextureRect" parent="MetersContainer/Hboxhealth"]
+z_index = 1
+layout_mode = 2
+texture = ExtResource("8_2oav4")
+stretch_mode = 4
+
+[node name="healthbar" type="ProgressBar" parent="MetersContainer/Hboxhealth"]
+custom_minimum_size = Vector2(354, 39)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_61xeq")
+theme_override_styles/fill = SubResource("StyleBoxFlat_hv2c0")
+value = 55.0
+
+[node name="HBoxstamina" type="HBoxContainer" parent="MetersContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="stamina" type="TextureRect" parent="MetersContainer/HBoxstamina"]
+z_index = 1
+layout_mode = 2
+texture = ExtResource("9_udnf4")
+stretch_mode = 4
+
+[node name="staminabar" type="ProgressBar" parent="MetersContainer/HBoxstamina"]
+custom_minimum_size = Vector2(354, 39)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_a5flh")
+theme_override_styles/fill = SubResource("StyleBoxFlat_gcf8n")
+value = 88.0
+
+[node name="HBoxhunger" type="HBoxContainer" parent="MetersContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="hunger" type="TextureRect" parent="MetersContainer/HBoxhunger"]
+z_index = 1
+layout_mode = 2
+texture = ExtResource("11_tlao7")
+stretch_mode = 4
+
+[node name="hungerbar" type="ProgressBar" parent="MetersContainer/HBoxhunger"]
+custom_minimum_size = Vector2(354, 39)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_4e24w")
+theme_override_styles/fill = SubResource("StyleBoxFlat_l3w3g")
+value = 35.0
+
+[node name="HBoxfatigue" type="HBoxContainer" parent="MetersContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="fatigue" type="TextureRect" parent="MetersContainer/HBoxfatigue"]
+z_index = 1
+layout_mode = 2
+texture = ExtResource("10_i77u5")
+stretch_mode = 4
+
+[node name="fatiguebar" type="ProgressBar" parent="MetersContainer/HBoxfatigue"]
+custom_minimum_size = Vector2(354, 39)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_j4yfy")
+theme_override_styles/fill = SubResource("StyleBoxFlat_2luub")
+value = 68.0
+
+[node name="HBoxsanity" type="HBoxContainer" parent="MetersContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="sanity" type="TextureRect" parent="MetersContainer/HBoxsanity"]
+z_index = 1
+layout_mode = 2
+texture = ExtResource("12_g7csj")
+stretch_mode = 4
+
+[node name="sanitybar" type="ProgressBar" parent="MetersContainer/HBoxsanity"]
+custom_minimum_size = Vector2(354, 39)
+layout_mode = 2
+theme_override_styles/background = SubResource("StyleBoxFlat_2prlm")
+theme_override_styles/fill = SubResource("StyleBoxFlat_78apw")
+value = 89.0
+
+[node name="MeterControl" type="Control" parent="."]
+layout_mode = 2
+anchors_preset = 0
+offset_left = 1485.0
+offset_top = 1067.0
+offset_right = 1905.0
+offset_bottom = 1067.0
+
+[node name="MovementAndRestControl" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 20.0
+offset_top = 22.0
+offset_right = 60.0
+offset_bottom = 62.0
+script = ExtResource("22_hj6q4")
+
+[node name="RestButton" type="Button" parent="MovementAndRestControl"]
+top_level = true
+z_index = 6
+clip_contents = true
+custom_minimum_size = Vector2(50.025, 40)
+layout_mode = 2
+offset_left = 285.0
+offset_top = 947.0
+offset_right = 397.0
+offset_bottom = 1049.0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxFlat_ex2m5")
+theme_override_styles/hover = SubResource("StyleBoxFlat_0jctq")
+text = "Rest"
+
+[node name="TravelButton" type="Button" parent="MovementAndRestControl"]
+top_level = true
+z_index = 6
+clip_contents = true
+custom_minimum_size = Vector2(50.025, 40)
+layout_mode = 2
+offset_left = 26.0
+offset_top = 947.0
+offset_right = 276.0
+offset_bottom = 1049.0
+theme_override_font_sizes/font_size = 33
+theme_override_styles/normal = SubResource("StyleBoxFlat_ex2m5")
+theme_override_styles/hover = SubResource("StyleBoxFlat_0jctq")
+text = "Travel On"
+script = ExtResource("24_uf6bg")

@@ -1,0 +1,41 @@
+[gd_scene load_steps=3 format=3 uid="uid://cip1s03qoo7xn"]
+
+[ext_resource type="Script" path="res://scripts/QuickRefresh.gd" id="1_fsjqx"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="2_cb46a"]
+
+[node name="QuickRefresh" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+script = ExtResource("1_fsjqx")
+
+[node name="RealmLabel" type="Label" parent="."]
+z_index = 1
+custom_minimum_size = Vector2(60, 0)
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 0.2
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 288.0
+offset_top = 360.0
+offset_right = 1561.0
+offset_bottom = 472.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_fonts/font = ExtResource("2_cb46a")
+theme_override_font_sizes/font_size = 111
+text = "Stormwilling Region"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="FadeRect" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)

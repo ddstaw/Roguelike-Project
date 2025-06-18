@@ -1,0 +1,2 @@
+New Game Cleanup
+> city_dataX.json isn't being reset on generating new map

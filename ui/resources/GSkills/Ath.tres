@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GSkill" load_steps=2 format=3 uid="uid://cqsye5kh536g2"]
+
+[ext_resource type="Script" path="res://ui/resources/GSkill.gd" id="1_ctgmm"]
+
+[resource]
+script = ExtResource("1_ctgmm")
+gskillname = "Athletics"
+gskillflavor = "athleticsflav"
+gskilldes = "athleticsdes"

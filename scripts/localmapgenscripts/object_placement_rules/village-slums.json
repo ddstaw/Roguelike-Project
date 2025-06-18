@@ -1,0 +1,23 @@
+{
+  "allowed_objects": {
+	"slum_brick_floor": ["bed", "candelabra", "woodchest"],
+	"slum_sidewalk_floor": ["slum_streetlamp", "slum_trash"],
+	"slum_road_floor": ["sewer_door"],
+	"slum_stone_floor": ["slum_trash", "sewer_door"]
+  },
+  "object_paths": {
+	"bed": "res://assets/localmap-graphics/bed.png",
+	"candelabra": "res://assets/localmap-graphics/candlelabra.png",
+	"woodchest": "res://assets/localmap-graphics/woodchest.png",
+	"sewer_door": "res://assets/localmap-graphics/objects/village-slums/sewer_door.png",
+	"slum_trash": "res://assets/localmap-graphics/objects/village-slums/slum_trash.png",
+	"slum_streetlamp": "res://assets/localmap-graphics/objects/village-slums/slum_streetlamp.png"
+  },
+  "special_rules": {
+	"slum_brick_floor": {
+	  "max_beds": 1,
+	  "max_candelabras": 2,
+	  "max_chests": 1
+	}
+  }
+}

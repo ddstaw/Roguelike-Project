@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Faith" load_steps=2 format=3 uid="uid://c0dn0tboi2otd"]
+
+[ext_resource type="Script" path="res://ui/resources/Faith.gd" id="1_r6w7a"]
+
+[resource]
+script = ExtResource("1_r6w7a")
+faithname = "Orthodox Dogmatist"
+faithflavor = "Orthoflav"
+faithdes = "Orthodes"
+faithbonus = "Orthobonus"

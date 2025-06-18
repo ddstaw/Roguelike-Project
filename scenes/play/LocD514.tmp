@@ -1,0 +1,586 @@
+[gd_scene load_steps=36 format=3 uid="uid://44m1uuvplkvu"]
+
+[ext_resource type="Script" path="res://scripts/LocalMap.gd" id="1_u3bsn"]
+[ext_resource type="Theme" uid="uid://ds5x2cgvx5ioq" path="res://ui/TravelLogTheme.tres" id="2_nsfpq"]
+[ext_resource type="Texture2D" uid="uid://ct2ivaekujxpb" path="res://assets/localmap-graphics/ui-buttons/gearw.png" id="3_whjrw"]
+[ext_resource type="Texture2D" uid="uid://3btal5umemi" path="res://assets/localmap-graphics/ui-buttons/geary.png" id="4_fhjbo"]
+[ext_resource type="Texture2D" uid="uid://bo24ucgc4yuhg" path="res://assets/localmap-graphics/ui-buttons/playw.png" id="5_6vs8n"]
+[ext_resource type="Texture2D" uid="uid://djxkvk6jr7al8" path="res://assets/localmap-graphics/ui-buttons/questw.png" id="6_g06gl"]
+[ext_resource type="Texture2D" uid="uid://b1hot7p4jchyn" path="res://assets/localmap-graphics/ui-buttons/bookw.png" id="7_8srhi"]
+[ext_resource type="Texture2D" uid="uid://cesuagmes177c" path="res://assets/localmap-graphics/ui-buttons/faithw.png" id="8_tc48r"]
+[ext_resource type="Texture2D" uid="uid://mnxwvgpy2cxu" path="res://assets/localmap-graphics/ui-buttons/equipw.png" id="8_u1ilb"]
+[ext_resource type="Texture2D" uid="uid://bqpjq53rfbdec" path="res://assets/localmap-graphics/ui-buttons/invw.png" id="9_diclb"]
+[ext_resource type="Texture2D" uid="uid://b0k4xi6oxl3if" path="res://assets/localmap-graphics/ui-buttons/housew.png" id="10_pc3jf"]
+[ext_resource type="Texture2D" uid="uid://ds0xi2mbdl1sq" path="res://assets/localmap-graphics/ui-buttons/hammerw.png" id="11_x44cc"]
+[ext_resource type="Texture2D" uid="uid://buf70tls03bqb" path="res://assets/localmap-graphics/ui-buttons/le.png" id="12_mhbxv"]
+[ext_resource type="Texture2D" uid="uid://cwtdm74ewxxsb" path="res://assets/worldmap-graphics/meters/44x44-health.png" id="13_8al1n"]
+[ext_resource type="Texture2D" uid="uid://co8q53tqpttqs" path="res://assets/localmap-graphics/ui-buttons/rest.png" id="14_287vf"]
+[ext_resource type="Texture2D" uid="uid://c7h1sacfc3vp6" path="res://assets/worldmap-graphics/meters/44x44-stam.png" id="14_wkf05"]
+[ext_resource type="Texture2D" uid="uid://ij5hia347stp" path="res://assets/localmap-graphics/ui-buttons/pray.png" id="15_3ibga"]
+[ext_resource type="Texture2D" uid="uid://b2ud5d2dgta3d" path="res://assets/worldmap-graphics/meters/44x44-hunger.png" id="15_8hcox"]
+[ext_resource type="Texture2D" uid="uid://bqkmpsu8jh8yv" path="res://assets/worldmap-graphics/meters/44x44-faitgue.png" id="16_ne38p"]
+[ext_resource type="Texture2D" uid="uid://c5bcw6g5hdkq3" path="res://assets/worldmap-graphics/meters/44x44--sanity.png" id="17_a044d"]
+[ext_resource type="Texture2D" uid="uid://dxe8oyw4ycp04" path="res://assets/localmap-graphics/ui-buttons/emptyhotbarslot.png" id="21_buqbm"]
+[ext_resource type="Texture2D" uid="uid://cgbg8ykj64dmt" path="res://assets/localmap-graphics/ui-buttons/328x100-wea2.png" id="21_mcdcu"]
+[ext_resource type="Texture2D" uid="uid://c6yisb4revwe2" path="res://assets/localmap-graphics/ui-buttons/100x100-ammo-type.png" id="21_vpla5"]
+[ext_resource type="Texture2D" uid="uid://bxquj0swscny3" path="res://assets/localmap-graphics/ui-buttons/328x100-wea1.png" id="22_nbrqp"]
+[ext_resource type="Texture2D" uid="uid://clvv5ria214wy" path="res://assets/localmap-graphics/ui-buttons/hotbar-up.png" id="25_5wehe"]
+[ext_resource type="Texture2D" uid="uid://bs6bqodcaxdd1" path="res://assets/localmap-graphics/ui-buttons/hotbar-down.png" id="26_xy5mw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fxgxr"]
+bg_color = Color(0, 0, 0, 1)
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gy5xd"]
+bg_color = Color(0, 0, 0, 1)
+border_width_top = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a1sgt"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fbuco"]
+bg_color = Color(0.921885, 0, 0.156112, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qwg4i"]
+bg_color = Color(0, 0.352941, 0.803922, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_87ba1"]
+bg_color = Color(0.301961, 0.831373, 0.352941, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v6mmy"]
+bg_color = Color(0.741176, 0.792157, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sf58m"]
+bg_color = Color(0.973068, 0.000610105, 0.943586, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rh3e2"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+
+[node name="LocalMap" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_right = 3.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_u3bsn")
+
+[node name="TileContainer" type="Node2D" parent="."]
+z_index = 2
+
+[node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="DebugUI" type="VBoxContainer" parent="UILayer"]
+top_level = true
+z_index = 5
+offset_left = 1615.0
+offset_top = 146.0
+offset_right = 1863.0
+offset_bottom = 517.0
+theme = ExtResource("2_nsfpq")
+
+[node name="WorldMap" type="Button" parent="UILayer/DebugUI"]
+z_index = 6
+layout_mode = 2
+text = "World Map"
+
+[node name="ToggleFreePan" type="Button" parent="UILayer/DebugUI"]
+layout_mode = 2
+text = "Toggle Free Pan"
+
+[node name="GenNewMapDebugButton" type="Button" parent="UILayer/DebugUI"]
+layout_mode = 2
+text = "Generate New Map"
+
+[node name="BiomeButton" type="Button" parent="UILayer/DebugUI"]
+layout_mode = 2
+text = "Biome"
+
+[node name="BiomeLabel" type="Label" parent="UILayer/DebugUI"]
+layout_mode = 2
+text = "Biome Name
+"
+
+[node name="TimeButton" type="Button" parent="UILayer/DebugUI"]
+layout_mode = 2
+text = "Time"
+
+[node name="TimeLabel" type="Label" parent="UILayer/DebugUI"]
+layout_mode = 2
+text = "Current Time
+"
+
+[node name="WeatherButton" type="Button" parent="UILayer/DebugUI"]
+layout_mode = 2
+text = "Weather"
+
+[node name="WeatherLabel" type="Label" parent="UILayer/DebugUI"]
+layout_mode = 2
+text = "Weather
+"
+
+[node name="ScenarioButton" type="Button" parent="UILayer/DebugUI"]
+layout_mode = 2
+text = "Scenario"
+
+[node name="ScenarioLabel" type="Label" parent="UILayer/DebugUI"]
+layout_mode = 2
+text = "Scenario
+"
+
+[node name="MainMenuButton" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 14.0
+offset_top = 11.0
+offset_right = 98.0
+offset_bottom = 95.0
+texture_normal = ExtResource("3_whjrw")
+texture_hover = ExtResource("4_fhjbo")
+
+[node name="CharButton" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 101.0
+offset_top = 12.0
+offset_right = 185.0
+offset_bottom = 96.0
+texture_normal = ExtResource("5_6vs8n")
+texture_hover = ExtResource("4_fhjbo")
+
+[node name="JournalButton" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 183.0
+offset_top = 10.0
+offset_right = 267.0
+offset_bottom = 94.0
+texture_normal = ExtResource("6_g06gl")
+texture_hover = ExtResource("4_fhjbo")
+
+[node name="SkillsButton" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 275.0
+offset_top = 11.0
+offset_right = 359.0
+offset_bottom = 95.0
+texture_normal = ExtResource("7_8srhi")
+texture_hover = ExtResource("4_fhjbo")
+
+[node name="FaithButton" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 365.0
+offset_top = 11.0
+offset_right = 449.0
+offset_bottom = 95.0
+texture_normal = ExtResource("8_tc48r")
+texture_hover = ExtResource("4_fhjbo")
+
+[node name="GearButton" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 454.0
+offset_top = 12.0
+offset_right = 538.0
+offset_bottom = 96.0
+texture_normal = ExtResource("8_u1ilb")
+texture_hover = ExtResource("4_fhjbo")
+
+[node name="InvButton" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 540.0
+offset_top = 10.0
+offset_right = 624.0
+offset_bottom = 94.0
+texture_normal = ExtResource("9_diclb")
+texture_hover = ExtResource("4_fhjbo")
+
+[node name="CraftButton" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 629.0
+offset_top = 12.0
+offset_right = 713.0
+offset_bottom = 96.0
+texture_normal = ExtResource("11_x44cc")
+texture_hover = ExtResource("4_fhjbo")
+
+[node name="BuildButton" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 714.0
+offset_top = 12.0
+offset_right = 798.0
+offset_bottom = 96.0
+texture_normal = ExtResource("10_pc3jf")
+texture_hover = ExtResource("4_fhjbo")
+
+[node name="TopUI" type="Panel" parent="UILayer"]
+z_index = 2
+offset_right = 1923.0
+offset_bottom = 107.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_fxgxr")
+
+[node name="BottomUI" type="Panel" parent="UILayer"]
+z_index = 2
+offset_left = -1.0
+offset_top = 842.0
+offset_right = 1923.0
+offset_bottom = 1081.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_gy5xd")
+
+[node name="PlaySceneName" type="Label" parent="UILayer"]
+z_index = 3
+offset_left = 1456.0
+offset_top = 26.0
+offset_right = 1812.0
+offset_bottom = 59.0
+theme = ExtResource("2_nsfpq")
+theme_override_font_sizes/font_size = 20
+text = "Exploring Grasslands"
+horizontal_alignment = 2
+
+[node name="Realm" type="Label" parent="UILayer"]
+z_index = 3
+offset_left = 1467.0
+offset_top = 5.0
+offset_right = 1811.0
+offset_bottom = 38.0
+theme = ExtResource("2_nsfpq")
+theme_override_font_sizes/font_size = 19
+text = "Stormwilling Region"
+horizontal_alignment = 2
+
+[node name="Time" type="Label" parent="UILayer"]
+z_index = 3
+offset_left = 1488.0
+offset_top = 68.0
+offset_right = 1811.0
+offset_bottom = 101.0
+theme = ExtResource("2_nsfpq")
+theme_override_font_sizes/font_size = 29
+text = "11:00PM"
+horizontal_alignment = 2
+
+[node name="Date" type="Label" parent="UILayer"]
+z_index = 3
+offset_left = 1490.0
+offset_top = 48.0
+offset_right = 1813.0
+offset_bottom = 81.0
+theme = ExtResource("2_nsfpq")
+theme_override_font_sizes/font_size = 20
+text = "September 1, 1822"
+horizontal_alignment = 2
+
+[node name="HotbarNumber" type="Label" parent="UILayer"]
+z_index = 3
+offset_left = 283.0
+offset_top = 987.0
+offset_right = 337.0
+offset_bottom = 1047.0
+theme = ExtResource("2_nsfpq")
+theme_override_font_sizes/font_size = 59
+text = "1"
+horizontal_alignment = 2
+
+[node name="AmmoTotal" type="Label" parent="UILayer"]
+z_index = 3
+offset_left = 508.0
+offset_top = 919.0
+offset_right = 607.0
+offset_bottom = 964.0
+theme = ExtResource("2_nsfpq")
+theme_override_font_sizes/font_size = 30
+text = "x999"
+
+[node name="AmmoType" type="Label" parent="UILayer"]
+z_index = 3
+offset_left = 507.0
+offset_top = 891.0
+offset_right = 556.0
+offset_bottom = 918.0
+theme = ExtResource("2_nsfpq")
+theme_override_font_sizes/font_size = 26
+text = "9mm"
+
+[node name="AmmoClip" type="Label" parent="UILayer"]
+z_index = 3
+offset_left = 507.0
+offset_top = 864.0
+offset_right = 556.0
+offset_bottom = 891.0
+theme = ExtResource("2_nsfpq")
+theme_override_font_sizes/font_size = 26
+text = "6/6"
+
+[node name="TravelLog" type="Label" parent="UILayer"]
+z_index = 3
+offset_left = 16.0
+offset_top = 847.0
+offset_right = 186.0
+offset_bottom = 907.0
+theme = ExtResource("2_nsfpq")
+theme_override_font_sizes/font_size = 29
+text = "Travel Log"
+horizontal_alignment = 2
+
+[node name="TimeOfDayType" type="TextureRect" parent="UILayer"]
+z_index = 3
+offset_left = 1825.0
+offset_top = 11.0
+offset_right = 1909.0
+offset_bottom = 95.0
+texture = ExtResource("12_mhbxv")
+
+[node name="RestButton" type="TextureRect" parent="UILayer"]
+z_index = 3
+offset_left = 1405.0
+offset_top = 962.0
+offset_right = 1512.0
+offset_bottom = 1069.0
+texture = ExtResource("14_287vf")
+
+[node name="PrayButton" type="TextureRect" parent="UILayer"]
+z_index = 3
+offset_left = 1405.0
+offset_top = 853.0
+offset_right = 1512.0
+offset_bottom = 960.0
+texture = ExtResource("15_3ibga")
+
+[node name="LocalMetersContainer" type="VBoxContainer" parent="UILayer"]
+offset_left = 1535.0
+offset_top = 855.0
+offset_right = 1906.0
+offset_bottom = 1071.0
+theme_override_constants/separation = -1
+
+[node name="HBoxLocalHealth" type="HBoxContainer" parent="UILayer/LocalMetersContainer"]
+layout_mode = 2
+theme_override_constants/separation = 5
+
+[node name="LocalHealth" type="TextureRect" parent="UILayer/LocalMetersContainer/HBoxLocalHealth"]
+z_index = 4
+layout_mode = 2
+texture = ExtResource("13_8al1n")
+
+[node name="LocalHealthBar" type="ProgressBar" parent="UILayer/LocalMetersContainer/HBoxLocalHealth"]
+z_index = 2
+custom_minimum_size = Vector2(322, 35)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_a1sgt")
+theme_override_styles/fill = SubResource("StyleBoxFlat_fbuco")
+value = 50.0
+
+[node name="HBoxLocalStamina" type="HBoxContainer" parent="UILayer/LocalMetersContainer"]
+layout_mode = 2
+
+[node name="LocalStamina" type="TextureRect" parent="UILayer/LocalMetersContainer/HBoxLocalStamina"]
+z_index = 4
+layout_mode = 2
+texture = ExtResource("14_wkf05")
+
+[node name="LocalStaminaBar" type="ProgressBar" parent="UILayer/LocalMetersContainer/HBoxLocalStamina"]
+z_index = 2
+custom_minimum_size = Vector2(322, 35)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_a1sgt")
+theme_override_styles/fill = SubResource("StyleBoxFlat_qwg4i")
+value = 50.0
+
+[node name="HBoxLocalHunger" type="HBoxContainer" parent="UILayer/LocalMetersContainer"]
+layout_mode = 2
+
+[node name="LocalHunger" type="TextureRect" parent="UILayer/LocalMetersContainer/HBoxLocalHunger"]
+z_index = 4
+layout_mode = 2
+texture = ExtResource("15_8hcox")
+
+[node name="LocalHungerBar" type="ProgressBar" parent="UILayer/LocalMetersContainer/HBoxLocalHunger"]
+z_index = 2
+custom_minimum_size = Vector2(322, 35)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_a1sgt")
+theme_override_styles/fill = SubResource("StyleBoxFlat_87ba1")
+value = 50.0
+
+[node name="HBoxLocalFatigue" type="HBoxContainer" parent="UILayer/LocalMetersContainer"]
+layout_mode = 2
+
+[node name="LocalFatigue" type="TextureRect" parent="UILayer/LocalMetersContainer/HBoxLocalFatigue"]
+z_index = 4
+layout_mode = 2
+texture = ExtResource("16_ne38p")
+
+[node name="LocalFatigueBar" type="ProgressBar" parent="UILayer/LocalMetersContainer/HBoxLocalFatigue"]
+z_index = 2
+custom_minimum_size = Vector2(322, 35)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_a1sgt")
+theme_override_styles/fill = SubResource("StyleBoxFlat_v6mmy")
+value = 50.0
+
+[node name="HBoxLocalSanity" type="HBoxContainer" parent="UILayer/LocalMetersContainer"]
+layout_mode = 2
+
+[node name="LocalSanity" type="TextureRect" parent="UILayer/LocalMetersContainer/HBoxLocalSanity"]
+z_index = 4
+layout_mode = 2
+texture = ExtResource("17_a044d")
+
+[node name="LocalSanityBar" type="ProgressBar" parent="UILayer/LocalMetersContainer/HBoxLocalSanity"]
+z_index = 2
+custom_minimum_size = Vector2(322, 35)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/background = SubResource("StyleBoxFlat_a1sgt")
+theme_override_styles/fill = SubResource("StyleBoxFlat_sf58m")
+value = 50.0
+
+[node name="HotbarSlot9" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 1293.0
+offset_top = 966.0
+offset_right = 1393.0
+offset_bottom = 1066.0
+texture_normal = ExtResource("21_buqbm")
+
+[node name="HotbarSlot8" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 1181.0
+offset_top = 966.0
+offset_right = 1281.0
+offset_bottom = 1066.0
+texture_normal = ExtResource("21_buqbm")
+
+[node name="HotbarSlot7" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 1068.0
+offset_top = 966.0
+offset_right = 1168.0
+offset_bottom = 1066.0
+texture_normal = ExtResource("21_buqbm")
+
+[node name="HotbarSlot6" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 956.0
+offset_top = 966.0
+offset_right = 1056.0
+offset_bottom = 1066.0
+texture_normal = ExtResource("21_buqbm")
+
+[node name="HotbarSlot5" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 844.0
+offset_top = 966.0
+offset_right = 944.0
+offset_bottom = 1066.0
+texture_normal = ExtResource("21_buqbm")
+
+[node name="HotbarSlot4" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 732.0
+offset_top = 966.0
+offset_right = 832.0
+offset_bottom = 1066.0
+texture_normal = ExtResource("21_buqbm")
+
+[node name="HotbarSlot3" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 619.0
+offset_top = 966.0
+offset_right = 719.0
+offset_bottom = 1066.0
+texture_normal = ExtResource("21_buqbm")
+
+[node name="HotbarSlot2" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 507.0
+offset_top = 966.0
+offset_right = 607.0
+offset_bottom = 1066.0
+texture_normal = ExtResource("21_buqbm")
+
+[node name="HotbarSlot1" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 396.0
+offset_top = 966.0
+offset_right = 496.0
+offset_bottom = 1066.0
+texture_normal = ExtResource("21_buqbm")
+
+[node name="AmmoImage" type="TextureRect" parent="UILayer"]
+z_index = 3
+offset_left = 397.0
+offset_top = 857.0
+offset_right = 497.0
+offset_bottom = 957.0
+texture = ExtResource("21_vpla5")
+
+[node name="WeapRight" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 955.0
+offset_top = 855.0
+offset_right = 1283.0
+offset_bottom = 955.0
+texture_normal = ExtResource("21_mcdcu")
+
+[node name="WeapLeft" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 617.0
+offset_top = 855.0
+offset_right = 945.0
+offset_bottom = 955.0
+texture_normal = ExtResource("22_nbrqp")
+
+[node name="HotbarUp" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 343.0
+offset_top = 966.0
+offset_right = 386.0
+offset_bottom = 1011.0
+texture_normal = ExtResource("25_5wehe")
+
+[node name="HotbarDown" type="TextureButton" parent="UILayer"]
+z_index = 3
+offset_left = 343.0
+offset_top = 1020.0
+offset_right = 386.0
+offset_bottom = 1065.0
+texture_normal = ExtResource("26_xy5mw")
+
+[node name="TravelLogControl" type="Control" parent="UILayer"]
+z_index = 3
+layout_mode = 3
+anchors_preset = 0
+offset_left = 15.0
+offset_top = 885.0
+offset_right = 294.0
+offset_bottom = 1066.0
+
+[node name="TravelLogPanel" type="Panel" parent="UILayer/TravelLogControl"]
+layout_mode = 0
+offset_right = 279.0
+offset_bottom = 181.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_rh3e2")
+
+[node name="TravelLogScrollContainer" type="ScrollContainer" parent="UILayer/TravelLogControl/TravelLogPanel"]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 5.0
+offset_right = 267.0
+offset_bottom = 174.0
+
+[node name="DarkOverlay" type="ColorRect" parent="UILayer"]
+offset_left = -19.0
+offset_top = -27.0
+offset_right = 1938.0
+offset_bottom = 1101.0
+mouse_filter = 2
+color = Color(0, 0, 0, 0)

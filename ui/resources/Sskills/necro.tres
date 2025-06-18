@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SSkill" load_steps=2 format=3 uid="uid://vskwg48hpe4y"]
+
+[ext_resource type="Script" path="res://ui/resources/SSkill.gd" id="1_f51un"]
+
+[resource]
+script = ExtResource("1_f51un")
+sskillname = "Necromancy"
+sskillflavor = "necrflav"
+sskilldes = "necrdes"

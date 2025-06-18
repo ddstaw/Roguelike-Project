@@ -1,0 +1,16 @@
+[gd_scene load_steps=3 format=3 uid="uid://intfutl3txnd"]
+
+[ext_resource type="Theme" uid="uid://d7301vkvq2j4" path="res://ui/skll-slot-theme.tres" id="1_3uyls"]
+[ext_resource type="Script" path="res://ui/scripts/Skillslot.gd" id="2_x4x0a"]
+
+[node name="Skillslot" type="TextureButton"]
+show_behind_parent = true
+custom_minimum_size = Vector2(725, 44)
+offset_right = 725.0
+offset_bottom = 44.0
+mouse_filter = 1
+theme = ExtResource("1_3uyls")
+script = ExtResource("2_x4x0a")
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

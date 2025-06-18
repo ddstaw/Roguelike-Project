@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SSkill" load_steps=2 format=3 uid="uid://cgxftu2ya1hy6"]
+
+[ext_resource type="Script" path="res://ui/resources/SSkill.gd" id="1_84v1h"]
+
+[resource]
+script = ExtResource("1_84v1h")
+sskillname = "Wandcraft"
+sskillflavor = "wandflav"
+sskilldes = "wanddes"

@@ -1,0 +1,39 @@
+{
+  "allowed_objects": {
+	"stone_floor": ["bed", "candelabra", "woodchest"],
+	"path": ["candelabra"],
+	"bridge": [],
+	"water": [],
+	"grass": ["woodchest"],
+	"bush": ["woodchest"],
+	"stairs": ["woodchest"]
+  },
+  "tile_paths": {
+	"stone_floor": "res://assets/localmap-graphics/stonefloor.png",
+	"path": "res://assets/localmap-graphics/path.png",
+	"grass": "res://assets/localmap-graphics/grass.png",
+	"bush": "res://assets/localmap-graphics/bush.png",
+	"water": "res://assets/localmap-graphics/water.png",
+	"bridge": "res://assets/localmap-graphics/bridge.png",
+	"stairs": "res://assets/localmap-graphics/stairs.png"
+  },
+  "object_paths": {
+	"bed": "res://assets/localmap-graphics/bed.png",
+	"candelabra": "res://assets/localmap-graphics/candlelabra.png",
+	"woodchest": "res://assets/localmap-graphics/woodchest.png"
+  },
+  "special_rules": {
+	"stone_floor": {
+	  "max_beds": 1,
+	  "max_candelabras": 2,
+	  "max_chests": 1
+	},
+	"path": {
+	  "candelabra_chance": 0.1
+	},
+	"grass": {
+	  "rare_chest_chance": 0.02,
+	  "chest_candelabra_nearby": true
+	}
+  }
+}

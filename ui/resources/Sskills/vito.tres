@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SSkill" load_steps=2 format=3 uid="uid://bmspqjmrmhi04"]
+
+[ext_resource type="Script" path="res://ui/resources/SSkill.gd" id="1_06m34"]
+
+[resource]
+script = ExtResource("1_06m34")
+sskillname = "Vitomancy"
+sskillflavor = "vitoflav"
+sskilldes = "vitodes"

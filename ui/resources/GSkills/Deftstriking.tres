@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GSkill" load_steps=2 format=3 uid="uid://lg3hutt5hylp"]
+
+[ext_resource type="Script" path="res://ui/resources/GSkill.gd" id="1_3yykj"]
+
+[resource]
+script = ExtResource("1_3yykj")
+gskillname = "Deft Striking"
+gskillflavor = "deftflav"
+gskilldes = "deftdes"

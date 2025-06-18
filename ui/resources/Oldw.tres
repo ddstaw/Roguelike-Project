@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Faith" load_steps=2 format=3 uid="uid://ddojltwns4vmr"]
+
+[ext_resource type="Script" path="res://ui/resources/Faith.gd" id="1_t8835"]
+
+[resource]
+script = ExtResource("1_t8835")
+faithname = "Follower of The Old Ways"
+faithflavor = "Oldwflav"
+faithdes = "Oldwdes"
+faithbonus = "Oldwbonus"

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GSkill" load_steps=2 format=3 uid="uid://bdsh1phmtrxo5"]
+
+[ext_resource type="Script" path="res://ui/resources/GSkill.gd" id="1_bks08"]
+
+[resource]
+script = ExtResource("1_bks08")
+gskillname = "Brute Force"
+gskillflavor = "bruteflav"
+gskilldes = "brutedes"

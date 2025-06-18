@@ -1,0 +1,54 @@
+[gd_scene load_steps=3 format=3 uid="uid://crd8ipptsy8ji"]
+
+[ext_resource type="Theme" uid="uid://cqtkb41dtrs6p" path="res://ui/Tooltip.tres" id="1_owp2g"]
+
+[sub_resource type="GDScript" id="GDScript_qnnjm"]
+script/source = "extends Control
+
+@onready var panel = $PopupPanel
+@onready var rich_text_label = $PopupPanel/MarginContainer/RichTextLabel
+
+# Update set_tooltip_text to use proper BBCode handling
+func Config (for_text):
+	if not rich_text_label:
+		await self.ready
+	
+	rich_text_label.text = for_text
+
+func show_tooltip(mouse_position: Vector2):
+	panel.global_position = mouse_position + Vector2(10, 10)  # Offset to avoid overlapping the mouse pointer
+	panel.show()
+"
+
+[node name="Tooltip" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+grow_horizontal = 2
+grow_vertical = 2
+script = SubResource("GDScript_qnnjm")
+
+[node name="PopupPanel" type="PopupPanel" parent="."]
+position = Vector2i(307, 103)
+size = Vector2i(300, 126)
+visible = true
+theme = ExtResource("1_owp2g")
+
+[node name="MarginContainer" type="MarginContainer" parent="PopupPanel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 3.0
+offset_top = 3.0
+offset_right = 297.0
+offset_bottom = 123.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_owp2g")
+metadata/_edit_use_anchors_ = true
+
+[node name="RichTextLabel" type="RichTextLabel" parent="PopupPanel/MarginContainer"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+theme = ExtResource("1_owp2g")
+bbcode_enabled = true
+scroll_active = false

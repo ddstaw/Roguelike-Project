@@ -1,0 +1,74 @@
+[gd_scene load_steps=8 format=3 uid="uid://bflemos3ak6ek"]
+
+[ext_resource type="Script" path="res://scripts/SettlementPopup.gd" id="1_pwteu"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="1_qcr87"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lbbjw"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(0.317647, 0.835294, 0.917647, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bbwng"]
+bg_color = Color(0.292533, 0.616167, 0.320322, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_g3l75"]
+bg_color = Color(0.815686, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xbfpw"]
+bg_color = Color(0.203922, 0.490196, 0.6, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h55td"]
+bg_color = Color(0.506425, 0.268675, 0.69814, 1)
+
+[node name="SettlementPopup" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_pwteu")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 695.0
+offset_top = 538.0
+offset_right = 1195.0
+offset_bottom = 738.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_lbbjw")
+
+[node name="Label" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 44.0
+offset_top = 28.0
+offset_right = 482.0
+offset_bottom = 73.0
+theme_override_fonts/font = ExtResource("1_qcr87")
+theme_override_font_sizes/font_size = 35
+text = "Place Settlements?"
+horizontal_alignment = 1
+
+[node name="ProceedButton" type="Button" parent="Panel"]
+layout_mode = 0
+offset_left = 54.0
+offset_top = 105.0
+offset_right = 181.0
+offset_bottom = 160.0
+theme_override_fonts/font = ExtResource("1_qcr87")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bbwng")
+theme_override_styles/hover = SubResource("StyleBoxFlat_g3l75")
+text = "Proceed"
+
+[node name="BackButton" type="Button" parent="Panel"]
+layout_mode = 0
+offset_left = 231.0
+offset_top = 105.0
+offset_right = 464.0
+offset_bottom = 160.0
+theme_override_fonts/font = ExtResource("1_qcr87")
+theme_override_styles/normal = SubResource("StyleBoxFlat_xbfpw")
+theme_override_styles/hover = SubResource("StyleBoxFlat_h55td")
+text = "Back to Map Generator"

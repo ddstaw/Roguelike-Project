@@ -1,0 +1,110 @@
+[gd_scene load_steps=9 format=3 uid="uid://cjaamt0wt8eid"]
+
+[ext_resource type="Texture2D" uid="uid://bfl3rd44mjfhg" path="res://ui/menus/bbg.png" id="1_3g55u"]
+[ext_resource type="Script" path="res://ui/scripts/CharEquip-ContinueButton.gd" id="2_d08if"]
+[ext_resource type="Script" path="res://ui/scripts/CharEq-ChrButton.gd" id="3_npy62"]
+[ext_resource type="Script" path="res://ui/scripts/CharEq-JourButton.gd" id="4_g1ly1"]
+[ext_resource type="Script" path="res://ui/scripts/CharEq-SkButton.gd" id="5_y3d8p"]
+[ext_resource type="Script" path="res://ui/scripts/CharEq-InvButton.gd" id="6_khetd"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_45heu"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3vqdr"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.854902, 0.607843, 0.054902, 1)
+
+[node name="CharEquipment" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_3g55u")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 273.0
+offset_top = 385.0
+offset_right = 1057.0
+offset_bottom = 682.0
+theme_override_font_sizes/font_size = 81
+text = "EQUIPMENT
+WORK IN PROGRESS"
+
+[node name="ContinueButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1404.0
+offset_top = 860.0
+offset_right = 1652.0
+offset_bottom = 1020.0
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_45heu")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3vqdr")
+text = "Continue"
+script = ExtResource("2_d08if")
+
+[node name="ChrButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1184.0
+offset_top = 52.0
+offset_right = 1862.0
+offset_bottom = 212.0
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_45heu")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3vqdr")
+text = "Character Profile"
+script = ExtResource("3_npy62")
+
+[node name="JourButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1184.0
+offset_top = 248.0
+offset_right = 1862.0
+offset_bottom = 408.0
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_45heu")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3vqdr")
+text = "Journal"
+script = ExtResource("4_g1ly1")
+
+[node name="SkButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1188.0
+offset_top = 434.0
+offset_right = 1866.0
+offset_bottom = 594.0
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_45heu")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3vqdr")
+text = "Skills"
+script = ExtResource("5_y3d8p")
+
+[node name="InvButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1190.0
+offset_top = 620.0
+offset_right = 1868.0
+offset_bottom = 780.0
+theme_override_font_sizes/font_size = 41
+theme_override_styles/normal = SubResource("StyleBoxFlat_45heu")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3vqdr")
+text = "Inventory"
+script = ExtResource("6_khetd")
+
+[connection signal="pressed" from="ContinueButton" to="ContinueButton" method="_on_pressed"]
+[connection signal="pressed" from="ChrButton" to="ChrButton" method="_on_pressed"]
+[connection signal="pressed" from="JourButton" to="JourButton" method="_on_pressed"]
+[connection signal="pressed" from="SkButton" to="SkButton" method="_on_pressed"]
+[connection signal="pressed" from="InvButton" to="InvButton" method="_on_pressed"]

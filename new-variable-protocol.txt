@@ -1,0 +1,274 @@
+✅ THE DUMMY-PROOF VARIABLE PROTOCOL™
+
+ int → Whole numbers, counts, simple ratings
+Use int when:
+
+You’re dealing with things that don’t need precision (no decimal places)
+
+You want to represent steps, points, or units
+
+The number is meant to be rounded, capped, or compared
+
+✅ Examples of good int uses:
+
+Variable Name	Meaning
+beauty_rating: 3	Sanity bonus strength (scale of 1–5)
+cover_rating: 50	50% chance to block projectiles
+hp: 5	How many hits something can take
+damage_per_turn: 2	Fire does 2 damage per turn
+muffle_rating: 1	How much sound is dampened (basic scale)
+
+===========================
+
+💬 String → Labels, categories, types, descriptions
+Use String when:
+
+You need to store names, tags, or categories
+
+You want something to show up in UI or tooltip text
+
+It's not a number you’ll do math on
+
+✅ Examples of good String uses:
+
+Variable Name	Meaning
+interactive_type: "shrine"	Used to trigger specific logic
+origin_realm: "hell"	Flavor or lore info
+on_burn_transform: "dirt"	What tile becomes when burned
+folklore: "Ancient fae road"	Shown when inspecting
+
+============================
+
+🔢 float → Precision numbers, chances, timers
+Use float when:
+
+You need decimal accuracy
+
+It’s used in probabilities or time durations
+
+You want smooth scaling or subtle changes
+
+✅ Examples of good float uses:
+
+Variable Name	Meaning
+trash_event_rating: 0.02	2% chance of triggering
+fire_spread_chance: 0.15	15% chance to spread fire
+sound_muffling: 0.25	Muffles 25% of sound passing through
+slip_chance: 0.08	8% chance to fall on unstable terrain
+beauty_decay_rate: 0.1	Slowly loses beauty over time
+
+=============================
+
+
+
+🔨 STEP 1: You're writing a terrain or object
+You're in:
+
+res://constants/terrain_data.gd for terrain
+
+res://constants/object_data.gd for objects
+
+→ You want to add a new variable to an entry.
+
+Example:
+
+"sewer_water": {
+	"blocks_movement": true,
+	"blocks_vision": false,
+	"flammable": false,
+	...
+
+	# New variable!
+	"trash_event": true,
+	"trash_event_rating": 0.02,
+}
+📌 Just add it here. No need to touch other entries unless they also care about this new variable.
+
+
+================================================
+================================================
+
+
+🧠 STEP 2: Ask yourself:
+Will any game logic need to check or use this variable?
+
+If NO (it's just for flavor or static data), you're done.
+
+✅ Examples of NO (Flavor-Only)
+These might show up in “inspect” dialogs, flavor text, or dev notes — but don’t change gameplay behavior.
+
+Variable	Use Case
+"origin_realm": "hell"	Just flavor to say where a cursed altar came from.
+"historical_name": "Old Imperial Road"	Displayed on hover or inspect. Doesn’t affect movement.
+"art_style": "Elven Gothic"	Used in a visual override for tilesets.
+"folklore": "A shrine to the lost moon goddess."	Just shown in tooltips.
+If you’re just storing these to show on UI or inspection, no logic uses them — so you can skip step 3 and move on.
+
+
+If YES (it affects something like movement, combat, fire, smell...), continue STEP 3:
+
+✅ Examples of YES (Gameplay Logic)
+These get referenced in systems like fire spreading, sanity checks, movement, combat, etc.
+
+Variable	Use Case
+"flammable": true	Fire system checks this during spread.
+"unstable": true	Slip/fall system checks this for movement rolls.
+"cursed": true	Interactions get harder, faith gets drained here.
+"beauty_rating": 3	Regenerates sanity when resting.
+"loot_chance": 0.1	Used by search/loot system to drop items.
+
+If you say “yes, this might matter in X system,” you want to do step 3 - add a helper in Constants.gd, so you can call:
+
+if Constants.has_flammable(tile_type):
+	do_flammable_effects()
+
+================================================
+================================================
+
+🔥 STEP 3: Add helper function(s) for gameplay variables
+
+If this variable affects gameplay logic (movement, fire, vision, faith, etc), we add helper functions so you can easily and safely check it anywhere in code.
+
+📍 You're now in:
+
+res://constants/Constants.gd ← This is where all helpers live.
+
+🛠️ Add a helper like this - this makes all makes all terrain non-flammable by default unless is flammable, good for rare case variables :
+
+static func is_flammable(tile_type: String) -> bool:
+	var tile_data = TERRAIN_PROPERTIES.get(tile_type, {})
+	return tile_data.get("flammable", false)
+
+📌 This will safely return `false` if the tile doesn’t have that variable set. No crashes. No errors.
+
+OPTIONAL: If your variable has a number tied to it (like burn time or fire chance), add a second helper:
+
+static func get_fuel_amount(tile_type: String) -> int:
+	var tile_data = TERRAIN_PROPERTIES.get(tile_type, {})
+	return tile_data.get("fuel_amount", 0)
+
+===== more helper examples: - pay attention to if int string or float
+
+For any variable that will be checked by logic (e.g. fire, sound, slipping, sanity, etc), create a helper.
+
+🛠️ Add this to res://constants/constants.gd
+
+static func is_flammable(tile_type: String) -> bool:
+	var tile_data = TERRAIN_PROPERTIES.get(tile_type, {})
+	return tile_data.get("flammable", false)
+📌 This safely returns false if the variable isn’t present.
+
+Great for rare-case booleans (e.g. only a few tiles are flammable, so everything else is false by default).
+
+🌡️ OPTIONAL: If your variable has a value (not just a bool), make a second helper
+
+static func get_fuel_amount(tile_type: String) -> int:
+	var tile_data = TERRAIN_PROPERTIES.get(tile_type, {})
+	return tile_data.get("fuel_amount", 0)
+	
+📌 This safely returns 0 for things without a burn value.
+Also good for sound_muffling, beauty_rating, fire_spread_chance, slip_chance, etc.
+
+
+
+
+================================================
+
+🚒 STEP 4: Use your helper in actual systems
+
+Once your helpers exist, use them in any script that cares about this logic:
+
+✅ Fire Spread Example:
+
+func spread_fire(tile_type: String) -> void:
+	if Constants.is_flammable(tile_type):
+		var fuel = Constants.get_fuel_amount(tile_type)
+		start_burning(fuel)
+
+✅ Another Example:
+
+if Constants.is_flammable(current_tile):
+	print("🔥 This tile is flammable! Add to fire list.")
+
+📌 You’re now safely using the variable. All systems should ONLY talk to the helper functions — not the raw dictionary!
+
+================================================
+================================================
+
+
+🔁 Optional: Add to debug tools
+If you have a tile inspector or dev panel, maybe add this info there for testing.
+Otherwise? You’re good to go.
+
+========
+
+🧾 THE TL;DR PLAYBOOK
+You’re writing "sewer_water", want to add "trash_event" and "trash_event_rating"
+
+✅ Add the variable(s) directly to the TERRAIN_PROPERTIES or OBJECT_PROPERTIES entry.
+
+✅ Add helper accessors in Constants.gd if you'll use them in game logic.
+
+✅ Use the helper in your actual gameplay code.
+
+🔁 Optionally add to any debug/inspector tools.
+
+🛑 What you don’t need to do:
+You don’t need to add "trash_event": false to every other tile.
+
+You don’t need to write a switch/case system.
+
+You don’t need to change existing systems if they don’t care about this variable.
+
+=============================
+
+🧱 For Terrain Variables
+
+# 🔧 Terrain: <Your Variable Name>
+static func has_<your_variable_name>(tile_type: String) -> bool:
+	return TERRAIN_PROPERTIES.get(tile_type, {}).get("<your_variable_name>", false)
+
+static func get_<your_variable_name>_rating(tile_type: String) -> float:
+	return TERRAIN_PROPERTIES.get(tile_type, {}).get("<your_variable_name>_rating", 0.0)
+
+Example (for "trash_event"):
+
+static func has_trash_event(tile_type: String) -> bool:
+	return TERRAIN_PROPERTIES.get(tile_type, {}).get("trash_event", false)
+
+static func get_trash_event_rating(tile_type: String) -> float:
+	return TERRAIN_PROPERTIES.get(tile_type, {}).get("trash_event_rating", 0.0)
+
+=======================================
+	
+📦 For Object Variables
+
+# 🔧 Object: <Your Variable Name>
+static func has_<your_variable_name>(object_type: String) -> bool:
+	return OBJECT_PROPERTIES.get(object_type, {}).get("<your_variable_name>", false)
+
+static func get_<your_variable_name>_rating(object_type: String) -> float:
+	return OBJECT_PROPERTIES.get(object_type, {}).get("<your_variable_name>_rating", 0.0)
+	
+========
+
+Example (for "unstable"):
+
+static func has_unstable(object_type: String) -> bool:
+	return OBJECT_PROPERTIES.get(object_type, {}).get("unstable", false)
+
+static func get_unstable_rating(object_type: String) -> float:
+	return OBJECT_PROPERTIES.get(object_type, {}).get("unstable_rating", 0.0)
+
+=======================================
+
+✨ Pro Tip:
+If your variable isn't a bool+rating pair (e.g. "beauty_level": 3 with no beauty = true), just write the single get_ function:
+
+static func get_beauty_level(tile_type: String) -> int:
+	return TERRAIN_PROPERTIES.get(tile_type, {}).get("beauty_level", 0)
+	
+You can paste all your helpers at the bottom of Constants.gd, under a comment header like:
+
+### TERRAIN HELPER FUNCTIONS
+### OBJECT HELPER FUNCTIONS

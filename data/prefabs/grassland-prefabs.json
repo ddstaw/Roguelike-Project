@@ -1,0 +1,104 @@
+{
+  "prefabs": [
+	{
+	  "name": "stone_tower_variant_1",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"GGWBBDBBWGG",
+		"GWBFFFFFBWG",
+		"WBFFFFFFFBW",
+		"WFFFFSFFFFW",
+		"WLFFFFFFFFW",
+		"WFFFFFFFFFW",
+		"BWFFFFFFFWB",
+		"GBBBDBDBBBG",
+		"GGGGGGGGGGG"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"S": "res://assets/localmap-graphics/stairs.png",
+		"L": "res://assets/localmap-graphics/ladder.png",
+		"G": "res://assets/localmap-graphics/grass.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_variant_2",
+	  "width": 10,
+	  "height": 9,
+	  "tiles": [
+		"WBBBBBBBBW",
+		"WLFFFFFFFW",
+		"WFFFFFFFFW",
+		"WFFFFFFFFW",
+		"WFFFSFFFFW",
+		"WFFFFFFFFW",
+		"WFFFFFFFFW",
+		"WFFFFFFFFW",
+		"BBBBBDBBBB"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"S": "res://assets/localmap-graphics/stairs.png",
+		"L": "res://assets/localmap-graphics/ladder.png",
+		"G": "res://assets/localmap-graphics/grass.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_variant_3",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"WBBBBBBWGG",
+		"WFFFFFFWGG",
+		"WFFSFFFWGG",
+		"WFFFFFFWGG",
+		"WFFFFFFBBWG",
+		"WFFFFFFFFWG",
+		"WFFFFFFLFWG",
+		"WFFFFFFFFWG",
+		"BBBBBDBBBBG"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"S": "res://assets/localmap-graphics/stairs.png",
+		"L": "res://assets/localmap-graphics/ladder.png",
+		"G": "res://assets/localmap-graphics/grass.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_variant_4",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"WBBBBBDBBBW",
+		"WFFFFFFFFFW",
+		"WFFFFFFFFFW",
+		"WFFFFFFFFWB",
+		"WFFFFSFFFDG",
+		"WFFFFFFFFBW",
+		"WFFFFFFFFFW",
+		"WLFFFFFFFFW",
+		"BBBBBDBBBBB"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"S": "res://assets/localmap-graphics/stairs.png",
+		"L": "res://assets/localmap-graphics/ladder.png",
+		"G": "res://assets/localmap-graphics/grass.png"
+	  }
+	}
+  ]
+}

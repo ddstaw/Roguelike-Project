@@ -1,0 +1,83 @@
+[gd_scene load_steps=12 format=3 uid="uid://br6xkl2t3qhj3"]
+
+[ext_resource type="Script" path="res://ui/scripts/LocalAreaExitPopup.gd" id="1_xmrok"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="2_lebk2"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8f7ni"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aq4c4"]
+bg_color = Color(0.22417, 0.681096, 0.639325, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sctym"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_q4sof"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uu5pw"]
+bg_color = Color(0.982859, 0.329762, 0.500377, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_386ta"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t7veo"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ojf71"]
+bg_color = Color(0.138525, 0.647807, 0.878598, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j731q"]
+
+[node name="LocalAreaExitPopup" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 962.0
+offset_top = 381.0
+offset_right = -739.0
+offset_bottom = -473.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_xmrok")
+
+[node name="LeaveLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 46.0
+offset_right = 205.0
+offset_bottom = 88.0
+theme_override_fonts/font = ExtResource("2_lebk2")
+theme_override_font_sizes/font_size = 37
+text = "Leave?"
+
+[node name="YesButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 65.0
+offset_top = 119.0
+offset_right = 102.0
+offset_bottom = 144.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_8f7ni")
+theme_override_styles/hover = SubResource("StyleBoxFlat_aq4c4")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_sctym")
+text = "Yes"
+
+[node name="NoButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 117.0
+offset_top = 119.0
+offset_right = 154.0
+offset_bottom = 144.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_q4sof")
+theme_override_styles/hover = SubResource("StyleBoxFlat_uu5pw")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_386ta")
+text = "No"
+
+[node name="RememberButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 49.0
+offset_top = 160.0
+offset_right = 163.0
+offset_bottom = 185.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_t7veo")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ojf71")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_j731q")
+text = "Remember..."

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Faith" load_steps=2 format=3 uid="uid://c30p4fbkxlev5"]
+
+[ext_resource type="Script" path="res://ui/resources/Faith.gd" id="1_a7mce"]
+
+[resource]
+script = ExtResource("1_a7mce")
+faithname = "Disciple of Rex Mundi"
+faithflavor = "Rexmflav"
+faithdes = "Rexmdes"
+faithbonus = "Rexmbonus"

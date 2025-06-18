@@ -1,0 +1,79 @@
+🎯 YOUR VISION (PUN INTENDED):
+✔️ You DO want:
+✅ Falling between Z levels (jump out windows, drop into sewer grates)
+
+✅ Shooting across at same height (window-to-window gunfights)
+
+✅ Seeing Z-1 alleys faded below, with no tiny NPCs shown
+
+✅ Seeing enemies in other buildings’ windows if they're on the same floor
+
+✅ Shooting across buildings at the same Z
+
+❌ You DON’T need:
+🚫 Shooting up/down stairs between floors
+
+🚫 Tracking rats/orphans below player when not interacted with
+
+🚫 Full vertical LOS simulation all the time
+
+🔨 SYSTEM DESIGN: VERTICAL INTERACTION
+Here’s a clean split of how to handle verticality:
+
+Interaction	Rule
+🪂 Falling	Fully allowed. Trigger scripted fall_to_z(player, z - 1) with landing effects.
+🔫 Shooting across at same Z	Allowed. LOS check between (x, y, z) and (x2, y2, z).
+🔫 Shooting up/down across Z	Only allowed between aligned positions (e.g., window directly across from window)
+🔍 Visibility between Z	Z-levels above/below are faded overlays, with no actors drawn
+🧍 Inter-floor actor sim	Only simulated when they're relevant (heard, seen, event-triggered)
+🌈 VISUAL DESIGN: Multi-Z Awareness Without Overload
+To keep it clear and performative:
+
+Element	Z Rendering
+Active Z	Full color, full sim, full interaction
+Z above	Maybe light shadows from building, no detail
+Z below	Faded terrain tiles, silhouettes only for important stuff (e.g. enemies seen from above)
+NPCs below	Not rendered unless part of special event (e.g. boss screaming below, then climbs stairs)
+So if you’re on Z1 looking out the window:
+
+You see the street below (Z0), maybe the parked car, the manhole cover
+
+But you don’t see the rat or orphan unless they become story-relevant
+
+🛠️ TECH TOOLBOX TO MAKE THIS HAPPEN
+Tool	Use
+current_z_level	Global state — used by AI, FOV, and renderer
+draw_z_layer(z: int)	Function in your MapRenderer.gd to draw with modulate fade or hide
+LineOfSight3D.gd	Helper for (x, y, z) → (x2, y2, z2) visibility checks
+fall_to_z()	Triggers a fall event, sets player to lower realm or sim layer
+event_trigger_on_z(z)	Simulates noise/combat heard on other floors triggering reaction
+🧠 Bonus Ideas to Bake in Later
+Feature	Notes
+“Peeking out window”	Add action to look down from building, revealing ground NPCs
+Rooftop fights	z+5 on tenements becomes tactical zone with full visibility
+Building-wide aggro	Gang boss on Z5 hears gunfire and sends goons down stairwell
+Snipers in city	Scripted NPCs on rooftops that fire down or across — scary but rare
+✅ TL;DR DESIGN SUMMARY
+✔️ Falling? Yes, and it's fun.
+
+✔️ Window-to-window gunfights across buildings? Hell yes.
+
+❌ Shooting down at alley NPCs from above? No — not unless explicitly triggered.
+
+✔️ Visibility of lower Z? Yes, in a faded/abstracted way.
+
+✅ Simulation of all Zs at once? No. You control what wakes up and when.
+
+You’re building immersive verticality that enhances tactics and storytelling without dragging you into sim-hell. This is chef’s kiss level world logic. 🧑‍🍳💥
+
+When you're ready, I can help you:
+
+Define the Z-level prefab JSON structure
+
+Build a ZManager.gd that loads/unloads floors
+
+Design a FOV/LOS helper that supports (x, y, z)
+
+Make a test tower to prototype rooftop-to-rooftop shootouts
+
+Let’s build your damn necromancer tower. 🧙‍♂️

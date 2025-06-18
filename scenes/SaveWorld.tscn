@@ -1,0 +1,153 @@
+[gd_scene load_steps=15 format=3 uid="uid://c05v030s86gtr"]
+
+[ext_resource type="Script" path="res://scripts/SaveWorld.gd" id="1_ab30t"]
+[ext_resource type="Texture2D" uid="uid://dllqx48crjd2b" path="res://assets/graphics/NewWorldBackground.png" id="1_jsllr"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="2_pqfof"]
+[ext_resource type="Script" path="res://scripts/backtomainmenusavegamebutton.gd" id="3_balqh"]
+[ext_resource type="Script" path="res://scripts/playbuttontoplayscreen.gd" id="5_0v6f8"]
+[ext_resource type="Script" path="res://scripts/SaveWorldSaveSlot1.gd" id="5_3t66a"]
+[ext_resource type="Script" path="res://scripts/SaveSlot2.gd" id="6_agucy"]
+[ext_resource type="Script" path="res://scripts/SaveSlot3.gd" id="7_kvnbu"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_thlqj"]
+bg_color = Color(0.277216, 0.133047, 0.01538, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.576471, 0.427451, 0.141176, 0.619608)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ddpwi"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7c5ae"]
+bg_color = Color(0.419983, 0.0316798, 0.22095, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vnjnf"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bofxa"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u0160"]
+bg_color = Color(0, 0, 0, 1)
+
+[node name="SaveWorld" type="Node2D"]
+script = ExtResource("1_ab30t")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_jsllr")
+
+[node name="backtomainmenu" type="Button" parent="."]
+offset_left = 176.0
+offset_top = 839.0
+offset_right = 517.0
+offset_bottom = 903.0
+theme_override_fonts/font = ExtResource("2_pqfof")
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_thlqj")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ddpwi")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7c5ae")
+text = "Back to Main Menu"
+script = ExtResource("3_balqh")
+
+[node name="playbuttontoplayscreen" type="Button" parent="."]
+offset_left = 1605.0
+offset_top = 500.0
+offset_right = 1746.0
+offset_bottom = 564.0
+theme_override_fonts/font = ExtResource("2_pqfof")
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_thlqj")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ddpwi")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7c5ae")
+text = "Play"
+script = ExtResource("5_0v6f8")
+
+[node name="SaveSlot1" type="Button" parent="."]
+offset_left = 939.0
+offset_top = 205.0
+offset_right = 1569.0
+offset_bottom = 394.0
+theme_override_fonts/font = ExtResource("2_pqfof")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_vnjnf")
+text = "Save Slot 1"
+script = ExtResource("5_3t66a")
+
+[node name="SaveSlot2" type="Button" parent="."]
+offset_left = 935.0
+offset_top = 436.0
+offset_right = 1565.0
+offset_bottom = 625.0
+theme_override_fonts/font = ExtResource("2_pqfof")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_bofxa")
+text = "Save Slot 2"
+script = ExtResource("6_agucy")
+
+[node name="SaveSlot3" type="Button" parent="."]
+offset_left = 934.0
+offset_top = 670.0
+offset_right = 1564.0
+offset_bottom = 859.0
+theme_override_fonts/font = ExtResource("2_pqfof")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_u0160")
+text = "Save Slot 3"
+script = ExtResource("7_kvnbu")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 187.0
+offset_top = 344.0
+offset_right = 851.0
+offset_bottom = 669.0
+theme_override_fonts/font = ExtResource("2_pqfof")
+theme_override_font_sizes/font_size = 26
+text = "Select a Save Slot to save your New World.
+
+If you save over an existing World, 
+that World and your actions will be erased 
+and replaced by the New World
+
+To begin playing, 
+save your New World in a Save Slot, 
+Press Play and select 
+the World you wish to play. "
+
+[node name="Label2" type="Label" parent="."]
+offset_left = 195.0
+offset_top = 214.0
+offset_right = 859.0
+offset_bottom = 539.0
+theme_override_fonts/font = ExtResource("2_pqfof")
+theme_override_font_sizes/font_size = 75
+text = "WORLD SAVE"
+
+[node name="Label3" type="Label" parent="."]
+offset_left = 949.0
+offset_top = 211.0
+offset_right = 1321.0
+offset_bottom = 279.0
+theme_override_fonts/font = ExtResource("2_pqfof")
+theme_override_font_sizes/font_size = 35
+text = "SAVE SLOT 1"
+
+[node name="Label4" type="Label" parent="."]
+offset_left = 949.0
+offset_top = 443.0
+offset_right = 1613.0
+offset_bottom = 768.0
+theme_override_fonts/font = ExtResource("2_pqfof")
+theme_override_font_sizes/font_size = 35
+text = "SAVE SLOT 2"
+
+[node name="Label5" type="Label" parent="."]
+offset_left = 949.0
+offset_top = 678.0
+offset_right = 1613.0
+offset_bottom = 1003.0
+theme_override_fonts/font = ExtResource("2_pqfof")
+theme_override_font_sizes/font_size = 35
+text = "SAVE SLOT 3"

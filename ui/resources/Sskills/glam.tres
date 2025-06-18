@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SSkill" load_steps=2 format=3 uid="uid://cvgul1md74qxr"]
+
+[ext_resource type="Script" path="res://ui/resources/SSkill.gd" id="1_jce0k"]
+
+[resource]
+script = ExtResource("1_jce0k")
+sskillname = "Glamourmancy"
+sskillflavor = "glamflav"
+sskilldes = "glamdes"

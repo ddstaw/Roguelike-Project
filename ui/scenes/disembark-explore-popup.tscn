@@ -1,0 +1,78 @@
+[gd_scene load_steps=6 format=3 uid="uid://gcgu20v2ubko"]
+
+[ext_resource type="Theme" uid="uid://ds5x2cgvx5ioq" path="res://ui/TravelLogTheme.tres" id="1_4svya"]
+[ext_resource type="Script" path="res://ui/scripts/disembark-explore-popup.gd" id="2_anew1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iwj3j"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 5
+border_width_top = 5
+border_width_right = 5
+border_width_bottom = 5
+border_color = Color(1, 1, 1, 1)
+expand_margin_left = 20.0
+expand_margin_top = 40.0
+expand_margin_right = 20.0
+expand_margin_bottom = 20.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3fae8"]
+bg_color = Color(3.85046e-06, 0.662762, 0.830652, 1)
+corner_detail = 1
+expand_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pqy2t"]
+content_margin_bottom = 4.0
+bg_color = Color(0.844577, 0.511128, 9.62615e-07, 1)
+
+[node name="disembark-explore-popup" type="Window"]
+position = Vector2i(626, 416)
+size = Vector2i(530, 213)
+content_scale_factor = 1.1
+theme = ExtResource("1_4svya")
+theme_override_colors/title_color = Color(1, 0.862745, 0.45098, 1)
+theme_override_colors/title_outline_modulate = Color(0, 0, 0, 1)
+theme_override_font_sizes/title_font_size = 27
+theme_override_styles/embedded_border = SubResource("StyleBoxFlat_iwj3j")
+script = ExtResource("2_anew1")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="findsomelabel" type="Label" parent="."]
+offset_left = 57.0
+offset_top = -1.0
+offset_right = 417.0
+offset_bottom = 24.0
+mouse_filter = 0
+text = "Finding someplace new..."
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_left = 10.0
+offset_top = 60.0
+offset_right = 473.0
+offset_bottom = 167.0
+theme_override_constants/separation = 12
+
+[node name="explorebustlabel" type="Label" parent="VBoxContainer"]
+layout_mode = 2
+mouse_filter = 0
+text = "...but you can't seem to find
+anywhere worth exploring."
+
+[node name="ExploreProceedButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_3fae8")
+text = "Proceed?"
+
+[node name="NevermindButton" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+size_flags_stretch_ratio = 0.5
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_pqy2t")
+text = "Nevermind"

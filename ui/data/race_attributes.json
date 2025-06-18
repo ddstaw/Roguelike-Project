@@ -1,0 +1,23 @@
+{
+    "human": {
+        "strength": 1,
+        "endurance": 1,
+        "agility": 1,
+        "perception": 1,
+        "charisma": 1,
+		"intelligence":1,
+		"willpower":1
+    },
+    "dwarf": {
+        "strength": 2,
+        "endurance": 2
+    },
+    "elf": {
+        "perception": 2,
+        "charisma": 2
+    },
+    "orc": {
+        "strength": 2,
+        "agility": 2
+    }
+}

@@ -1,0 +1,19 @@
+{
+  "None": {
+	"size": [0, 0],
+	"tiles": []
+  },
+  "Horse": {
+	"size": [1, 1],
+	"tiles": [
+	  { "offset": [0, 0], "texture": "res://assets/localmap-graphics/mounts/horse_01.png" }
+	]
+  },
+  "Wagon": {
+	"size": [2, 1],
+	"tiles": [
+	  { "offset": [0, 0], "texture": "res://assets/localmap-graphics/mounts/wagon-left.png" },
+	  { "offset": [1, 0], "texture": "res://assets/localmap-graphics/mounts/wagon-right.png" }
+	]
+  }
+}

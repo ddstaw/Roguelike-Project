@@ -1,0 +1,14 @@
+[gd_scene load_steps=2 format=3 uid="uid://hsoupgehmdvr"]
+
+[ext_resource type="Script" path="res://ui/scripts/Faithslot.gd" id="1_nv6h2"]
+
+[node name="Faithslot" type="TextureButton"]
+show_behind_parent = true
+custom_minimum_size = Vector2(48, 48)
+offset_right = 48.0
+offset_bottom = 48.0
+mouse_filter = 1
+script = ExtResource("1_nv6h2")
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]

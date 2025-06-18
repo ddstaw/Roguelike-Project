@@ -1,0 +1,69 @@
+> after basic scaffolding, thinking about doing this a more organic way, currently i'm in this stage of my roadmap - 
+
+🧱 Next Steps in the Dev Pipeline:
+We're entering the Lighting & Field of View (FOV) zone:
+
+1. Store/track walkability and visibility data
+We’ll use the build_walkability_grid() output to power FOV + lighting logic.
+
+Could store this grid in memory per loaded map (not JSON yet unless we need persistence).
+
+2. Setup FOV system
+Use something like shadowcasting or recursive raycasting (Godot-friendly).
+
+Based on blocks_vision from terrain/objects.
+
+Player gets visible area grid after moving.
+
+3. Basic Lighting Overlay
+Add a ColorRect or shader overlay for darkness.
+
+Remove darkness from visible tiles based on FOV.
+
+Add a “light radius” to the player (e.g. lanterns).
+
+- anyway i was thinking at some point, it would be good to maybe shift towards specific gameplay loops, could you help me setup milestones from where i'm at to loops like this: 
+
+
+- Angler Loop (basic early game wilderness survival - eating, drinking, sleeping, earning)
+	- getting wood and stones and plant fiber - interacting with objects (bushes and rocks) also maybe special action - searching? 
+	- making a axe (for more wood faster) - crafting new gear with component items
+	- making a knife (for butchering fish) - crafting new gear with component items
+	- making a spear (for defending from animals) - crafting new gear with component items
+	- making a rod (for catching fish) - crafting new gear with component items
+	- making a shovel (for digging worms) - crafting new gear with component items
+	- making a hammer (for building objects) - crafting new gear with component items
+	- dig for worms - interacting with terrain (with correct gear in hand only - shovel)
+	- make a campfire and primitive shelter (building and placing objects, which consumes items)
+	- catch fish - interacting with terrain (with correct gear in hand only - rod, water tile becomes "exploited" can't refish at same spot over and over, have to move on)
+	- butcher fish - processing / interacting with component item if certain gear is available (cutting type gear - knife, axe) - best done thru crafting menu?  (raw fish into fish meat)
+	- cook fish on campfire - cooking / interacting with object that changes one component item into another component item (fish meat into cooked fish), need wood for fuel
+	- eat fish / drink water - eating / drinking actions - get sick from unboiled water?
+	- sleep in primitive shelter, may be awoke by animals approach - sleeping action with random outcomes
+	- defend self if animal attacks - basic combat, close and some range with spear, spear can be thrown?
+	- remember place where campfire / sheleter is - remember place logic, saving a map and returning 
+	- go find fish market in town to sell extra fish - looking for vendors / selling to vendors, have to explore city biomes, may need ports? 
+	- buy better rod? buy lures? buy cooking pot? buy fishing hat and jacket - buy from vendor / shopping, looking for fishing vendor, have to explore city biomes, may need ports?
+	- repeat & scale
+	
+- Junkman loop (basic early game urban survival - eating, drinking, sleeping, earning)
+	- search garbage cans for rags, broken glass, scrap metal (other worthless junk) - interacting with objects / need to be sure cant be exploited, searching same garbage can over and over
+	- search alleys for broken furniture - requires exploring more city biomes, traveling
+	- scrap broken furniture for wood - turning an item into another item, maybe should require workbench? need to find a factory or workshop in slum with workbench? 
+	- make axe, knife, spear, hammer from scrap metal and wood - basic crafting, turning component items into gear
+	- make a fishing net from rag strips and wood - used like a fishing rod for catching items in sewer water without getting sick
+	- go hunt rats in sewer - basic combat, close and some range with spear, spear can be thrown? 
+	- butcher rats with knife - basic crafting, turning component item into cookable item if certain gear is available (cutting type gear - knife, axe)(rat carcass into rat meat)
+	- cook rats on hobo campfires in alleys and sewer - have to find public oil drum stove in alley or sewer, need to fuel with wood - turning (rat meat into cooked rat meat)
+	- sleep in hobo camps (careful, may get robbed for money or items) - sleeping action with random outcomes
+	- search garbage piles and in sewer water for things to sell - (mostly junk but it adds up, sometimes you find a gold ring or something siilar of moderate value)  - interacting with objects / need to be sure cant be exploited, searching same garbage can over and over
+	- buy a cheap lock from locksmith - find locksmith vendor by exploring biomes, maybe make it more common someplaces? 
+	- find an abandoned apartment or ramshackle - find by exploring biomes, need to have logic for determining "unclaimed" urban places
+	- claim apartment with cheap lock
+	- remember place where claimed residence is - remember place logic, saving a map and returning
+	- build Ragpile Mattress for sleeping, oil drum stove for cooking - building and placing objects in claimed space
+	- repeat & scale
+
+	
+	
+	

@@ -1,0 +1,80 @@
+MainScene (Node2D) - Root Scene
+├── UIContainer (Control) - All UI Elements
+│   ├── TopBar (HBoxContainer) - Displays Game Menu, Character, Region, and Time
+│   │   ├── MainMenuButton (TextureButton) - Opens Game Menu (Settings/Quit) [NEW]
+│   │   ├── CharacterButton (TextureButton) - Opens character sheet
+│   │   ├── EquipmentButton (TextureButton) - Opens equipment
+│   │   ├── InventoryButton (TextureButton) - Opens inventory
+│   │   ├── BuildButton (TextureButton) - Opens building options
+│   │   └── RegionInfo (HBoxContainer) - Displays region and time
+│   │       ├── RegionLabel (Label) - Shows biome ("Grasslands")
+│   │       ├── WorldLabel (Label) - Shows world name ("Stormwilling Region")
+│   │       ├── TimeOfDayIcon (TextureRect) - Shows day/night icon
+│   │       └── TimeLabel (Label) - Displays current time ("11:00PM")
+│
+│   ├── BottomBar (HBoxContainer) - Displays Travel Log, Toolbelt, and Status Bars
+│   │   ├── TravelLog (VBoxContainer) - Displays player actions and dialogues
+│   │   │   └── LogLabel (RichTextLabel) - ("You see a snake", "*Bark")
+│   │
+│   │   ├── ToolbeltContainer (VBoxContainer) - Toolbelt and Switching
+│   │   │   ├── HotbarSwitcher (VBoxContainer) - Switches toolbelt sets vertically
+│   │   │   │   ├── UpArrow (Button) - Previous toolbelt set (▲)
+│   │   │   │   ├── HotbarNumber (Label) - Displays current toolbelt number ("1")
+│   │   │   │   └── DownArrow (Button) - Next toolbelt set (▼)
+│   │   │   │
+│   │   │   └── ToolbeltGrid (GridContainer) - Displays 9 slots for the current toolbelt
+│   │   │       ├── Slot1 (Button) - Hotkey 1
+│   │   │       ├── Slot2 (Button) - Hotkey 2
+│   │   │       ├── Slot3 (Button) - Hotkey 3
+│   │   │       ├── Slot4 (Button) - Hotkey 4
+│   │   │       ├── Slot5 (Button) - Hotkey 5
+│   │   │       ├── Slot6 (Button) - Hotkey 6
+│   │   │       ├── Slot7 (Button) - Hotkey 7
+│   │   │       ├── Slot8 (Button) - Hotkey 8
+│   │   │       └── Slot9 (Button) - Hotkey 9
+│   │   │
+│   │   │   ├── SpellbookButton (TextureButton) - Opens known spells/skills
+│   │   │   └── CampButton (TextureButton) - Makes camp or rests
+│   │   
+│   │   └── StatusBars (VBoxContainer) - Displays player's vital stats
+│   │       ├── HealthBar (ProgressBar) - Red (Health)
+│   │       ├── StaminaBar (ProgressBar) - Blue (Stamina)
+│   │       ├── HungerBar (ProgressBar) - Green (Hunger)
+│   │       ├── FatigueBar (ProgressBar) - Yellow (Fatigue)
+│   │       └── SanityBar (ProgressBar) - Purple (Sanity)
+│
+│   └── MainMenu (Control) - [NEW] Game Menu Scene (Settings/Quit/Resume)
+│       ├── PanelBackground (PanelContainer) - Black overlay
+│       ├── MainMenuOptions (VBoxContainer) - Options Layout
+│       │   ├── ResumeButton (Button) - Close menu and resume
+│       │   ├── SettingsButton (Button) - Opens settings
+│       │   ├── MainMenuButton (Button) - Return to title screen
+│       │   └── QuitButton (Button) - Exit game
+│       └── AnimationPlayer (AnimationPlayer) - Menu transitions
+│
+├── Camera2D (Camera2D) - Follows player with smooth panning
+│   └── Tween (Tween) - For smooth camera transitions
+│
+├── MapContainer (Node2D) - Procedural Map and NPC Entities
+│   ├── TileMap (TileMap) - Displays the terrain (grass, rivers, trees)
+│   │
+│   ├── NPCContainer (Node2D) - Holds all NPCs
+│   │   └── NPCs (CharacterBody2D) - Individual NPC nodes
+│   │       ├── Sprite2D (Sprite2D) - NPC appearance
+│   │       ├── CollisionShape2D (CollisionShape2D) - NPC collider
+│   │       ├── AnimationPlayer (AnimationPlayer) - NPC animations
+│   │       └── DialogueLabel (Label) - [NEW] Shows floating NPC dialogue
+│   │
+│   └── NPCDialogueManager (Node) - [NEW] Manages NPC speech bubbles
+│       ├── DialogueInstances (Node2D) - Container for active dialogues
+│       └── DialogueTimer (Timer) - Controls dialogue duration
+│
+└── GameController (Node) - Core Managers for Gameplay Logic
+    ├── ToolbeltManager (Node) - Manages toolbelt sets and usage
+    ├── TimeManager (Node) - Controls day/night cycle and lighting
+    ├── ProcGenManager (Node) - Generates map, NPCs, and items
+    ├── TurnManager (Node) - Manages turn-based player/NPC actions
+    ├── NPCBehaviorManager (Node) - [UPDATED] Triggers NPC dialogues
+    ├── DialogueManager (Node) - [NEW] Coordinates NPC speech bubbles
+    ├── CombatManager (Node) - Manages player and NPC attacks
+    └── SaveManager (Node) - Saves and loads player progress

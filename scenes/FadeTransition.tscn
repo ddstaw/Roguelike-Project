@@ -1,0 +1,32 @@
+[gd_scene load_steps=2 format=3 uid="uid://dkdha32s3rce6"]
+
+[sub_resource type="GDScript" id="GDScript_x80gp"]
+script/source = "extends ColorRect
+
+signal transition_complete()
+
+func fade_in(duration=1.0):
+	modulate = Color(0, 0, 0, 1)
+	var tween = create_tween()
+	tween.tween_property(self, \"modulate:a\", 0, duration)
+	tween.connect(\"finished\", Callable(self, \"_on_fade_in_finished\"))
+
+func fade_out(duration=1.0):
+	modulate = Color(0, 0, 0, 0)
+	var tween = create_tween()
+	tween.tween_property(self, \"modulate:a\", 1, duration)
+	await tween.finished
+	emit_signal(\"transition_complete\")
+
+func _on_fade_in_finished():
+	self.visible = false
+"
+
+[node name="ColorRect" type="ColorRect"]
+offset_left = -60.0
+offset_top = -59.0
+offset_right = 1999.0
+offset_bottom = 1155.0
+mouse_filter = 2
+color = Color(0.0745098, 0.0745098, 0.0745098, 1)
+script = SubResource("GDScript_x80gp")

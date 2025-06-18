@@ -1,0 +1,372 @@
+X Walkability grid generation
+
+X Block vision grid
+
+🔲 Lighting system (torches, lanterns, etc)
+
+X FOV reveal overlay
+
+🔲 Interaction with "dynamic" tiles like doors
+
+======================
+
+🧱 Next Steps in the Dev Pipeline:
+We're entering the Lighting & Field of View (FOV) zone:
+
+1. Store/track walkability and visibility data
+We’ll use the build_walkability_grid() output to power FOV + lighting logic.
+
+Could store this grid in memory per loaded map (not JSON yet unless we need persistence).
+
+2. Setup FOV system
+Use something like shadowcasting or recursive raycasting (Godot-friendly).
+
+Based on blocks_vision from terrain/objects.
+
+Player gets visible area grid after moving.
+
+3. Basic Lighting Overlay
+Add a ColorRect or shader overlay for darkness.
+
+Remove darkness from visible tiles based on FOV.
+
+Add a “light radius” to the player (e.g. lanterns).
+
+======================
+
+🗺 Recommended Phased Plan
+✅ Phase 1: Terrain/Object Collision
+Add a is_tile_walkable(x, y) helper.
+
+Add NON_WALKABLE_TERRAINS and NON_WALKABLE_OBJECTS in Constants.
+
+Block movement before updating position.
+
+🌘 Phase 2: Light/Dark Overlay (Time of Day)
+Add a ColorRect node that adjusts opacity based on miltime.
+
+No need for complex lighting yet.
+
+Could add torch/lamp logic later.
+
+🔦 Phase 3: Basic FOV
+Raycast out from player’s tile in all 8 directions up to light_radius.
+
+Stop on walls/objects that block vision.
+
+Stop on walls/objects that block vision.
+👀 Phase 4: Advanced FOV + Light Sources
+Add torches, lanterns, and buildings with windows.
+
+Each light source gets its own radius and casts light.
+
+NPCs outside of your visible radius are hidden from view.
+
+🧍 Phase 5: NPC Movement + Visibility
+Only show and update NPCs that are visible.
+
+Movement runs after player turn ends.
+
+Eventually, they could have their own FOV too.
+
+=====================================
+TECH TO LOOP ROADMAP
+=====================================
+
+🧱 CURRENT STAGE: Tech Foundation
+Milestone 0: Lighting & FOV Integration
+
+ ✅ build_walkability_grid() provides blocks_movement and blocks_vision
+
+ ✅ Consts.is_blocking_vision() uses terrain + object data
+
+ 🔄 Implement FOV algorithm (start with recursive shadowcasting or Bresenham rays for simplicity)
+
+ 💡 Create a tile-level visibility_map, refreshed on player move
+
+ 🎨 Dark overlay via shader or modulated ColorRect/TileMap layer
+
+ 🔦 Add player "light source radius"
+
+Once this is in, the fog-of-war and darkness will support exploration and survival loops. You’re gonna feel the wilderness.
+
+🎣 Milestone 1: Minimal Viable Angler Loop (Wilderness Survival)
+Goal: Simulate basic survival in wild — move, gather, craft, eat, sleep.
+
+🌿 Core Systems:
+ Implement interactable object logic (bushes, rocks) → right-click or action-key triggers
+
+ Add “gatherable” prefab logic (maybe tag with "gatherable": true in object JSON)
+
+ Basic component item system (wood, stone, fiber) into inventory
+
+🛠️ Crafting Foundation:
+ UI for selecting craftables (or just a debug menu for now)
+
+ Load crafting_recipes.json with inputs/outputs
+
+ Crafting requires components + (optionally) tool-in-hand
+
+🎣 Basic Gear:
+ Axe (gather faster / chop-only objects)
+
+ Rod (required to fish)
+
+ Knife (required to butcher)
+
+ Shovel (dig for worms)
+
+ Hammer (required for building)
+
+🐟 Core Interactions:
+ Fishing spot prefab (water tile + "fishing hotspot" overlay)
+
+Fish only if rod in hand
+
+Mark tile as “exploited” after use (flag in metadata)
+
+ Worm digging (only at specific soil tiles, with shovel)
+
+ Campfire placement (consume wood + stone)
+
+Accepts fish_meat to create cooked_fish
+
+ Shelter prefab placement (provides sleep location)
+
+🍽️ Basic Needs:
+ Hunger / thirst stat ticking over time
+
+ “Eat” and “Drink” actions from inventory
+
+ Sleeping system (skip time, restore energy, maybe animal encounter chance)
+
+🧭 Loop Closure:
+ Vendor prefab (fishing market in a nearby realm/city)
+
+Sells gear (better rod, lures)
+
+Buys cooked fish
+
+ Add marker/reminder system (bookmark or note camp location)
+
+ Realm transition system for city → market
+
+At this stage, the player can explore → gather → craft → survive → sell → repeat. That’s the tight core of the Angler loop.
+
+🔁 Milestone 2: Expand & Polish
+Once that loop is working:
+
+ Introduce random events (weather, animal encounters at night)
+
+ Add durability to tools (force maintenance loop)
+
+ Add more fish types, bait, and biome-based fishing logic
+
+ Expand towns with more vendor types (gear progression)
+
+ Build "loop scale": can the player sustain indefinitely and upgrade?
+
+📦 Suggested Structure Updates (non-blocking, for later)
+interactables/ → JSON data per object type defining behavior (searchable, gatherable, searchable once)
+
+crafting/recipes.json → formalizes all recipes (component → product)
+
+needs_system.gd → tracks player hunger, thirst, fatigue
+
+interaction_handler.gd → a flexible system for object use
+
+==============================
+
+🧱 Milestone 0 (Shared Foundation — Already In Progress or Useful to Both)
+✅ build_walkability_grid() + FOV groundwork — covers both wilderness and urban traversal
+
+✅ Terrain + Object logic centralized in Consts.gd — solid move, this'll make interactions sane
+
+✅ Prefab + ObjectLayer system — easily allows tagging/flagging urban junk vs nature interactables
+
+🔄 (Soon) Visibility system + tile darkness + player light radius
+
+🔄 Interaction system (suggest making it generic: interact(obj, player) with data-driven responses)
+
+🔄 Inventory + component items foundation
+
+This is the base that all loops build off. You’re in a strong place here.
+
+🏚️ Milestone 1: Core Junkman Loop — Urban Survival
+Goal: Survive in a slum biome with scavenging, basic crafting, and dangerous nights.
+
+🗑️ Urban Biomes & Interactables
+ Add garbage can prefabs with "searchable": true, "once_only": true tags
+
+ Add junk pile / alley furniture prefabs
+
+ Randomized loot table per object type (use weighted RNG: rags common, gold ring rare)
+
+ Sewer entrances as local map transitions (mini-dungeons) - prevent exploitation (sewer rerolling every entry, you need to go to a new slum biome, not reroll the same over and over)
+
+ Designate unsearchable once searched (add "searched": true metadata to tile or object ID)
+
+🧠 Note: Use the same interactables system as bushes and fishing spots — just different flags & loot tables.
+
+🛠️ Urban Crafting
+ Scrap item types: broken_furniture, scrap_metal, rags, glass
+
+ Add “workbench” tag to specific slum interior objects
+
+Can’t craft advanced tools (axe, hammer) without workbench
+
+Could extend crafting UI to check "required_station" field in recipe
+
+ Junk tools: axe, spear, hammer from scrap + wood
+
+🔁 Same crafting system from Angler; just different recipes and materials.
+
+🐀 Sewer Loop & Combat
+ Sewer generator scene with rat spawns (connect via sewer entrance prefab)
+
+ Rat AI: simple path-to-player, maybe “ambush” behavior from darkness
+
+ Spear combat (throwable or melee)
+
+ Rats drop rat_carcass → can be butchered to rat_meat
+
+🍳 Urban Cooking & Survival
+ Oil drum stove prefab (in alleys / sewer / camps)
+
+Consumes wood, cooks rat_meat → cooked_rat
+
+ Hobo camp prefabs:
+
+Allow sleeping, but add sleep_event_chance like “wake up robbed” or “rat attack”
+
+Add "public": true flag for camps that anyone can use (vs player-claimed)
+
+🏠 Home Claiming System
+ Explore city and find tagged claimable_structure (abandoned apartments, ramshackles)
+
+ Add "is_claimed": false to prefab metadata
+
+ Claim if carrying a "cheap_lock" item
+
+Sets "is_claimed": true, marks location on world map
+
+ Claiming adds ability to build there (see below)
+
+🧱 Building in Urban Spaces
+ Build mattress, stove, maybe container storage (future)
+
+ Like wilderness building — but different recipes + uses
+
+Requires hammer + components
+
+📈 Junkman Loop Closure
+ Add junk vendor (buys scrap, sells tools, lock)
+
+ Explore city to find locksmith → buy cheap_lock
+
+ Return to claimed spot, build up base
+
+ Loop becomes: explore → scavenge → craft → survive → upgrade base → repeat
+
+🧠 Systems to Think Ahead On (Shared, Modular-Friendly Ideas)
+Feature	Notes
+interactables.json	Let every object define "interact_type": "gather", "search", "fish", "cook", etc.
+loot_tables.json	Give prefabs loot pools so objects don’t hardcode drops
+player_stats.gd	Track hunger, thirst, fatigue, sickness
+random_events.gd	Handles night events, combat ambushes, etc
+realm_registry.gd	Let you track which locations have been “remembered” or claimed
+furniture.json	Data-driven placeable objects, whether shelter or ragpile
+💡 Milestone 2: Early Emergent Storytelling
+Once you’ve got one loop mostly working (Angler or Junkman), you’ll be in a spot where:
+
+Players are choosing how to survive
+
+Exploration reveals new things over time
+
+Light crafting/economy creates goals
+
+Claiming space creates an emotional link
+
+This is the point where you can start layering in:
+
+Weather systems
+
+NPCs with light schedules
+
+Vendors that change by biome
+
+Multiple loop paths in parallel
+
+========================
+
+ ALPHA POLISH CHECKLIST
+🗂️ Organized by category. Goal: Functional, understandable, and engaging first experience.
+
+🎮 Gameplay Flow
+ ⏳ Core loops are completable (Angler/Junkman both have self-contained gather > craft > sell > survive > repeat)
+
+ 🧭 Onboarding is intuitive (optional signs, tutorials, or contextual prompts)
+
+ 🔄 Interaction feedback is obvious (popups, sound, animation, or message logs)
+
+ 🧱 Resource loops are balanced (not too grindy, not trivial — test time-to-gear milestones)
+
+🌍 World Interactions
+ 🧺 Gatherables work consistently (bushes, junk piles, etc. clear interaction states)
+
+ 🚪 Realm transitions are seamless (no stutter, state loss, or map bugs)
+
+ 🪓 Tool gating is enforced (you can’t fish without a rod, dig without a shovel, etc)
+
+ 📍 Map memory is functional (player can find claimed shelter, vendor, or sewer)
+
+🔥 FOV & Lighting
+ 🔄 FOV updates on move (instant or smoothed — no visual lag)
+
+ 🌑 Darkness feels immersive (tiles are clearly visible/invisible, not confusing)
+
+ 🔦 Player light radius works (dynamically updates with gear changes, night/day cycle)
+
+ 🧟 Enemies respect visibility (rats only aggro if player’s visible or within range)
+
+🎛️ UI/UX Polish
+ 🎒 Inventory UI is usable (drag/drop, tooltips, component count visibility)
+
+ 🛠️ Crafting UI is readable (inputs clear, missing requirements obvious)
+
+ 📜 Message log or feedback system (You searched. You found x. You can't do y.)
+
+ 🛏️ Sleep/cook/interact UIs use context-sensitive menus or prompts
+
+🐛 Debugging / Dev Tools
+ 🐞 Dev console / cheat hotkeys (spawn item, fast travel, toggle night, etc)
+
+ 🧰 Clear log output (errors show location or type)
+
+ 🧪 Stress test edge cases (search same object twice, realm swap mid-action, etc)
+
+💾 Save/Load Systems
+ 💡 Save is automatic or player-triggered
+
+ 🔁 Loading respects current slot system
+
+ 🔍 Map and object states persist (searched garbage stays searched, player health retained)
+
+ 🧱 Structure placements saved/rebuilt (campfires, shelters, claimed zones)
+
+🔊 Audio/Visual Polish
+ 🔔 Sound cues for interact, craft, combat, gather
+
+ 🌗 Lighting transitions (fade in/out when entering new area or sleeping)
+
+ 🧍 Character animations or feedback (e.g. “gather” animation even if simple)
+
+📢 Alpha Experience / Player Feedback
+ 🧪 Playtest sessions planned (target early feedback from a few trusted folks)
+
+ 🧾 Bug/feedback report method (in-game or out-of-game)
+
+ 🧠 First 10 mins of gameplay is curated (slow ramp-up, no overwhelming menus)
+
+✅ ALPHA DONE WHEN:
+“A player can enter the world and survive in wilderness or city by being a combination or dedicated Angler or Junkman, enter the world, explore their biome, gather items, craft basic gear, survive a few nights, sell/find value, and feel like they’ve started something.”

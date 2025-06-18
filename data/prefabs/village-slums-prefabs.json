@@ -1,0 +1,144 @@
+{
+  "prefabs": [
+	{
+	  "name": "slum_tenement_lower_street_type1",
+	  "width": 15,
+	  "height": 16,
+	  "tiles": [
+		"HHHHHHHHHHHHHHH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGWJBWJDJWBJWGH",
+		"HGWFFDFFFDFFWGH",
+		"HGWFFWFFFWFFWGH",
+		"HGWFFWFLFWFFWGH", 
+		"HGWBBWFSFWBBWGH", 
+		"HGWFFDFFFDFFWGH", 
+		"HGWFFWFFFWFFWGH",
+		"HGWBBWFFFWBBWGH", 
+		"HGEFFDFFFDFFEGH",
+		"HGWFFWFFFWFFWGH",
+		"HGWFFWFFFWFFWGH",
+		"HGBJBBJDJBJBBGH", 
+		"GGGGGGGGGGGGGGG" 
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallside.png",
+		"B": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallbottom.png",
+		"J": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallbottom_window.png",
+		"E": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallside_window.png",
+		"F": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor.png",
+		"D": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_door.png",
+		"S": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor_stairs_up.png",
+		"G": "res://assets/localmap-graphics/terrain/village-slums/slum_stone_floor.png",
+		"H": "res://assets/localmap-graphics/terrain/village-slums/slum_wood_fence.png"
+	  }
+	},
+	{
+	  "name": "slum_empty_lower_street_type1",
+	  "width": 15,
+	  "height": 16,
+	  "tiles": [
+		"HHHHHHHGGHHHHHH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"GGGGGGGGGGGGGGG", 
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"GGGGGGGGGGGGGGG" 
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallside.png",
+		"B": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallbottom.png",
+		"J": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallbottom_window.png",
+		"E": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallside_window.png",
+		"F": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor.png",
+		"D": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_door.png",
+		"S": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor_stairs_up.png",
+		"G": "res://assets/localmap-graphics/terrain/village-slums/slum_stone_floor.png",
+		"H": "res://assets/localmap-graphics/terrain/village-slums/slum_wood_fence.png"
+	  }
+	},
+	{
+	  "name": "slum_empty_upper_street_type1",
+	  "width": 15,
+	  "height": 16,
+	  "tiles": [
+		"GGGGGGGGGGGGGGG",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH", 
+		"HGGGGGGGGGGGGGH", 
+		"GGGGGGGGGGGGGGG", 
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH", 
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH",
+		"HGGGGGGGGGGGGGH", 
+		"HGGGGGGGGGGGGGH", 
+		"HGGGGGGGGGGGGGH",
+		"HHHHHHHGHHHHHHH"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallside.png",
+		"B": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallbottom.png",
+		"J": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallbottom_window.png",
+		"E": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallside_window.png",
+		"F": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor.png",
+		"D": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_door.png",
+		"S": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor_stairs_up.png",
+		"G": "res://assets/localmap-graphics/terrain/village-slums/slum_stone_floor.png",
+		"H": "res://assets/localmap-graphics/terrain/village-slums/slum_wood_fence.png"
+	  }
+	},
+	{
+	  "name": "slum_tenement_upper_street_type1",
+	  "width": 15,
+	  "height": 16,
+	  "tiles": [
+		"GGGGGGGGGGGGGGG",
+		"HGWJBWJDJWBJWGH",
+		"HGWFFDFFFDFFWGH",
+		"HGWFFWFFFWFFWGH",
+		"HGWFFWFLFWFFWGH", 
+		"HGWBBWFSFWBBWGH", 
+		"HGWFFDFFFDFFWGH", 
+		"HGWFFWFFFWFFWGH",
+		"HGWBBWFFFWBBWGH", 
+		"HGEFFDFFFDFFEGH",
+		"HGWFFWFFFWFFWGH",
+		"HGWFFWFFFWFFWGH",
+		"HGBJBBJDJBJBBGH", 
+		"HGGGGGGGGGGGGGH", 
+		"HGGGGGGGGGGGGGH",
+		"HHHHHHHHHHHHHHH"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallside.png",
+		"B": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallbottom.png",
+		"J": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallbottom_window.png",
+		"E": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_wallside_window.png",
+		"F": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor.png",
+		"D": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_door.png",
+		"S": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor_stairs_up.png",
+		"G": "res://assets/localmap-graphics/terrain/village-slums/slum_stone_floor.png",
+		"H": "res://assets/localmap-graphics/terrain/village-slums/slum_wood_fence.png"
+	  }
+	}
+  ]
+}

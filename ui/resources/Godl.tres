@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Faith" load_steps=2 format=3 uid="uid://cxfn24cqxdlga"]
+
+[ext_resource type="Script" path="res://ui/resources/Faith.gd" id="1_xgvbp"]
+
+[resource]
+script = ExtResource("1_xgvbp")
+faithname = "Godless"
+faithflavor = "Godlflav"
+faithdes = "Godldes"
+faithbonus = "Godlbonus"

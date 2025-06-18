@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SSkill" load_steps=2 format=3 uid="uid://dsquj330i5q3u"]
+
+[ext_resource type="Script" path="res://ui/resources/SSkill.gd" id="1_prprk"]
+
+[resource]
+script = ExtResource("1_prprk")
+sskillname = "Pyromancy"
+sskillflavor = "pyroflav"
+sskilldes = "pyrodes"

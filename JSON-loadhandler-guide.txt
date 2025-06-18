@@ -1,0 +1,49 @@
+Every new Json requires these:
+
+func get_player_effects_path() -> String:
+	return get_save_file_path() + "characterdata/player_effects" + str(get_save_slot()) + ".json"
+
+func load_player_effects() -> Dictionary:
+	var path = get_player_gear_path()
+	return load_json_file(path)
+	
+func save_player_effects(data: Dictionary) -> void:
+	var path = get_player_gear_path()
+	save_json_file(path, data)
+
+func get_current_mount_data() -> Dictionary:
+	var gear_path = get_player_gear_path()
+	var gear_data = load_json_file(gear_path)
+
+	if gear_data == null:
+		print("⚠️ Warning: Player gear file not found or invalid. Defaulting to 'None' mount.")
+		return get_mount_data_by_id("None")
+
+	var mount_id = gear_data.get("mount", "None")
+	return get_mount_data_by_id(mount_id)
+
+func get_mount_data_by_id(mount_id: String) -> Dictionary:
+	var mount_types_path = "res://data/mount_types.json"
+	var mount_types = load_json_file(mount_types_path)
+
+	if mount_types == null:
+		print("❌ ERROR: Failed to load mount_types.json")
+		return {}
+
+	# If the mount ID isn't found, fall back to 'None'
+	if not mount_types.has(mount_id):
+		print("⚠️ Warning: Mount ID '%s' not found. Using 'None'." % mount_id)
+		return mount_types.get("None", {})
+
+	return mount_types[mount_id]
+
+func get_current_offhand_data() -> Dictionary:
+	var gear_path = get_player_gear_path()
+	var gear_data = load_json_file(gear_path)
+
+	if gear_data == null:
+		print("⚠️ Warning: Player gear file not found or invalid. Defaulting to 'None' mount.")
+		return get_mount_data_by_id("None")
+
+	var offhand_id = gear_data.get("offhand", "None")
+	return get_offhand_data_by_id(offhand_id)

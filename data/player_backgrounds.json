@@ -1,0 +1,112 @@
+[
+    {
+        "title": "Wanderer",
+        "description": "A soul without a home, always moving and never settling.",
+        "bonus": "Bonus: +1 to Agility, +1 to Stealth.",
+        "allowed_races": ["human", "elf"],
+        "allowed_faiths": [],
+        "allowed_sexes": []
+    },
+    {
+        "title": "Noble",
+        "description": "Born of privilege, with wealth and influence at your fingertips.",
+        "bonus": "Bonus: +2 to Charisma, Access to Noble Estates.",
+        "allowed_races": ["human"],
+        "allowed_faiths": ["Pious Reformationist"],
+        "allowed_sexes": ["male"]
+    },
+    {
+        "title": "Outlaw",
+        "description": "A life on the edge, living by your own rules and outside the law.",
+        "bonus": "Bonus: +1 to Combat Skills, Discounts on Black Market Goods.",
+        "allowed_races": ["human", "dwarf"],
+        "allowed_faiths": [],
+        "allowed_sexes": []
+    },
+    {
+        "title": "Bandit",
+        "description": "Living on the fringes of society, taking what you need by force.",
+        "bonus": "Bonus: +1 to Combat Skills, +1 to Stealth.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": []
+    },
+    {
+        "title": "Amazon",
+        "description": "A fierce warrior of a matriarchal society.",
+        "bonus": "Bonus: +2 to Strength, +1 to Combat Skills.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": ["female"]
+    },
+    {
+        "title": "Arcanist",
+        "description": "A master of the mystical arts, drawn to the secrets of magic.",
+        "bonus": "Bonus: +2 to Magic Skills, Access to Arcane Libraries.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "aptitude_requirements": {
+            "magic": 2,
+            "technology": 0
+        }
+    },
+    {
+        "title": "Technomancer",
+        "description": "A visionary of technology, fusing machines with arcane principles.",
+        "bonus": "Bonus: +2 to Technology Skills, Access to Advanced Workshops.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "aptitude_requirements": {
+            "magic": 0,
+            "technology": 2
+        }
+    },
+    {
+        "title": "Synthesist",
+        "description": "A rare blend of magic and technology, uniting the best of both worlds.",
+        "bonus": "Bonus: +1 to Magic and Technology Skills, Access to Hybrid Crafting.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "aptitude_requirements": {
+            "magic": 1,
+            "technology": 1
+        }
+    },
+    {
+        "title": "Mastermind",
+        "description": "A calculating genius combining dark magic and advanced technology to create minions.",
+        "bonus": "Bonus: +3 to Minion Control, Access to Unique Constructs.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "magitech": ["robo", "necr"]
+        }
+    },
+    {
+        "title": "Ex-Miner",
+        "description": "A tough former miner with expertise in metallurgy and blacksmithing.",
+        "bonus": "Bonus: +2 to Mining Efficiency, Access to Advanced Smithing Techniques.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["metallurgy", "blacksmithing"]
+        }
+    },
+    {
+        "title": "Demolitionist",
+        "description": "A specialist in blowing things up, skilled with firearms and explosive magitech.",
+        "bonus": "Bonus: +2 to Explosives Damage, Access to Demolition Equipment.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["firearms"],
+            "magitech": ["pyro"]
+        }
+    }
+]

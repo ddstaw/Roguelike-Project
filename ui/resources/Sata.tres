@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="Faith" load_steps=2 format=3 uid="uid://ruyq7a66qdjr"]
+
+[ext_resource type="Script" path="res://ui/resources/Faith.gd" id="1_vhopb"]
+
+[resource]
+script = ExtResource("1_vhopb")
+faithname = "Sinister Cultist"
+faithflavor = "Sataflav"
+faithdes = "Satades"
+faithbonus = "Satabonus"

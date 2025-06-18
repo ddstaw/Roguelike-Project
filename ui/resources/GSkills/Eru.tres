@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="GSkill" load_steps=2 format=3 uid="uid://bxs5n8r73dqw2"]
+
+[ext_resource type="Script" path="res://ui/resources/GSkill.gd" id="1_bc2tr"]
+
+[resource]
+script = ExtResource("1_bc2tr")
+gskillname = "Erudition"
+gskillflavor = "eruflav"
+gskilldes = "erudes"

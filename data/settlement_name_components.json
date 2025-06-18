@@ -1,0 +1,38 @@
+{
+    "capital_city_name": [
+      "Tarrant", "New York", "London", "Paris", "Istanbul",
+      "Vandemar", "Drakeport", "Highcourt", "Ebonspire", "Gildoria",
+      "Redgate", "Bastion", "Cindralore", "Thornehall", "Avelmere",
+      "Brightharbor", "Velgrath", "Kingsfall", "Ironreach", "Stormvault"
+    ],
+    
+    "old_city_name": [
+      "Caladona", "Morger", "Rodericksbury", "Old Laron", "Doree",
+      "Grimsby", "Elderwatch", "Dunloren", "Wyrmrest", "Fallor",
+      "Stonevale", "Ruinstead", "High Dargan", "Branrick", "Ebonmere",
+      "Carroway", "Old Varn", "Northcross", "Greyroost", "Thalreth"
+    ],
+    
+    "village_name": [
+      "Shrewsburns", "Luggarstowne", "Dargerville", "Huntsville", "Shint", "Clarksvile", "Gorbae",
+      "Branston", "Maplecross", "Thistlewick", "Elmwick", "Gravelden",
+      "Wyrm Hollow", "Pinebarrow", "Frostmill", "Ottermere", "Mossford",
+      "Redwharf", "Greenthatch", "Crowmere", "Briarstead", "Ternfield",
+      "Glimmertown", "Hollowgate", "Foxburrow", "Candleford", "Wickerby"
+    ],
+  
+    "elf_haven_name": [
+      "Al Larq", "Dar Mano", "Cor Porgan", "La Mora", "Mor Fargon",
+      "Elaren", "Sylenora", "Vel Quinthal", "Tal Sorae", "Iel Thalas",
+      "Quel Lira", "Nor Valen", "Myrr Wynth", "Lun Sirel", "Thal Morn",
+      "Ethenari", "Sil Lirae", "Val Rhael", "Aeriseth", "Cal Faenya"
+    ],
+    
+    "dwarf_city_name": [
+      "Ironhill", "Stonesafe", "Mountainhome", "Silverstone", "Forgehome",
+      "Deepforge", "Grumbar's Hold", "Stonecleft", "Kragmere", "Thuldar's Gate",
+      "Copperdeep", "Frosthammer", "Brimvault", "Rocspire", "Gildengrave",
+      "Barak Dur", "Anvilreach", "Thrumheim", "Stoneward", "Undercrag"
+    ]
+  }
+  

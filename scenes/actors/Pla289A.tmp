@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://1ycsqqbm8dqt"]
+
+[ext_resource type="Script" path="res://scripts/localmapgenscripts/PlayerVisual.gd" id="1_fvyb2"]
+[ext_resource type="Texture2D" uid="uid://blldovvr0w0oj" path="res://assets/localmap-graphics/glow/empty_glow.png" id="2_3cq4b"]
+
+[node name="Player" type="CharacterBody2D"]
+z_index = 1
+script = ExtResource("1_fvyb2")
+
+[node name="BaseSprite" type="Sprite2D" parent="."]
+
+[node name="ArmorSprite" type="Sprite2D" parent="."]
+
+[node name="CapeSprite" type="Sprite2D" parent="."]
+
+[node name="HatSprite" type="Sprite2D" parent="."]
+
+[node name="MainWeaponSprite" type="Sprite2D" parent="."]
+
+[node name="OffhandSprite" type="Sprite2D" parent="."]
+
+[node name="FollowCam" type="Camera2D" parent="."]
+
+[node name="GlowOverlay" type="Sprite2D" parent="."]
+texture = ExtResource("2_3cq4b")

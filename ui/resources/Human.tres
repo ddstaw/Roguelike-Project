@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Race" load_steps=2 format=3 uid="uid://c7j8tln4mu454"]
+
+[ext_resource type="Script" path="res://ui/resources/Race.gd" id="1_ow2qd"]
+
+[resource]
+script = ExtResource("1_ow2qd")
+racename = "Human"
+raceflavor = "Humaninfo"
+racebonus = "Human"

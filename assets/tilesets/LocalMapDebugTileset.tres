@@ -1,0 +1,4 @@
+[gd_resource type="TileSet" format=3 uid="uid://b3212frxsra8t"]
+
+[resource]
+tile_size = Vector2i(88, 88)

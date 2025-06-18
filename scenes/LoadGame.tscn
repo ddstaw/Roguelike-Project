@@ -1,0 +1,150 @@
+[gd_scene load_steps=17 format=3 uid="uid://dy5ipabnje4gf"]
+
+[ext_resource type="Texture2D" uid="uid://dllqx48crjd2b" path="res://assets/graphics/NewWorldBackground.png" id="1_6iyy2"]
+[ext_resource type="Script" path="res://scripts/LoadGame.gd" id="1_ybki7"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="2_1aetq"]
+[ext_resource type="Script" path="res://scripts/loadgamebackButton.gd" id="3_7asgb"]
+[ext_resource type="Script" path="res://ui/scripts/PlaySaveSlot1.gd" id="5_5xd26"]
+[ext_resource type="Script" path="res://ui/scripts/PlaySaveSlot2.gd" id="6_nqgms"]
+[ext_resource type="Script" path="res://ui/scripts/PlaySaveSlot3.gd" id="7_ptl0d"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tm31o"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 11
+border_width_top = 11
+border_width_right = 11
+border_width_bottom = 11
+border_color = Color(0.976471, 0.67451, 0.356863, 0.231373)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mh8go"]
+bg_color = Color(0.528817, 0.479985, 0.130064, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ayg8h"]
+bg_color = Color(0.205117, 0.205117, 0.205117, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_s7les"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ox7s2"]
+bg_color = Color(0.254564, 0.696425, 0.464784, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b83ec"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3s7n6"]
+bg_color = Color(0.254902, 0.698039, 0.466667, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1k2c1"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aqay3"]
+bg_color = Color(0.254902, 0.698039, 0.466667, 1)
+
+[node name="LoadGame" type="Node2D"]
+script = ExtResource("1_ybki7")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_6iyy2")
+
+[node name="Button" type="Button" parent="."]
+offset_left = 185.0
+offset_top = 773.0
+offset_right = 561.0
+offset_bottom = 882.0
+theme_override_fonts/font = ExtResource("2_1aetq")
+theme_override_font_sizes/font_size = 71
+theme_override_styles/normal = SubResource("StyleBoxFlat_tm31o")
+theme_override_styles/hover = SubResource("StyleBoxFlat_mh8go")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ayg8h")
+text = "<< Back"
+script = ExtResource("3_7asgb")
+
+[node name="SaveSlot1" type="Button" parent="."]
+offset_left = 901.0
+offset_top = 195.0
+offset_right = 1729.0
+offset_bottom = 400.0
+theme_override_fonts/font = ExtResource("2_1aetq")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_s7les")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ox7s2")
+script = ExtResource("5_5xd26")
+
+[node name="SaveSlot2" type="Button" parent="."]
+offset_left = 898.0
+offset_top = 440.0
+offset_right = 1726.0
+offset_bottom = 645.0
+theme_override_fonts/font = ExtResource("2_1aetq")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_b83ec")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3s7n6")
+script = ExtResource("6_nqgms")
+
+[node name="SaveSlot3" type="Button" parent="."]
+offset_left = 897.0
+offset_top = 683.0
+offset_right = 1725.0
+offset_bottom = 888.0
+theme_override_fonts/font = ExtResource("2_1aetq")
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_1k2c1")
+theme_override_styles/hover = SubResource("StyleBoxFlat_aqay3")
+script = ExtResource("7_ptl0d")
+
+[node name="Label" type="Label" parent="."]
+offset_left = 188.0
+offset_top = 186.0
+offset_right = 476.0
+offset_bottom = 290.0
+theme_override_fonts/font = ExtResource("2_1aetq")
+theme_override_font_sizes/font_size = 96
+text = "PLAY"
+
+[node name="Label3" type="Label" parent="."]
+offset_left = 913.0
+offset_top = 201.0
+offset_right = 1287.0
+offset_bottom = 305.0
+theme_override_fonts/font = ExtResource("2_1aetq")
+theme_override_font_sizes/font_size = 35
+text = "Save Slot 1"
+
+[node name="Label3" type="Label" parent="Label3"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 246.0
+offset_right = 373.0
+offset_bottom = 350.0
+theme_override_fonts/font = ExtResource("2_1aetq")
+theme_override_font_sizes/font_size = 35
+text = "Save Slot 2"
+
+[node name="Label3" type="Label" parent="Label3/Label3"]
+layout_mode = 0
+offset_left = -1.0
+offset_top = 241.0
+offset_right = 373.0
+offset_bottom = 345.0
+theme_override_fonts/font = ExtResource("2_1aetq")
+theme_override_font_sizes/font_size = 35
+text = "Save Slot 3"
+
+[node name="Label2" type="Label" parent="."]
+offset_left = 188.0
+offset_top = 300.0
+offset_right = 833.0
+offset_bottom = 716.0
+theme_override_fonts/font = ExtResource("2_1aetq")
+theme_override_font_sizes/font_size = 38
+text = "Choose your Save Slot
+to begin playing.
+If you have not created
+a character, you will be
+brought to the character
+creation. If your character
+has died, you may continue
+playing in the same world
+with a new character"

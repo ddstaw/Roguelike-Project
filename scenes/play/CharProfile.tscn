@@ -1,0 +1,721 @@
+[gd_scene load_steps=16 format=3 uid="uid://h2af4eslxw48"]
+
+[ext_resource type="Texture2D" uid="uid://kmm12pkjfyce" path="res://ui/p/h/m/hm1.png" id="1_1ycci"]
+[ext_resource type="Script" path="res://ui/scripts/chrp-control.gd" id="1_hom4i"]
+[ext_resource type="Texture2D" uid="uid://bfl3rd44mjfhg" path="res://ui/menus/bbg.png" id="2_fbk8o"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="3_4i061"]
+[ext_resource type="Script" path="res://ui/scripts/CharProfile-backtoworldmap-Button.gd" id="4_f7xx1"]
+[ext_resource type="Script" path="res://ui/scripts/chrp-journal-button.gd" id="5_rfkb8"]
+[ext_resource type="Script" path="res://ui/scripts/chrp-skills-button.gd" id="6_aofpt"]
+[ext_resource type="Script" path="res://ui/scripts/chrp-equip-button.gd" id="7_myji4"]
+[ext_resource type="Script" path="res://ui/scripts/chrp-inv-button.gd" id="8_5ucku"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vb8sd"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jmosx"]
+bg_color = Color(0.18359, 0.18359, 0.18359, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c3a30"]
+bg_color = Color(0.835765, 0.512958, 0.190185, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5dap6"]
+bg_color = Color(0.733333, 0.188235, 0.176471, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_48jt4"]
+bg_color = Color(0.668135, 0.463341, 0.706778, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.8, 0.388235, 0.8, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vif13"]
+content_margin_top = 40.0
+content_margin_bottom = 40.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[node name="CharProfile" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Control" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_hom4i")
+
+[node name="chrpplayerinfoCharPort" type="TextureRect" parent="Control"]
+unique_name_in_owner = true
+z_index = 3
+layout_mode = 0
+offset_left = 56.0
+offset_top = 55.0
+offset_right = 318.0
+offset_bottom = 319.0
+texture = ExtResource("1_1ycci")
+
+[node name="chrp-VBoxContainer-charinfo" type="VBoxContainer" parent="Control"]
+layout_mode = 0
+offset_left = 352.0
+offset_top = 45.0
+offset_right = 794.0
+offset_bottom = 253.0
+theme_override_constants/separation = -1
+
+[node name="chrpnamelabel" type="Label" parent="Control/chrp-VBoxContainer-charinfo"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Douglas MacDouglas"
+
+[node name="chrp-HBoxContainer-chartitle" type="HBoxContainer" parent="Control/chrp-VBoxContainer-charinfo"]
+layout_mode = 2
+
+[node name="chrpracelabel" type="Label" parent="Control/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-chartitle"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Human"
+
+[node name="Control2" type="Control" parent="Control/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-chartitle"]
+custom_minimum_size = Vector2(10, 0)
+layout_mode = 2
+
+[node name="chrpbackground" type="Label" parent="Control/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-chartitle"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Former Bandit"
+
+[node name="chrpfaithlabel" type="Label" parent="Control/chrp-VBoxContainer-charinfo"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Orthodox Dogmatist"
+
+[node name="chrp-HBoxContainer-charlevel" type="HBoxContainer" parent="Control/chrp-VBoxContainer-charinfo"]
+layout_mode = 2
+
+[node name="chrp-levellabel" type="Label" parent="Control/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-charlevel"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Level"
+
+[node name="Control" type="Control" parent="Control/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-charlevel"]
+layout_mode = 2
+
+[node name="chrplevel" type="Label" parent="Control/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-charlevel"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "0"
+
+[node name="Control" type="Control" parent="Control/chrp-VBoxContainer-charinfo"]
+custom_minimum_size = Vector2(10, 30)
+layout_mode = 2
+
+[node name="chrp-exptolvlup-descrip" type="Label" parent="Control/chrp-VBoxContainer-charinfo"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "Exp. to level up"
+
+[node name="chrp-playerinfo-panel" type="Panel" parent="."]
+z_index = 1
+layout_mode = 0
+offset_left = 25.0
+offset_top = 27.0
+offset_right = 1271.0
+offset_bottom = 1050.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_vb8sd")
+
+[node name="chrp-playerinfo-exp-meter-all" type="ProgressBar" parent="."]
+z_index = 1
+layout_mode = 0
+offset_left = 358.0
+offset_top = 265.0
+offset_right = 751.0
+offset_bottom = 304.0
+theme_override_styles/background = SubResource("StyleBoxFlat_jmosx")
+theme_override_styles/fill = SubResource("StyleBoxFlat_c3a30")
+show_percentage = false
+
+[node name="chrp-xptolevelup" type="Label" parent="."]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 0
+offset_left = 358.0
+offset_top = 265.0
+offset_right = 546.0
+offset_bottom = 308.0
+theme_override_font_sizes/font_size = 38
+text = "400/1000"
+
+[node name="chrp-VBoxContainer-dmg" type="VBoxContainer" parent="."]
+layout_mode = 2
+offset_left = 57.0
+offset_top = 707.0
+offset_right = 471.0
+offset_bottom = 1047.0
+theme_override_constants/separation = 2
+
+[node name="chrp-rangedmg-label" type="Label" parent="chrp-VBoxContainer-dmg"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Rng Damage"
+
+[node name="chrp-rngspeed-label" type="Label" parent="chrp-VBoxContainer-dmg"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Rng Speed"
+
+[node name="chrp-rngaccur-label" type="Label" parent="chrp-VBoxContainer-dmg"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Rng Accuracy"
+
+[node name="chrp-mledmg-label" type="Label" parent="chrp-VBoxContainer-dmg"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Mle Damage"
+
+[node name="chrp-mlespeed-label" type="Label" parent="chrp-VBoxContainer-dmg"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Mle Speed"
+
+[node name="chrp-mleaccur-label" type="Label" parent="chrp-VBoxContainer-dmg"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Mle Accuracy"
+
+[node name="chrp-ar-label" type="Label" parent="chrp-VBoxContainer-dmg"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Armor Rating"
+
+[node name="chrp-dodge-label" type="Label" parent="chrp-VBoxContainer-dmg"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Dodge"
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 2
+offset_left = 3.0
+offset_top = -1.0
+offset_right = 1923.0
+offset_bottom = 1079.0
+texture = ExtResource("2_fbk8o")
+metadata/_edit_lock_ = true
+
+[node name="chrp-VBoxContainer-attrib" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 56.0
+offset_top = 343.0
+offset_right = 332.0
+offset_bottom = 683.0
+
+[node name="chrp-strength-label" type="Label" parent="chrp-VBoxContainer-attrib"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "strength"
+
+[node name="chrp-perception-label" type="Label" parent="chrp-VBoxContainer-attrib"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "perception"
+
+[node name="chrp-endurance-label" type="Label" parent="chrp-VBoxContainer-attrib"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "endurance"
+
+[node name="chrp-intelligence-label" type="Label" parent="chrp-VBoxContainer-attrib"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "intelligence"
+
+[node name="chrp-willpower-label" type="Label" parent="chrp-VBoxContainer-attrib"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "willpower"
+
+[node name="chrp-charisma-label" type="Label" parent="chrp-VBoxContainer-attrib"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "charisma"
+
+[node name="chrp-agility-label" type="Label" parent="chrp-VBoxContainer-attrib"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "agility"
+
+[node name="chrp-faith-label" type="Label" parent="chrp-VBoxContainer-attrib"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "faith"
+
+[node name="chrp-VBoxContainer-activelvl" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 378.0
+offset_top = 341.0
+offset_right = 421.0
+offset_bottom = 681.0
+
+[node name="chrp-strength-lvl" type="Label" parent="chrp-VBoxContainer-activelvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-perception-lvl" type="Label" parent="chrp-VBoxContainer-activelvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-endurance-lvl" type="Label" parent="chrp-VBoxContainer-activelvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-intelligence-lvl" type="Label" parent="chrp-VBoxContainer-activelvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-willpower-lvl" type="Label" parent="chrp-VBoxContainer-activelvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-charisma-lvl" type="Label" parent="chrp-VBoxContainer-activelvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-agility-lvl" type="Label" parent="chrp-VBoxContainer-activelvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-faith-lvl" type="Label" parent="chrp-VBoxContainer-activelvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "0"
+
+[node name="chrp-VBoxContainer-dmglvl" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 379.0
+offset_top = 707.0
+offset_right = 422.0
+offset_bottom = 1047.0
+theme_override_constants/separation = 1
+
+[node name="chrp-rangedmg-lvl" type="Label" parent="chrp-VBoxContainer-dmglvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-rngspeed-lvl" type="Label" parent="chrp-VBoxContainer-dmglvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-rngaccur-lvl" type="Label" parent="chrp-VBoxContainer-dmglvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-mledmg-lvl" type="Label" parent="chrp-VBoxContainer-dmglvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-mlespeed-lvl" type="Label" parent="chrp-VBoxContainer-dmglvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-mleaccur-lvl" type="Label" parent="chrp-VBoxContainer-dmglvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "6"
+
+[node name="chrp-ar-label-lvl" type="Label" parent="chrp-VBoxContainer-dmglvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "0"
+
+[node name="chrp-dodge-lvl" type="Label" parent="chrp-VBoxContainer-dmglvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "1"
+
+[node name="chrp-VBoxContainer-dmgresist" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 510.0
+offset_top = 552.0
+offset_right = 901.0
+offset_bottom = 1021.0
+
+[node name="chrp-dmgresist-label" type="Label" parent="chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Damage Resistance"
+
+[node name="chrp-pen-label" type="Label" parent="chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Penetration"
+
+[node name="chrp-phy-label" type="Label" parent="chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Physical"
+
+[node name="chrp-mgk-label" type="Label" parent="chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Magick"
+
+[node name="chrp-fir-label" type="Label" parent="chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Fire"
+
+[node name="chrp-ice-label" type="Label" parent="chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Ice"
+
+[node name="chrp-poi-label" type="Label" parent="chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Poison"
+
+[node name="chrp-gla-label" type="Label" parent="chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Glamour"
+
+[node name="chrp-div-label" type="Label" parent="chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Divine"
+
+[node name="chrp-dar-label" type="Label" parent="chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Dark"
+
+[node name="chrp-voi-label" type="Label" parent="chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Void"
+
+[node name="chrp-VBoxContainer-dmgresist-lvl" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 820.0
+offset_top = 600.0
+offset_right = 889.0
+offset_bottom = 1026.0
+
+[node name="chrp-pen-lvl" type="Label" parent="chrp-VBoxContainer-dmgresist-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "0%"
+
+[node name="chrp-phy-lvl" type="Label" parent="chrp-VBoxContainer-dmgresist-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "2%"
+
+[node name="chrp-mgk-lvl" type="Label" parent="chrp-VBoxContainer-dmgresist-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "10%"
+
+[node name="chrp-fir-lvl" type="Label" parent="chrp-VBoxContainer-dmgresist-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "2%"
+
+[node name="chrp-ice-lvl" type="Label" parent="chrp-VBoxContainer-dmgresist-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "2%"
+
+[node name="chrp-poi-lvl" type="Label" parent="chrp-VBoxContainer-dmgresist-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "2%"
+
+[node name="chrp-gla-lvl" type="Label" parent="chrp-VBoxContainer-dmgresist-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "10%"
+
+[node name="chrp-div-lvl" type="Label" parent="chrp-VBoxContainer-dmgresist-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "10%"
+
+[node name="chrp-dar-lvl" type="Label" parent="chrp-VBoxContainer-dmgresist-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "20%"
+
+[node name="chrp-voi-lvl" type="Label" parent="chrp-VBoxContainer-dmgresist-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "10%"
+
+[node name="chrp-VBoxContainer-meter-label" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(120, 30)
+layout_mode = 0
+offset_left = 508.0
+offset_top = 339.0
+offset_right = 669.0
+offset_bottom = 598.0
+theme_override_constants/separation = 1
+
+[node name="chrp-health" type="Label" parent="chrp-VBoxContainer-meter-label"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Health"
+
+[node name="chrp-stamina" type="Label" parent="chrp-VBoxContainer-meter-label"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Stamina"
+
+[node name="chrp-fatigue" type="Label" parent="chrp-VBoxContainer-meter-label"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Faitgue"
+
+[node name="chrp-hunger" type="Label" parent="chrp-VBoxContainer-meter-label"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Hunger"
+
+[node name="chrp-sanity" type="Label" parent="chrp-VBoxContainer-meter-label"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Sanity"
+
+[node name="chrp-VBoxContainer-meter-lvl" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(120, 30)
+layout_mode = 0
+offset_left = 708.0
+offset_top = 339.0
+offset_right = 869.0
+offset_bottom = 598.0
+theme_override_constants/separation = 1
+
+[node name="chrp-health-lvl" type="Label" parent="chrp-VBoxContainer-meter-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0, 0, 1)
+theme_override_font_sizes/font_size = 38
+text = "80/120"
+
+[node name="chrp-stamina-lvl" type="Label" parent="chrp-VBoxContainer-meter-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 1, 1)
+theme_override_font_sizes/font_size = 38
+text = "80/120"
+
+[node name="chrp-fatigue-lvl" type="Label" parent="chrp-VBoxContainer-meter-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.729412, 0, 1)
+theme_override_font_sizes/font_size = 38
+text = "80/120"
+
+[node name="chrp-hunger-lvl" type="Label" parent="chrp-VBoxContainer-meter-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 1, 0, 1)
+theme_override_font_sizes/font_size = 38
+text = "80/120"
+
+[node name="chrp-sanity-lvl" type="Label" parent="chrp-VBoxContainer-meter-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_colors/font_color = Color(0.866667, 0, 1, 1)
+theme_override_font_sizes/font_size = 38
+text = "80/120"
+
+[node name="chrp-Back-Button" type="Button" parent="."]
+top_level = true
+layout_mode = 0
+offset_left = 1690.0
+offset_top = 866.0
+offset_right = 1892.0
+offset_bottom = 1052.0
+theme_override_fonts/font = ExtResource("3_4i061")
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_5dap6")
+theme_override_styles/hover = SubResource("StyleBoxFlat_48jt4")
+text = "Continue"
+script = ExtResource("4_f7xx1")
+
+[node name="chrp-VBoxContainer-buttons" type="VBoxContainer" parent="."]
+top_level = true
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.516
+anchor_top = 0.044
+anchor_right = 0.516
+anchor_bottom = 0.044
+offset_left = 309.28
+offset_top = -15.52
+offset_right = 915.28
+offset_bottom = 676.48
+theme_override_constants/separation = 20
+
+[node name="chrp-journal-button" type="Button" parent="chrp-VBoxContainer-buttons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 71
+theme_override_styles/normal = SubResource("StyleBoxFlat_vif13")
+text = "JOURNAL"
+script = ExtResource("5_rfkb8")
+
+[node name="chrp-skills-button" type="Button" parent="chrp-VBoxContainer-buttons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 71
+theme_override_styles/normal = SubResource("StyleBoxFlat_vif13")
+text = "SKILLS"
+script = ExtResource("6_aofpt")
+
+[node name="chrp-equip-button" type="Button" parent="chrp-VBoxContainer-buttons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 71
+theme_override_styles/normal = SubResource("StyleBoxFlat_vif13")
+text = "EQUIPMENT"
+script = ExtResource("7_myji4")
+
+[node name="chrp-inv-button" type="Button" parent="chrp-VBoxContainer-buttons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 71
+theme_override_styles/normal = SubResource("StyleBoxFlat_vif13")
+text = "INVENTORY"
+script = ExtResource("8_5ucku")
+
+[connection signal="pressed" from="chrp-Back-Button" to="chrp-Back-Button" method="_on_chrp_back_button_pressed"]

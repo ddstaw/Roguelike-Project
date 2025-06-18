@@ -1,0 +1,180 @@
+[gd_scene load_steps=19 format=3 uid="uid://dcfkqn5jyu8qh"]
+
+[ext_resource type="Texture2D" uid="uid://dllqx48crjd2b" path="res://assets/graphics/NewWorldBackground.png" id="1_7fyhy"]
+[ext_resource type="Script" path="res://scripts/CultureMap.gd" id="1_q4mvv"]
+[ext_resource type="Script" path="res://scripts/CultureMapDisplay.gd" id="3_kuv7x"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="4_cpdt3"]
+[ext_resource type="Script" path="res://scripts/ProceedButton.gd" id="5_n47a7"]
+[ext_resource type="Script" path="res://scripts/BackToMapGen.gd" id="6_1tgux"]
+[ext_resource type="Script" path="res://scripts/SettlementPlacement.gd" id="7_c4r2j"]
+[ext_resource type="Script" path="res://scripts/PlayMapButton.gd" id="8_jmctb"]
+[ext_resource type="Script" path="res://scripts/ReturnToMapGenButton.gd" id="9_t66av"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6xf3"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.901961, 0.196078, 0.0666667, 1)
+expand_margin_left = 3.0
+expand_margin_top = 3.0
+expand_margin_right = 3.0
+expand_margin_bottom = 3.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cfu6p"]
+bg_color = Color(0.149568, 0.621446, 0.986962, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dp5m0"]
+bg_color = Color(0.956863, 0.0823529, 0.658824, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sbgxo"]
+bg_color = Color(0.584409, 0.634181, 0.308716, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ldewc"]
+bg_color = Color(0.901961, 0.435294, 0.117647, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fwbw3"]
+bg_color = Color(0, 0.625093, 0.997777, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ekf3p"]
+bg_color = Color(0.937255, 0.0431373, 0.0666667, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yl0g4"]
+bg_color = Color(0.692448, 0.581579, 0.415439, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6t67i"]
+bg_color = Color(0.575808, 0.548503, 0.900505, 1)
+
+[node name="CultureMap" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_q4mvv")
+
+[node name="Background" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_7fyhy")
+stretch_mode = 6
+
+[node name="WorldNameLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 985.0
+offset_top = 206.0
+offset_right = 1659.0
+offset_bottom = 300.0
+horizontal_alignment = 1
+
+[node name="MapControl" type="Control" parent="."]
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MapControl"]
+layout_mode = 0
+offset_left = 1110.0
+offset_top = 330.0
+offset_right = 1542.0
+offset_bottom = 762.0
+
+[node name="SubViewport" type="SubViewport" parent="MapControl/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(432, 432)
+render_target_update_mode = 4
+
+[node name="WorldTextureRect" type="TextureRect" parent="MapControl/SubViewportContainer/SubViewport"]
+custom_minimum_size = Vector2(432, 432)
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("3_kuv7x")
+
+[node name="MessageLogControl" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 170.0
+offset_top = 170.0
+offset_right = 700.0
+offset_bottom = 900.0
+
+[node name="MessageLogPanel" type="Panel" parent="MessageLogControl"]
+layout_mode = 0
+offset_right = 530.0
+offset_bottom = 730.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_y6xf3")
+
+[node name="MessageLogScroll" type="ScrollContainer" parent="MessageLogControl/MessageLogPanel"]
+layout_mode = 0
+offset_right = 530.0
+offset_bottom = 730.0
+
+[node name="MessageLogVBox" type="VBoxContainer" parent="MessageLogControl/MessageLogPanel/MessageLogScroll"]
+layout_mode = 2
+
+[node name="PlaceSettlementsWindow" type="Window" parent="."]
+title = "Place Settlements?"
+position = Vector2i(735, 497)
+size = Vector2i(330, 74)
+theme_override_fonts/title_font = ExtResource("4_cpdt3")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PlaceSettlementsWindow"]
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -127.5
+offset_top = -57.0
+offset_right = 120.5
+offset_bottom = 7.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ProceedButton" type="Button" parent="PlaceSettlementsWindow/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_cpdt3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_cfu6p")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dp5m0")
+text = "Proceed"
+script = ExtResource("5_n47a7")
+
+[node name="BackToMapGen" type="Button" parent="PlaceSettlementsWindow/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_cpdt3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_sbgxo")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ldewc")
+text = "Back to Map Generator"
+script = ExtResource("6_1tgux")
+
+[node name="SettlementPlacementNode" type="Node" parent="."]
+script = ExtResource("7_c4r2j")
+
+[node name="MapGeneratedWindow" type="Window" parent="."]
+title = "Map Generated!"
+position = Vector2i(755, 711)
+size = Vector2i(310, 49)
+theme_override_fonts/title_font = ExtResource("4_cpdt3")
+theme_override_font_sizes/title_font_size = 19
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MapGeneratedWindow"]
+offset_right = 310.0
+offset_bottom = 49.0
+
+[node name="PlayMapButton" type="Button" parent="MapGeneratedWindow/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_cpdt3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_fwbw3")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ekf3p")
+text = "Play This Map"
+script = ExtResource("8_jmctb")
+
+[node name="ReturnToMapGenButton" type="Button" parent="MapGeneratedWindow/VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = ExtResource("4_cpdt3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_yl0g4")
+theme_override_styles/hover = SubResource("StyleBoxFlat_6t67i")
+text = "Return to Map Generation"
+script = ExtResource("9_t66av")

@@ -1,0 +1,11 @@
+[gd_scene format=3 uid="uid://bwlch1hddf8ye"]
+
+[node name="PopUpMessage" type="CanvasLayer"]
+
+[node name="Message" type="RichTextLabel" parent="."]
+offset_left = 412.0
+offset_top = 198.0
+offset_right = 761.0
+offset_bottom = 430.0
+bbcode_enabled = true
+scroll_active = false

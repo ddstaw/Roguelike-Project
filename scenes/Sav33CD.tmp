@@ -1,0 +1,80 @@
+[gd_scene load_steps=11 format=3 uid="uid://c05v030s86gtr"]
+
+[ext_resource type="Script" path="res://scripts/SaveWorld.gd" id="1_ab30t"]
+[ext_resource type="Texture2D" uid="uid://dllqx48crjd2b" path="res://assets/graphics/NewWorldBackground.png" id="1_jsllr"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="2_pqfof"]
+[ext_resource type="Script" path="res://scripts/backtomainmenusavegamebutton.gd" id="3_balqh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_thlqj"]
+bg_color = Color(0.277216, 0.133047, 0.01538, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.576471, 0.427451, 0.141176, 0.619608)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ddpwi"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7c5ae"]
+bg_color = Color(0.419983, 0.0316798, 0.22095, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i62ip"]
+bg_color = Color(0.228928, 0.164784, 0.167626, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bqgqr"]
+bg_color = Color(0.616334, 0.530915, 0.344621, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lmpma"]
+bg_color = Color(0.597953, 0.0768301, 0.134605, 1)
+
+[node name="SaveWorld" type="Node2D" node_paths=PackedStringArray("save_slot_button_1")]
+script = ExtResource("1_ab30t")
+save_slot_button_1 = NodePath("SaveSlot1")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_jsllr")
+
+[node name="backtomainmenu" type="Button" parent="."]
+offset_left = 176.0
+offset_top = 839.0
+offset_right = 517.0
+offset_bottom = 903.0
+theme_override_fonts/font = ExtResource("2_pqfof")
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_thlqj")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ddpwi")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_7c5ae")
+text = "Back to Main Menu"
+script = ExtResource("3_balqh")
+
+[node name="SaveSlot1" type="Button" parent="."]
+offset_left = 571.0
+offset_top = 225.0
+offset_right = 1686.0
+offset_bottom = 399.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_i62ip")
+theme_override_styles/hover = SubResource("StyleBoxFlat_bqgqr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_lmpma")
+text = "SAVE SLOT 1"
+
+[node name="SaveSlot2" type="Button" parent="."]
+offset_left = 571.0
+offset_top = 432.0
+offset_right = 1686.0
+offset_bottom = 606.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_i62ip")
+theme_override_styles/hover = SubResource("StyleBoxFlat_bqgqr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_lmpma")
+text = "SAVE SLOT 2"
+
+[node name="SaveSlot3" type="Button" parent="."]
+offset_left = 576.0
+offset_top = 645.0
+offset_right = 1691.0
+offset_bottom = 819.0
+theme_override_styles/normal = SubResource("StyleBoxFlat_i62ip")
+theme_override_styles/hover = SubResource("StyleBoxFlat_bqgqr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_lmpma")
+text = "SAVE SLOT 3"

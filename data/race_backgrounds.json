@@ -1,0 +1,66 @@
+[
+    {
+        "title": "Dwarven Forge Master",
+        "description": "Born in the heart of the mountains, you have spent your life mastering the craft of the forge. The anvil and hammer are as familiar to you as breathing.",
+        "bonus": "Bonus: +2 to Blacksmithing, +1 to Metallurgy.",
+        "allowed_races": ["dwarf"],
+        "allowed_faiths": [],
+        "allowed_sexes": []
+    },
+    {
+        "title": "Tunnel Scout",
+        "description": "You were trained in the deep tunnels to protect your kin from invaders. Your keen senses and agility are unmatched underground.",
+        "bonus": "Bonus: +2 to Stealth, +1 to Deftstriking.",
+        "allowed_races": ["dwarf"],
+        "allowed_faiths": [],
+        "allowed_sexes": []
+    },
+    {
+        "title": "Elven Wanderer",
+        "description": "An elf of the old world, you have traveled far and wide, never settling, always seeking the next adventure. The forests and wilds are your home.",
+        "bonus": "Bonus: +2 to Bowmanship, +1 to Stealth.",
+        "allowed_races": ["elf"],
+        "allowed_faiths": [],
+        "allowed_sexes": []
+    },
+    {
+        "title": "Arcane Scholar",
+        "description": "Raised among the high elves, you have dedicated your life to the study of ancient magic and the pursuit of arcane knowledge.",
+        "bonus": "Bonus: +2 to Erudition, +1 to Enchantment.",
+        "allowed_races": ["elf"],
+        "allowed_faiths": [],
+        "allowed_sexes": []
+    },
+    {
+        "title": "Street Enforcer",
+        "description": "Raised in the industrial slums, you’ve spent your life brawling in back alleys and enforcing the rules of the underworld.",
+        "bonus": "Bonus: +2 to Pugilism, +1 to Skullduggery.",
+        "allowed_races": ["orc"],
+        "allowed_faiths": [],
+        "allowed_sexes": []
+    },
+    {
+        "title": "Factory Foreman",
+        "description": "You rose through the ranks in the harsh industrial factories, gaining a keen understanding of machinery and labor.",
+        "bonus": "Bonus: +2 to Tinkering, +1 to Bruteforce.",
+        "allowed_races": ["orc"],
+        "allowed_faiths": [],
+        "allowed_sexes": []
+    },
+    {
+        "title": "Noble Scion",
+        "description": "Born into a family of high status, you have been groomed for leadership and diplomacy, wielding influence wherever you go.",
+        "bonus": "Bonus: +2 to Charisma, +1 to Erudition.",
+        "allowed_races": ["human"],
+        "allowed_faiths": [],
+        "allowed_sexes": []
+    },
+    {
+        "title": "Mercenary Veteran",
+        "description": "You’ve fought in countless battles, selling your skills to the highest bidder. Experience has hardened you into a formidable warrior.",
+        "bonus": "Bonus: +2 to Firearms, +1 to Deftstriking.",
+        "allowed_races": ["human"],
+        "allowed_faiths": [],
+        "allowed_sexes": []
+    }
+]

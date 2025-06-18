@@ -1,0 +1,132 @@
+[gd_scene load_steps=13 format=3 uid="uid://ic6xwcivgrpf"]
+
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="1_1lc7y"]
+[ext_resource type="Texture2D" uid="uid://wobdh17v6hbw" path="res://assets/graphics/MainMenu.png" id="1_4gxll"]
+[ext_resource type="Script" path="res://scripts/MainMenu.gd" id="1_adele"]
+[ext_resource type="Script" path="res://scripts/Quit Button.gd" id="3_ql3y5"]
+[ext_resource type="Script" path="res://scripts/MusicToggleButton.gd" id="4_renpy"]
+[ext_resource type="Script" path="res://scripts/NewButton.gd" id="4_xy5xh"]
+[ext_resource type="Script" path="res://scripts/ContinueButton.gd" id="5_osxu6"]
+
+[sub_resource type="Theme" id="Theme_wcq2b"]
+default_font = ExtResource("1_1lc7y")
+default_font_size = 51
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ak6so"]
+bg_color = Color(0.054902, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.563038, 0.489391, 0.253717, 1)
+corner_detail = 16
+shadow_color = Color(0, 0, 0, 0.4)
+shadow_size = 10
+shadow_offset = Vector2(20, 20)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oh2vt"]
+bg_color = Color(0.169206, 0.0487458, 0.276494, 1)
+shadow_color = Color(0, 0, 0, 0.843137)
+shadow_offset = Vector2(10, 10)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wu0ic"]
+bg_color = Color(0, 0.00784314, 0.294118, 1)
+
+[sub_resource type="GDScript" id="GDScript_2a3ov"]
+script/source = "extends Sprite2D
+
+
+# Called when the node enters the scene tree for the first time.
+func _ready():
+	pass # Replace with function body.
+
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta):
+	pass
+"
+
+[node name="Node2D" type="Node2D"]
+script = ExtResource("1_adele")
+
+[node name="Quit Button" type="Button" parent="."]
+z_index = 3
+offset_left = 1305.0
+offset_top = 758.0
+offset_right = 1731.0
+offset_bottom = 923.0
+theme = SubResource("Theme_wcq2b")
+theme_override_colors/font_color = Color(0.807843, 0.741176, 0.47451, 1)
+theme_override_colors/font_hover_color = Color(0.788235, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.104986, 0, 0.742899, 1)
+theme_override_font_sizes/font_size = 68
+theme_override_styles/normal = SubResource("StyleBoxFlat_ak6so")
+theme_override_styles/hover = SubResource("StyleBoxFlat_oh2vt")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_wu0ic")
+text = "Quit"
+script = ExtResource("3_ql3y5")
+
+[node name="New Button" type="Button" parent="."]
+z_index = 3
+offset_left = 1307.0
+offset_top = 555.0
+offset_right = 1733.0
+offset_bottom = 720.0
+theme = SubResource("Theme_wcq2b")
+theme_override_colors/font_color = Color(0.807843, 0.741176, 0.47451, 1)
+theme_override_colors/font_hover_color = Color(0.788235, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.104986, 0, 0.742899, 1)
+theme_override_font_sizes/font_size = 68
+theme_override_styles/normal = SubResource("StyleBoxFlat_ak6so")
+theme_override_styles/hover = SubResource("StyleBoxFlat_oh2vt")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_wu0ic")
+text = "New World"
+script = ExtResource("4_xy5xh")
+
+[node name="Continue Button" type="Button" parent="."]
+z_index = 3
+offset_left = 1307.0
+offset_top = 358.0
+offset_right = 1733.0
+offset_bottom = 523.0
+theme = SubResource("Theme_wcq2b")
+theme_override_colors/font_color = Color(0.807843, 0.741176, 0.47451, 1)
+theme_override_colors/font_hover_color = Color(0.788235, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.104986, 0, 0.742899, 1)
+theme_override_font_sizes/font_size = 68
+theme_override_styles/normal = SubResource("StyleBoxFlat_ak6so")
+theme_override_styles/hover = SubResource("StyleBoxFlat_oh2vt")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_wu0ic")
+text = "Play"
+script = ExtResource("5_osxu6")
+
+[node name="MusicToggleButton" type="Button" parent="."]
+z_index = 3
+offset_left = 83.0
+offset_top = 80.0
+offset_right = 380.0
+offset_bottom = 146.0
+theme = SubResource("Theme_wcq2b")
+theme_override_colors/font_color = Color(0.807843, 0.741176, 0.47451, 1)
+theme_override_colors/font_hover_color = Color(0.788235, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0.104986, 0, 0.742899, 1)
+theme_override_font_sizes/font_size = 36
+theme_override_styles/normal = SubResource("StyleBoxFlat_ak6so")
+theme_override_styles/hover = SubResource("StyleBoxFlat_oh2vt")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_wu0ic")
+text = "Music On/Off"
+script = ExtResource("4_renpy")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(959, 539)
+texture = ExtResource("1_4gxll")
+script = SubResource("GDScript_2a3ov")
+metadata/_edit_lock_ = true
+
+[node name="Label" type="Label" parent="."]
+z_index = 3
+offset_left = 1459.0
+offset_top = 989.0
+offset_right = 1575.0
+offset_bottom = 1012.0
+text = "Pre-Alpha 1.0.0"

@@ -1,0 +1,124 @@
+[gd_scene load_steps=11 format=3 uid="uid://6d16ef60ub6w"]
+
+[ext_resource type="Texture2D" uid="uid://bfl3rd44mjfhg" path="res://ui/menus/bbg.png" id="1_eihyj"]
+[ext_resource type="Script" path="res://ui/scripts/Journal-CharprofButton.gd" id="2_f8j0a"]
+[ext_resource type="Script" path="res://ui/scripts/charjour-SkillButton.gd" id="3_rmrfs"]
+[ext_resource type="Script" path="res://ui/scripts/Journal-ContinueButton.gd" id="3_thibf"]
+[ext_resource type="Script" path="res://ui/scripts/CharJour-EquipmentButton.gd" id="4_dkx8c"]
+[ext_resource type="Script" path="res://ui/scripts/CharJour-InvButton.gd" id="5_tlwg8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dv1gd"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lt1k3"]
+bg_color = Color(0.842637, 0.485594, 0.453758, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_574u4"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_54m60"]
+bg_color = Color(0.913655, 0.431746, 0.392993, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+
+[node name="CharJournal" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+texture = ExtResource("1_eihyj")
+
+[node name="CharprofButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1132.0
+offset_top = 40.0
+offset_right = 1871.0
+offset_bottom = 213.0
+theme_override_font_sizes/font_size = 61
+theme_override_styles/normal = SubResource("StyleBoxFlat_dv1gd")
+theme_override_styles/hover = SubResource("StyleBoxFlat_lt1k3")
+text = "Character Profile"
+script = ExtResource("2_f8j0a")
+
+[node name="SkillButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1135.0
+offset_top = 240.0
+offset_right = 1874.0
+offset_bottom = 413.0
+theme_override_font_sizes/font_size = 61
+theme_override_styles/normal = SubResource("StyleBoxFlat_dv1gd")
+theme_override_styles/hover = SubResource("StyleBoxFlat_lt1k3")
+text = "Skills"
+script = ExtResource("3_rmrfs")
+
+[node name="EquipmentButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1132.0
+offset_top = 437.0
+offset_right = 1871.0
+offset_bottom = 610.0
+theme_override_font_sizes/font_size = 61
+theme_override_styles/normal = SubResource("StyleBoxFlat_dv1gd")
+theme_override_styles/hover = SubResource("StyleBoxFlat_lt1k3")
+text = "Equipment"
+script = ExtResource("4_dkx8c")
+
+[node name="InvButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1137.0
+offset_top = 635.0
+offset_right = 1876.0
+offset_bottom = 808.0
+theme_override_font_sizes/font_size = 61
+theme_override_styles/normal = SubResource("StyleBoxFlat_dv1gd")
+theme_override_styles/hover = SubResource("StyleBoxFlat_lt1k3")
+text = "Inventory"
+script = ExtResource("5_tlwg8")
+
+[node name="ContinueButton" type="Button" parent="."]
+layout_mode = 0
+offset_left = 1391.0
+offset_top = 852.0
+offset_right = 1623.0
+offset_bottom = 1025.0
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_574u4")
+theme_override_styles/hover = SubResource("StyleBoxFlat_54m60")
+text = "Continue"
+script = ExtResource("3_thibf")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 0
+offset_left = 139.0
+offset_top = 425.0
+offset_right = 1019.0
+offset_bottom = 725.0
+theme_override_font_sizes/font_size = 91
+text = "JOURNAL 
+WORK IN PROGRESS"
+
+[connection signal="pressed" from="CharprofButton" to="CharprofButton" method="_on_pressed"]
+[connection signal="pressed" from="SkillButton" to="SkillButton" method="_on_pressed"]
+[connection signal="pressed" from="EquipmentButton" to="EquipmentButton" method="_on_pressed"]
+[connection signal="pressed" from="InvButton" to="InvButton" method="_on_pressed"]
+[connection signal="pressed" from="ContinueButton" to="ContinueButton" method="_on_pressed"]

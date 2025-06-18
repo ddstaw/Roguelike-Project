@@ -1,0 +1,332 @@
+[
+    {
+        "title": "Woodland Hunter",
+        "description": "A master of the wild, you have honed your skills in navigating forests and hunting with precision.",
+        "bonus": "Bonus: +2 to Bowmanship, +1 to Bowery.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["bowmanship", "bowery"]
+        }
+    },
+    {
+        "title": "Street Brawler",
+        "description": "You've learned to survive on the streets using your fists and brute strength. No one dares to mess with you.",
+        "bonus": "Bonus: +2 to Pugilism, +1 to Bruteforce.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["pugilism", "bruteforce"]
+        }
+    },
+    {
+        "title": "Erudite Spy",
+        "description": "With a sharp mind and a knack for deceit, you gather information and manipulate others with ease.",
+        "bonus": "Bonus: +2 to Erudition, +1 to Skullduggery.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["erudition", "skullduggery"]
+        }
+    },
+    {
+        "title": "Market Trader",
+        "description": "You have a keen eye for business and know how to negotiate the best deals, making you a formidable presence in the market.",
+        "bonus": "Bonus: +2 to Acumen, +1 to Construction.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["acumen", "construction"]
+        }
+    },
+    {
+        "title": "Industrial Foreman",
+        "description": "You've managed work crews and kept large projects on track, blending practical skills with leadership.",
+        "bonus": "Bonus: +2 to Construction, +1 to Acumen.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["construction", "acumen"]
+        }
+    },
+    {
+        "title": "Highwayman",
+        "description": "A rogue of the roads, you use stealth and force to take what you need from unsuspecting travelers.",
+        "bonus": "Bonus: +2 to Skullduggery, +1 to Deftstriking.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["skullduggery", "deftstriking"]
+        }
+    },
+    {
+        "title": "Field Medic",
+        "description": "You have honed your skills in the field, using basic alchemy and practical knowledge to patch up the wounded.",
+        "bonus": "Bonus: +2 to Alchemy, +1 to Athletics.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["alchemy", "athletics"]
+        }
+    },
+    {
+        "title": "Town Tailor",
+        "description": "With a needle and thread, you transform fabric into garments, serving the practical and stylish needs of your community.",
+        "bonus": "Bonus: +2 to Tailoring, +1 to Acumen.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["tailoring", "acumen"]
+        }
+    },
+    {
+        "title": "Rugged Explorer",
+        "description": "Venturing far from civilization, you survive on your wits and an iron will, conquering the harshest landscapes.",
+        "bonus": "Bonus: +2 to Frontiersmanship, +1 to Athletics.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["frontiersmanship", "athletics"]
+        }
+    },
+    {
+        "title": "Stealthy Cutpurse",
+        "description": "Quick with your hands and silent as a shadow, you make your living by relieving others of their valuables.",
+        "bonus": "Bonus: +2 to Skullduggery, +1 to Athletics.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["skullduggery", "athletics"]
+        }
+    },
+    {
+        "title": "Sly Merchant",
+        "description": "Not all trades are honest, but you make sure they’re profitable. A little cunning goes a long way in business.",
+        "bonus": "Bonus: +2 to Acumen, +1 to Skullduggery.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["acumen", "skullduggery"]
+        }
+    },
+    {
+        "title": "Armorsmith",
+        "description": "Crafting armor is your art, and each piece tells a story of protection and craftsmanship.",
+        "bonus": "Bonus: +2 to Blacksmithing, +1 to Construction.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["blacksmithing", "construction"]
+        }
+    },
+    {
+        "title": "Seafaring Raider",
+        "description": "You’ve lived a life on the water, using your athletic prowess and combat skills to pillage and plunder.",
+        "bonus": "Bonus: +2 to Athletics, +1 to Bowmanship.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["athletics", "bowmanship"]
+        }
+    },
+    {
+        "title": "Resourceful Tinker",
+        "description": "You see opportunity in scrap and discarded items, always able to create something useful from the odds and ends.",
+        "bonus": "Bonus: +2 to Construction, +1 to Frontiersmanship.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["construction", "frontiersmanship"]
+        }
+    },
+    {
+        "title": "Crafty Tailor",
+        "description": "Specializing in bespoke garments, you cater to the elite and discerning with your unique designs.",
+        "bonus": "Bonus: +2 to Tailoring, +1 to Erudition.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["tailoring", "erudition"]
+        }
+    },
+    {
+        "title": "Meticulous Alchemist",
+        "description": "You dedicate yourself to the delicate art of alchemy, mastering potions and chemical concoctions.",
+        "bonus": "Bonus: +2 to Alchemy.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["alchemy"]
+        }
+    },
+    {
+        "title": "Athletic Competitor",
+        "description": "You’ve spent years training your body, honing your athletic prowess for sport or survival.",
+        "bonus": "Bonus: +2 to Athletics.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["athletics"]
+        }
+    },
+    {
+        "title": "Forgehand",
+        "description": "Skilled in the art of blacksmithing, you know your way around an anvil and hammer.",
+        "bonus": "Bonus: +2 to Blacksmithing.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["blacksmithing"]
+        }
+    },
+    {
+        "title": "Woodsman",
+        "description": "A true master of woodcraft, you navigate the forest effortlessly and build shelters with ease.",
+        "bonus": "Bonus: +2 to Bowery.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["bowery"]
+        }
+    },
+    {
+        "title": "Marksman",
+        "description": "A skilled archer, you hit your targets with unerring accuracy.",
+        "bonus": "Bonus: +2 to Bowmanship.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["bowmanship"]
+        }
+    },
+    {
+        "title": "Street Tough",
+        "description": "You’re no stranger to physical confrontations; you excel in using brute force to solve problems.",
+        "bonus": "Bonus: +2 to Bruteforce.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["bruteforce"]
+        }
+    },
+    {
+        "title": "Carpenter",
+        "description": "Skilled in the construction of homes, ships, and more, your expertise with wood and tools is unmatched.",
+        "bonus": "Bonus: +2 to Construction.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["construction"]
+        }
+    },
+    {
+        "title": "Duelist",
+        "description": "Fast, precise, and deadly with a blade, you thrive in close combat.",
+        "bonus": "Bonus: +2 to Deftstriking.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["deftstriking"]
+        }
+    },
+    {
+        "title": "Scholar",
+        "description": "A keen mind and a thirst for knowledge drive you to study and learn everything you can.",
+        "bonus": "Bonus: +2 to Erudition.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["erudition"]
+        }
+    },
+    {
+        "title": "Gunslinger",
+        "description": "Fast on the draw and accurate under pressure, you are a deadly shot with any firearm.",
+        "bonus": "Bonus: +2 to Firearms.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["firearms"]
+        }
+    },
+    {
+        "title": "Ranger",
+        "description": "A true survivalist, you are adept at navigating and thriving in the untamed wilds.",
+        "bonus": "Bonus: +2 to Frontiersmanship.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["frontiersmanship"]
+        }
+    },
+    {
+        "title": "Master Metallurgist",
+        "description": "You have mastered the secrets of metal, turning raw ore into strong and valuable materials.",
+        "bonus": "Bonus: +2 to Metallurgy.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["metallurgy"]
+        }
+    },
+    {
+        "title": "Boxer",
+        "description": "You fight with your fists and rely on your skill and strength to win the day.",
+        "bonus": "Bonus: +2 to Pugilism.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["pugilism"]
+        }
+    },
+    {
+        "title": "Shadow Thief",
+        "description": "Skilled in moving unseen, you slip into places you shouldn’t be and take what isn’t yours.",
+        "bonus": "Bonus: +2 to Skullduggery.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["skullduggery"]
+        }
+    },
+    {
+        "title": "Seamstress",
+        "description": "With every stitch, you create something beautiful or practical, serving clients from all walks of life.",
+        "bonus": "Bonus: +2 to Tailoring.",
+        "allowed_races": [],
+        "allowed_faiths": [],
+        "allowed_sexes": [],
+        "skill_combinations": {
+            "skills": ["tailoring"]
+        }
+    }
+]
