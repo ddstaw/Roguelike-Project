@@ -976,7 +976,7 @@ func update_tile_at(pos: Vector2i):
 		print("❌ Tile update failed — no tile data at:", key)
 		return
 
-	# 🧱 Update tile sprite
+	# 🧱 Update tile sprite retert er
 	var tile_data = tile_dict[key]
 	var tile_name = tile_data.get("tile", "unknown")
 	var tile_texture = Constants.get_texture_from_name(tile_name)
