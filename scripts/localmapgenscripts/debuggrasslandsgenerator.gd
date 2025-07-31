@@ -5,7 +5,7 @@ extends Node
 # 🧭 Generation grid layout (used for blueprint loop)
 const CHUNK_GRID_WIDTH := 3
 const CHUNK_GRID_HEIGHT := 3
-const CHUNK_SIZE := Vector2i(50, 50)  # All grassland chunks are uniform
+const CHUNK_SIZE := Vector2i(40, 40)  # All grassland chunks are uniform
 const CENTER_CHUNK_COORD := Vector2i(1, 1)  # Used for prefab placement or spawn bias
 
 # 🌊 Stream config
@@ -119,7 +119,7 @@ func generate_chunked_map(tile_container: Node) -> Array:
 	var chunked_object_data := {}
 	var chunk_blueprints := {}
 
-	const CHUNK_SIZE = Vector2i(50, 50)
+	const CHUNK_SIZE = Vector2i(40, 40)
 
 	# 🧱 STEP 1: Define blueprint structure (uniform for grasslands)
 	for cx in range(3):
@@ -138,12 +138,12 @@ func generate_chunked_map(tile_container: Node) -> Array:
 	# 🌊 STEP 2: Stream/path setup
 	stream_should_exist = randf() < STREAM_CHANCE
 	if stream_should_exist:
-		stream_seed_x = randi_range(60, 140)
+		stream_seed_x = randi_range(20, 100)
 		print("🌊 Stream enabled → global stream X:", stream_seed_x)
 
 	path_should_exist = randf() < PATH_CHANCE
 	if path_should_exist:
-		path_seed_y = randi_range(60, 140)
+		path_seed_y = randi_range(20, 100)
 		print("🛤️ Path enabled → global path Y:", path_seed_y)
 
 	# 🏰 STEP 3: Load prefabs

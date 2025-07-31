@@ -20,7 +20,6 @@ func trigger_map_reload():
 	print("🔄 Requesting map reload...")
 	request_map_reload.emit()
 
-# Load JSON from the specified path and return it as either a Dictionary or Array
 func load_json_file(path: String) -> Variant:
 	if not FileAccess.file_exists(path):
 		print("Error: File does not exist at path:", path)
@@ -48,7 +47,6 @@ func load_json_file(path: String) -> Variant:
 	else:
 		print("Error parsing JSON at path:", path)
 		return null
-
 
 # Retrieve the correct save slot number
 func get_save_slot() -> int:
@@ -691,204 +689,6 @@ func save_localmap_terrain():
 	LoadHandlerSingleton.save_json_file(path, { "modified_terrain": {} })
 	print("🪨 Blank terrain state saved.")
 
-func save_temp_localmap_placement():
-	var player_pos = LoadHandlerSingleton.get_player_position()
-	var cell_name = "cell_" + str(player_pos.x) + "_" + str(player_pos.y)
-
-	# 🔽 STEP 1: Load layout and object layer
-	var layout_path = LoadHandlerSingleton.get_temp_localmap_layout_path()
-	var layout_data = LoadHandlerSingleton.load_json_file(layout_path)
-
-	if layout_data == null:
-		print("❌ ERROR: Failed to load layout data from:", layout_path)
-		return
-
-	var object_path = LoadHandlerSingleton.get_temp_localmap_objects_path()
-	var object_data = LoadHandlerSingleton.load_json_file(object_path)
-
-	if object_data == null:
-		print("⚠️ Warning: No objects found — proceeding with empty object layer.")
-		object_data = []
-	else:
-		print("✅ Loaded object layer with %d objects." % object_data.size())
-
-	# 🔽 STEP 2: Determine valid terrain types for player/mount spawn
-	var biome = LoadHandlerSingleton.get_biome_name(player_pos)
-	var valid_terrain_types := []
-
-	match biome:
-		"grass", "grassland", "debug_grass", "debug_grassland":
-			valid_terrain_types = ["grass", "path"]
-		"forest":
-			valid_terrain_types = ["grass"]
-		"mountains":
-			valid_terrain_types = ["rock", "stone_path"]
-		"road":
-			valid_terrain_types = ["path", "grass"]
-		_:
-			valid_terrain_types = ["grass"]  # Fallback/default case
-
-	print("🌿 Biome = %s → Valid terrain for spawn: %s" % [biome, valid_terrain_types])
-
-	# 🔽 STEP 3: Scan for valid spawn tiles
-	var valid_positions := []
-	var object_positions := {}
-
-	for obj in object_data:
-		if typeof(obj) == TYPE_DICTIONARY and obj.has("position"):
-			var pos = Vector2i(obj.position.x, obj.position.y)
-			object_positions[pos] = true
-
-	var tile_grid = layout_data["tile_grid"]
-
-	for key in tile_grid.keys():
-		var coords = key.split("_")
-		if coords.size() != 2:
-			continue
-
-		var x = int(coords[0])
-		var y = int(coords[1])
-		var tile_data = tile_grid[key]
-		var terrain_type = tile_data.get("tile", "")
-		var pos = Vector2i(x, y)
-
-		if terrain_type in valid_terrain_types and not object_positions.has(pos):
-			valid_positions.append(pos)
-
-	print("🔍 Found %d valid spawn tiles. Sample: %s" % [valid_positions.size(), valid_positions.front() if valid_positions.size() > 0 else "None"])
-
-	# 🔽 STEP 4: Pick a spawn position
-	var spawn_pos := Vector2i(0, 0)
-
-	if valid_positions.size() == 0:
-		print("❌ ERROR: No valid spawn tiles found! Using fallback at (0, 0).")
-	else:
-		spawn_pos = valid_positions[randi() % valid_positions.size()]
-		print("📍 Player spawn selected at: (%d, %d)" % [spawn_pos.x, spawn_pos.y])
-
-	# 🔽 STEP 5.1: Load mount data from gear file + mount_types.json
-	var mount_data = LoadHandlerSingleton.get_current_mount_data()
-
-	if mount_data.is_empty():
-		print("🪑 No mount equipped or invalid mount data.")
-	else:
-		print("🐎 Current mount loaded:")
-		print("- Size: ", mount_data.get("size"))
-		print("- Tiles: ", mount_data.get("tiles"))
-
-	# 🔽 STEP 5.2: Try to find nearby space to place the mount
-	var mount_candidates := []
-	var mount_size = Vector2i(0, 0)
-
-	if mount_data.has("size"):
-		mount_size = Vector2i(mount_data["size"][0], mount_data["size"][1])
-
-	# Only attempt if the mount is at least 1x1
-	if mount_size.x > 0 and mount_size.y > 0 and mount_data.has("tiles"):
-
-		var radius = 3  # Distance from player to search
-		for dx in range(-radius, radius + 1):
-			for dy in range(-radius, radius + 1):
-				var base_pos = spawn_pos + Vector2i(dx, dy)
-				var can_place = true
-
-				# Check all mount tile offsets
-				for tile_entry in mount_data["tiles"]:
-					var offset = Vector2i(tile_entry["offset"][0], tile_entry["offset"][1])
-					var pos = base_pos + offset
-
-					# Bounds & object collision check
-					if not tile_grid.has("%d_%d" % [pos.x, pos.y]):
-						can_place = false
-						break
-
-					var terrain = tile_grid["%d_%d" % [pos.x, pos.y]].get("tile", "")
-					if terrain not in valid_terrain_types or object_positions.has(pos) or pos == spawn_pos:
-						can_place = false
-						break
-
-				if can_place:
-					mount_candidates.append(base_pos)
-
-	print("🏇 Found %d valid mount placements near player." % mount_candidates.size())
-	if mount_candidates.size() > 0:
-		print("📍 Mount can be placed at base tile: %s" % mount_candidates.front())
-
-	# 🔽 STEP 5.3: Inject mount tiles into the object layer
-	if mount_candidates.size() > 0:
-		var mount_base = mount_candidates.front()
-		var mount_key_index = 0  # You could use a counter or random UID later
-
-		for tile_entry in mount_data["tiles"]:
-			var offset = Vector2i(tile_entry["offset"][0], tile_entry["offset"][1])
-			var final_pos = mount_base + offset
-			var texture_path = tile_entry["texture"]
-
-			var mount_id = "mount_%d" % mount_key_index
-			mount_key_index += 1
-
-			var mount_object = {
-				"position": { "x": final_pos.x, "y": final_pos.y, "z": 0 },
-				"texture": texture_path,
-				"type": "mount"
-			}
-
-			# Inject into the dictionary using a new key
-			object_data["objects"][mount_id] = mount_object
-
-		# Save it out
-		LoadHandlerSingleton.save_temp_localmap_objects(object_data)
-		print("✅ Mount placed at: ", mount_base, " (added %d tile(s))" % mount_data["tiles"].size())
-	else:
-		print("⚠️ Could not find valid mount placement. Skipping mount spawn.")
-
-	# 🔁 Placement data build
-	var placement_data = {
-		"local_map": {
-			"in_localmap": true,
-			"local_map_type": "wilderness",
-			"from_worldmap_cell": cell_name,
-			"grid_position": { "x": spawn_pos.x, "y": spawn_pos.y },
-			"z_level": 0,
-			"existing_z_levels": ["0"],
-			"explored_chunks": { "0": [str(player_pos.x) + "_" + str(player_pos.y)] },
-			"z_level_definitions": { "0": { "type": "predefined" } },
-			"build_permissions": {
-				"allowed": true,
-				"restrictions": {
-					"city_district": "requires_claimed_property",
-					"max_height": 5,
-					"max_depth": 5
-				}
-			},
-			"rememberable": true,
-			"city_claiming": {
-				"allowed": false,
-				"property_id": null,
-				"status": "unclaimed"
-			},
-			"environmental_effects": {
-				"weather": "clear",
-				"season": "summer",
-				"temperature": 25,
-				"special_effects": []
-			},
-			"entities_file": LoadHandlerSingleton.get_temp_localmap_entities_path(),
-			"terrain_file": layout_path
-		}
-	}
-
-	var path = LoadHandlerSingleton.get_temp_localmap_placement_path()
-	LoadHandlerSingleton.save_json_file(path, placement_data)
-	print("📌 Placement data saved.")
-
-
-func save_all_localmap_files(grid, object_layer, objects := {}, entities := {}, terrain_mods := {}):
-	save_temp_localmap_layout(grid)
-	save_temp_localmap_objects(objects)
-	save_temp_localmap_entities(entities)
-	save_localmap_terrain()
-	save_temp_localmap_placement()
 
 func load_temp_localmap_placement() -> Dictionary:
 	var path = get_temp_localmap_placement_path()
@@ -1362,14 +1162,28 @@ func chunked_mount_placement(chunk_key: String) -> void:
 	var chunk_size: Vector2i = Vector2i(raw_size[0], raw_size[1])
 	var chunk_origin: Vector2i = Vector2i(raw_origin[0], raw_origin[1])
 	var biome_key: String = placement_file.local_map.get("biome_key", "gef")  # Fallback to "gef" if not set
+	
+	print("🔎 chunk_key =", chunk_key)
+	print("🔎 biome_key =", biome_key)
 
-	var tile_chunk: Dictionary = load_json_file(get_chunked_tile_chunk_path(chunk_key, biome_key))
-	var object_data: Dictionary = load_json_file(get_chunked_object_chunk_path(chunk_key, biome_key))
-
-	if tile_chunk == null or not tile_chunk.has("tile_grid"):
-		print("❌ ERROR: Missing tile data for", chunk_key)
+	var tile_chunk_raw = load_json_file(get_chunked_tile_chunk_path(chunk_key, biome_key))
+	if tile_chunk_raw == null:
+		print("❌ ERROR: Failed to load tile chunk for", chunk_key)
 		return
-	if typeof(object_data) != TYPE_DICTIONARY:
+
+	var tile_chunk = tile_chunk_raw as Dictionary
+	if tile_chunk == null or not tile_chunk.has("tile_grid"):
+		print("❌ ERROR: Invalid or missing tile data for", chunk_key)
+		return
+
+	var object_data_raw = load_json_file(get_chunked_object_chunk_path(chunk_key, biome_key))
+	if object_data_raw == null:
+		print("❌ ERROR: Failed to load object chunk for", chunk_key)
+		return
+
+	var object_data = object_data_raw as Dictionary
+	if object_data == null:
+		print("⚠️ Warning: Object chunk isn't a dictionary — defaulting to empty.")
 		object_data = {}
 
 	var tile_data: Dictionary = tile_chunk["tile_grid"]
@@ -1460,7 +1274,7 @@ func chunked_mount_placement(chunk_key: String) -> void:
 					"texture": entry["texture"]
 				}
 
-			print("✅ Mount placed at:", base_mount_pos)
+			print("✅ 1Mount placed at:", base_mount_pos)
 		else:
 			print("⚠️ No valid mount placement for chunk:", chunk_key)
 
@@ -1500,8 +1314,18 @@ func save_chunked_localmap_placement():
 
 	var biome_key: String = placement_file.local_map.get("biome_key", "gef")  # Fallback to "gef" if not set
 
-	var tile_chunk: Dictionary = load_json_file(get_chunked_tile_chunk_path(chunk_key, biome_key))
-	var object_data: Dictionary = load_json_file(get_chunked_object_chunk_path(chunk_key, biome_key))
+	var tile_chunk_data = load_json_file(get_chunked_tile_chunk_path(chunk_key, biome_key))
+	if tile_chunk_data == null or not tile_chunk_data.has("tile_grid"):
+		print("❌ ERROR: Failed to load tile grid from chunk:", chunk_key)
+		return
+	var tile_chunk: Dictionary = tile_chunk_data
+
+	var object_data_raw = load_json_file(get_chunked_object_chunk_path(chunk_key, biome_key))
+	var object_data: Dictionary = {}
+	if object_data_raw != null and typeof(object_data_raw) == TYPE_DICTIONARY:
+		object_data = object_data_raw
+	else:
+		print("⚠️ Warning: Object chunk missing or malformed for:", chunk_key)
 
 	if tile_chunk == null or not tile_chunk.has("tile_grid"):
 		print("❌ ERROR: Failed to load tile grid from chunk:", chunk_key)
@@ -1544,6 +1368,36 @@ func save_chunked_localmap_placement():
 	var placement_data = placement_file.duplicate(true)
 	placement_data["local_map"]["grid_position"] = { "x": global_spawn.x, "y": global_spawn.y }
 	placement_data["local_map"]["grid_position_local"] = { "x": local_spawn.x, "y": local_spawn.y }
+	
+	# Add this just before save_json_file()
+	var z_level := 0  # Or however you're determining it dynamically
+
+	# Update Z-level
+	placement_data["local_map"]["z_level"] = z_level
+
+	# Track in existing_z_levels
+	if not placement_data["local_map"].has("existing_z_levels"):
+		placement_data["local_map"]["existing_z_levels"] = []
+
+	if str(z_level) not in placement_data["local_map"]["existing_z_levels"]:
+		placement_data["local_map"]["existing_z_levels"].append(str(z_level))
+
+	# Optional: ensure it's listed in z_level_definitions
+	if not placement_data["local_map"].has("z_level_definitions"):
+		placement_data["local_map"]["z_level_definitions"] = {}
+
+	if not placement_data["local_map"]["z_level_definitions"].has(str(z_level)):
+		placement_data["local_map"]["z_level_definitions"][str(z_level)] = { "type": "predefined" }
+
+	# Optional: track explored chunk for this z
+	var current_chunk_id := chunk_key.replace("chunk_", "")
+	var explored_chunks = placement_data["local_map"].get("explored_chunks", {})
+	if not explored_chunks.has(str(z_level)):
+		explored_chunks[str(z_level)] = []
+	if current_chunk_id not in explored_chunks[str(z_level)]:
+		explored_chunks[str(z_level)].append(current_chunk_id)
+	placement_data["local_map"]["explored_chunks"] = explored_chunks
+
 
 	save_json_file(get_temp_localmap_placement_path(), placement_data)
 	print("📌 Final placement saved with updated spawn info.")
@@ -1898,6 +1752,10 @@ func get_current_chunk_id() -> String:
 	var placement := load_temp_placement()
 	return placement.get("local_map", {}).get("current_chunk_id", "chunk_1_1")
 
+func get_current_z_level() -> int:
+	var placement := load_temp_placement()
+	return placement.get("local_map", {}).get("z_level", 0)
+
 func get_chunk_blueprints() -> Dictionary:
 	var placement := load_temp_placement()
 	if not placement.has("local_map"):
@@ -1911,13 +1769,23 @@ func get_chunk_origin(chunk_id: String) -> Vector2i:
 	var bp: Dictionary = blueprints[chunk_id]
 	return Vector2i(bp["origin"][0], bp["origin"][1])
 
-func get_chunked_tile_chunk_path(chunk_id: String, key: String) -> String:
-	var folder = Constants.get_chunk_folder_for_key(key)
-	return get_save_file_path() + "localchunks/" + folder + "/chunk_tile_" + chunk_id + ".json"
+func get_chunked_tile_chunk_path(chunk_id: String, key: String, z_level: String = "") -> String:
+	if z_level == "":
+		var placement = load_temp_localmap_placement()
+		z_level = str(placement.get("local_map", {}).get("z_level", "0"))
 
-func get_chunked_object_chunk_path(chunk_id: String, key: String) -> String:
 	var folder = Constants.get_chunk_folder_for_key(key)
-	return get_save_file_path() + "localchunks/" + folder + "/chunk_object_" + chunk_id + ".json"
+	return get_save_file_path() + "localchunks/" + folder + "/z" + z_level + "/chunk_tile_" + chunk_id + ".json"
+
+
+func get_chunked_object_chunk_path(chunk_id: String, key: String, z_level: String = "") -> String:
+	if z_level == "":
+		var placement = load_temp_localmap_placement()
+		z_level = str(placement.get("local_map", {}).get("z_level", "0"))
+
+	var folder = Constants.get_chunk_folder_for_key(key)
+	return get_save_file_path() + "localchunks/" + folder + "/z" + z_level + "/chunk_object_" + chunk_id + ".json"
+
 	
 # Optional for entity + terrain mods if you plan to save those
 func get_chunked_entity_chunk_path(chunk_id: String, biome_key: String) -> String:
