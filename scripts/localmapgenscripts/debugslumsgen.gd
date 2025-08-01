@@ -179,7 +179,130 @@ func generate_chunked_map(tile_container: Node) -> Array:
 				object_layer[x].append(null)
 
 		var placed_objects = ObjectPlacer.place_objects(grid, object_layer, biome, {}, 1, chunk_key)
+		
+		# 🕳️ Inject sewer doors after object placement
+		var road_candidates: Array = []
+		var stone_candidates: Array = []
+		var min_required_dist := 28.0
+		var center := Vector2(size.x / 2, size.y / 2)
 
+		for x in range(size.x):
+			for y in range(size.y):
+				var tile_name: String = grid[x][y].get("tile", "")
+				var has_object := object_layer[x][y] != null
+				if has_object:
+					continue
+
+				if tile_name == "slum_road_floor":
+					road_candidates.append(Vector2i(x, y))
+				elif tile_name == "slum_stone_floor":
+					stone_candidates.append(Vector2i(x, y))
+
+		# Filter stone_candidates to more central zone
+		var central_stone_candidates := []
+		for candidate in stone_candidates:
+			if (
+				candidate.x > int(size.x * 0.25) and candidate.x < int(size.x * 0.75) and
+				candidate.y > int(size.y * 0.25) and candidate.y < int(size.y * 0.75)
+			):
+				central_stone_candidates.append(candidate)
+
+		if central_stone_candidates.size() > 0:
+			stone_candidates = central_stone_candidates
+
+		# Pick road sewer door
+		if road_candidates.size() > 0:
+			var pos: Vector2i = road_candidates[randi() % road_candidates.size()]
+			var id := "sewer_door_road_%d_%d" % [pos.x, pos.y]
+			var global_pos: Vector2i = pos + origin
+			var obj := {
+				"position": { "x": pos.x, "y": pos.y, "z": 0 },
+				"type": "sewer_door",
+				"texture": Constants.OBJECT_TEXTURE_KEYS["sewer_door"]
+			}
+			placed_objects[id] = obj
+			object_layer[pos.x][pos.y] = obj
+			LoadHandlerSingleton.add_egress_point({
+				"type": "sewer_door",
+				"target_z": Constants.EGRESS_TYPES["sewer_door"],
+				"position": { "x": global_pos.x, "y": global_pos.y, "z": 0 },
+				"chunk": chunk_key,
+				"biome": biome
+			})
+
+		# Sort and pick stone sewer door
+		stone_candidates.sort_custom(func(a, b):
+			return Vector2(a).distance_to(center) < Vector2(b).distance_to(center)
+		)
+
+		if stone_candidates.size() > 0 and road_candidates.size() > 0:
+			var road_pos: Vector2i = road_candidates[0]
+			var stone_pos: Vector2i = stone_candidates[0]
+			var max_dist := -1.0
+
+			for candidate in stone_candidates:
+				if object_layer[candidate.x][candidate.y] != null:
+					continue
+				var dist := Vector2(road_pos).distance_to(Vector2(candidate))
+				if dist > max_dist and dist >= min_required_dist:
+					max_dist = dist
+					stone_pos = candidate
+
+			var id := "sewer_door_stone_%d_%d" % [stone_pos.x, stone_pos.y]
+			var global_pos: Vector2i = stone_pos + origin
+			var obj := {
+				"position": { "x": stone_pos.x, "y": stone_pos.y, "z": 0 },
+				"type": "sewer_door",
+				"texture": Constants.OBJECT_TEXTURE_KEYS["sewer_door"]
+			}
+			placed_objects[id] = obj
+			object_layer[stone_pos.x][stone_pos.y] = obj
+			LoadHandlerSingleton.add_egress_point({
+				"type": "sewer_door",
+				"target_z": Constants.EGRESS_TYPES["sewer_door"],
+				"position": { "x": global_pos.x, "y": global_pos.y, "z": 0 },
+				"chunk": chunk_key,
+				"biome": biome
+			})
+
+
+		
+		# 🔍 Check TILE-based egress
+		for key in flat_tile_grid.keys():
+			var tile_data = flat_tile_grid[key]
+			var tile_name = tile_data.get("tile", "")
+			if Constants.EGRESS_TYPES.has(tile_name):
+				var parts = key.split("_")
+				if parts.size() == 2:
+					var local_x = int(parts[0])
+					var local_y = int(parts[1])
+					var global_x = origin.x + local_x
+					var global_y = origin.y + local_y
+					var target_z = Constants.EGRESS_TYPES[tile_name]
+					LoadHandlerSingleton.add_egress_point({
+						"type": tile_name,
+						"target_z": target_z,
+						"position": { "x": global_x, "y": global_y, "z": 0 },
+						"chunk": chunk_key,
+						"biome": biome
+					})
+
+		# 🔍 Check OBJECT-based egress
+		for obj_id in placed_objects.keys():
+			var obj = placed_objects[obj_id]
+			var obj_type = obj.get("type", "")
+			if Constants.EGRESS_TYPES.has(obj_type):
+				var pos = obj.get("position", {})
+				if pos.has("x") and pos.has("y"):
+					var global_pos = Vector2i(pos["x"], pos["y"]) + origin
+					var target_z = Constants.EGRESS_TYPES[obj_type]
+					LoadHandlerSingleton.add_egress_point({
+						"type": obj_type,
+						"target_z": target_z,
+						"position": { "x": global_pos.x, "y": global_pos.y, "z": 0 },
+						"chunk": chunk_key,
+						"biome": biome
+					})
 
 		# 💾 Save
 		chunked_tile_data[chunk_key] = {
@@ -194,6 +317,7 @@ func generate_chunked_map(tile_container: Node) -> Array:
 			MapRenderer.render_map({ "tile_grid": flat_tile_grid }, { "objects": object_layer }, tile_container, chunk_key)
 
 	print("✅ All slum chunks generated.")
+	print("📍 Egress points collected:", LoadHandlerSingleton.get_egress_points())
 	return [chunked_tile_data, chunked_object_data, chunk_blueprints, "vses"]
 
 

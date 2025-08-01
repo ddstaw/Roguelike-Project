@@ -105,16 +105,33 @@ func load_and_render_local_map():
 
 	# 🔍 Get entry context and chunk info
 	var entry_context = LoadHandlerSingleton.load_entry_context()
+	var placement = LoadHandlerSingleton.load_temp_localmap_placement()
 	var chunk_id = LoadHandlerSingleton.load_temp_localmap_placement().local_map.current_chunk_id
+	var biome_key = placement["local_map"].get("biome_key", "grassland_explore_fields")
+	var z_level = str(placement["local_map"].get("z_level", "0"))
 	current_chunk_id = chunk_id
 
-	print("🧩 Loading chunked local map:", chunk_id)
-
+	print("🧩 Loading chunked local map:", chunk_id, "at Z =", z_level)
 
 	# 🧱 Load tile and object chunks
-	var tile_chunk = LoadHandlerSingleton.load_chunked_tile_chunk(chunk_id)
-	var object_chunk = LoadHandlerSingleton.load_chunked_object_chunk(chunk_id)
+	var tile_path = LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_id, biome_key, z_level)
+	var object_path = LoadHandlerSingleton.get_chunked_object_chunk_path(chunk_id, biome_key, z_level)
+	
+	var tile_chunk = LoadHandlerSingleton.load_json_file(tile_path)
+	var object_chunk = LoadHandlerSingleton.load_json_file(object_path)
+	
+	# Wrap tile_chunk like load_chunked_tile_chunk does
+	if tile_chunk.has("tile_grid"):
+		tile_chunk = { "tile_grid": tile_chunk["tile_grid"] }
 
+	# Wrap object_chunk like load_chunked_object_chunk does
+	if object_chunk.has("objects"):
+		object_chunk = object_chunk
+	elif typeof(object_chunk) == TYPE_DICTIONARY:
+		object_chunk = { "objects": object_chunk }
+	else:
+		object_chunk = { "objects": {} }
+	
 	current_tile_chunk = tile_chunk
 	current_object_chunk = object_chunk
 

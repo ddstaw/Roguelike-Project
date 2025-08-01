@@ -1314,13 +1314,16 @@ func save_chunked_localmap_placement():
 
 	var biome_key: String = placement_file.local_map.get("biome_key", "gef")  # Fallback to "gef" if not set
 
-	var tile_chunk_data = load_json_file(get_chunked_tile_chunk_path(chunk_key, biome_key))
+	var z_level = int(placement_file["local_map"].get("z_level", 0))
+
+
+	var tile_chunk_data = load_json_file(get_chunked_tile_chunk_path(chunk_key, biome_key, str(z_level)))
 	if tile_chunk_data == null or not tile_chunk_data.has("tile_grid"):
 		print("❌ ERROR: Failed to load tile grid from chunk:", chunk_key)
 		return
 	var tile_chunk: Dictionary = tile_chunk_data
 
-	var object_data_raw = load_json_file(get_chunked_object_chunk_path(chunk_key, biome_key))
+	var object_data_raw = load_json_file(get_chunked_object_chunk_path(chunk_key, biome_key, str(z_level)))
 	var object_data: Dictionary = {}
 	if object_data_raw != null and typeof(object_data_raw) == TYPE_DICTIONARY:
 		object_data = object_data_raw
@@ -1369,9 +1372,6 @@ func save_chunked_localmap_placement():
 	placement_data["local_map"]["grid_position"] = { "x": global_spawn.x, "y": global_spawn.y }
 	placement_data["local_map"]["grid_position_local"] = { "x": local_spawn.x, "y": local_spawn.y }
 	
-	# Add this just before save_json_file()
-	var z_level := 0  # Or however you're determining it dynamically
-
 	# Update Z-level
 	placement_data["local_map"]["z_level"] = z_level
 
@@ -1835,8 +1835,26 @@ func reset_chunk_state():
 		var local_map = get_node("/root/LocalMap")
 		if local_map.has_method("clear_walkability"):
 			local_map.call("clear_walkability")
+	
+	reset_egress_points()
 
 func set_chunk_blueprints(bp: Dictionary) -> void:
 	_chunk_blueprints = bp
 
+var egress_points := []  # Reset each local map generation
 
+func reset_egress_points():
+	egress_points.clear()
+
+func add_egress_point(point: Dictionary):
+	# point must contain: position (Vector2i), type (e.g. "hole", "stairs_down"), and target_z (int)
+	if point.has("position") and point.has("type") and point.has("target_z"):
+		egress_points.append(point)
+	else:
+		push_error("Invalid egress point: missing keys")
+
+func get_egress_points() -> Array:
+	return egress_points
+
+func get_egress_points_for_z(target_z: int) -> Array:
+	return egress_points.filter(func(p): return p["target_z"] == target_z)

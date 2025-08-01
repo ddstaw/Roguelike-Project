@@ -42,6 +42,7 @@ const TEXTURE_STONEFLOOR := Constants.TILE_TEXTURES["stonefloor"]
 const TEXTURE_BED := Constants.TILE_TEXTURES["bed"]
 const TEXTURE_CANDLELABRA := Constants.TILE_TEXTURES["candelabra"]
 const TEXTURE_STAIRS := Constants.TILE_TEXTURES["stairs"]
+const TEXTURE_LADDER := Constants.TILE_TEXTURES["ladder"]
 const TEXTURE_WOODCHEST := Constants.TILE_TEXTURES["woodchest"]
 
 
@@ -57,6 +58,8 @@ const OBJECT_RULES = {
 	TEXTURE_TREE_3: [],
 	TEXTURE_BUSH: [],
 	TEXTURE_FLOWERS: [],
+	TEXTURE_HOLE: [],
+	TEXTURE_LADDER: [],
 	TEXTURE_STAIRS: [TEXTURE_WOODCHEST],
 }
 
@@ -170,6 +173,32 @@ func generate_chunked_map(tile_container: Node) -> Array:
 			print("🏗 Placing prefab in", chunk_key)
 			place_structure(grid, tower_prefab, size)
 
+				# Inject cave hole tile (after prefab, before object layer is created)
+		if chunk_key == "chunk_0_0":
+			var valid := []
+			for x in range(size.x):
+				for y in range(size.y):
+					if grid[x][y].get("tile", "") == "grass":
+						valid.append(Vector2i(x, y))
+
+			if valid.size() > 0:
+				var pos: Vector2i = valid[randi() % valid.size()]
+				grid[pos.x][pos.y] = {
+					"tile": "hole",
+					"state": LoadHandlerSingleton.get_tile_state_for("hole")
+				}
+				LoadHandlerSingleton.add_egress_point({
+					"type": "hole",
+					"target_z": Constants.EGRESS_TYPES["hole"],
+					"position": { "x": pos.x + origin.x, "y": pos.y + origin.y, "z": 0 },
+					"chunk": chunk_key,
+					"biome": biome
+				})
+				print("🕳️ Cave hole set at:", pos)
+			else:
+				print("⚠️ Could not place hole in", chunk_key)
+
+
 		# 🧹 Now flatten updated grid
 		var flat_tile_grid := {}
 		for x in range(size.x):
@@ -185,6 +214,43 @@ func generate_chunked_map(tile_container: Node) -> Array:
 				object_layer[x].append(null)
 
 		var placed_objects = ObjectPlacer.place_objects(grid, object_layer, biome)
+		
+		# 🔍 Check TILE-based egress
+		for key in flat_tile_grid.keys():
+			var tile_data = flat_tile_grid[key]
+			var tile_name = tile_data.get("tile", "")
+			if Constants.EGRESS_TYPES.has(tile_name):
+				var parts = key.split("_")
+				if parts.size() == 2:
+					var local_x = int(parts[0])
+					var local_y = int(parts[1])
+					var global_x = origin.x + local_x
+					var global_y = origin.y + local_y
+					var target_z = Constants.EGRESS_TYPES[tile_name]
+					LoadHandlerSingleton.add_egress_point({
+						"type": tile_name,
+						"target_z": target_z,
+						"position": { "x": global_x, "y": global_y, "z": 0 },
+						"chunk": chunk_key,
+						"biome": biome
+					})
+
+		# 🔍 Check OBJECT-based egress
+		for obj_id in placed_objects.keys():
+			var obj = placed_objects[obj_id]
+			var obj_type = obj.get("type", "")
+			if Constants.EGRESS_TYPES.has(obj_type):
+				var pos = obj.get("position", {})
+				if pos.has("x") and pos.has("y"):
+					var global_pos = Vector2i(pos["x"], pos["y"]) + origin
+					var target_z = Constants.EGRESS_TYPES[obj_type]
+					LoadHandlerSingleton.add_egress_point({
+						"type": obj_type,
+						"target_z": target_z,
+						"position": { "x": global_pos.x, "y": global_pos.y, "z": 0 },
+						"chunk": chunk_key,
+						"biome": biome
+					})
 
 		# 💾 Save
 		chunked_tile_data[chunk_key] = {
@@ -199,6 +265,7 @@ func generate_chunked_map(tile_container: Node) -> Array:
 			MapRenderer.render_map({ "tile_grid": flat_tile_grid }, { "objects": object_layer }, tile_container, chunk_key)
 
 	print("✅ All forest chunks generated.")
+	print("📍 Egress points collected:", LoadHandlerSingleton.get_egress_points())
 	return [chunked_tile_data, chunked_object_data, chunk_blueprints, "fep"]
 
 

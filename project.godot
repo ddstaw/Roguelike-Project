@@ -26,6 +26,7 @@ GeneratorDispatcher="*res://scripts/GeneratorDispatcher.gd"
 MapRenderer="*res://scripts/localmapgenscripts/MapRenderer.gd"
 ObjectPlacer="*res://scripts/localmapgenscripts/ObjectPlacer.gd"
 ChunkTools="*res://scripts/localmapscripts/ChunkTools.gd"
+ZLevelManager="*res://scripts/ZLevelManager.gd"
 
 [display]
 

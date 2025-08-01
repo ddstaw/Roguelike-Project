@@ -50,7 +50,10 @@ const TILE_TEXTURES := {
 	"slum_wood_fence": preload("res://assets/localmap-graphics/terrain/village-slums/slum_wood_fence.png"),
 	"slum_sidewalk_floor": preload("res://assets/localmap-graphics/terrain/village-slums/slum_sidewalk_floor.png"),
 	"sewer_door": preload("res://assets/localmap-graphics/objects/village-slums/sewer_door.png"),
-	"slum_road_floor": preload("res://assets/localmap-graphics/terrain/village-slums/slum_road_floor.png")
+	"slum_road_floor": preload("res://assets/localmap-graphics/terrain/village-slums/slum_road_floor.png"),
+	"caverock": preload("res://assets/localmap-graphics/caverock.png"),
+	"cavewallbottom": preload("res://assets/localmap-graphics/cavewallbottom.png"),
+	"cavewallside": preload("res://assets/localmap-graphics/cavewallside.png")
 	
 }
 
@@ -104,7 +107,10 @@ const TEXTURE_TO_NAME := {
 	TILE_TEXTURES["slum_sidewalk_floor"]: "slum_sidewalk_floor",
 	TILE_TEXTURES["slum_road_floor"]: "slum_road_floor",
 	TILE_TEXTURES["sewer_door"]: "sewer_door",
-	TILE_TEXTURES["candelabra_lit"]: "candelabra_lit"
+	TILE_TEXTURES["candelabra_lit"]: "candelabra_lit",
+	TILE_TEXTURES["caverock"]: "caverock",
+	TILE_TEXTURES["cavewallbottom"]: "cavewallbottom",
+	TILE_TEXTURES["cavewallside"]: "cavewallside"
 }
 
 const TRANSITION_TEXTURES := {
@@ -122,6 +128,15 @@ const DOOR_PAIRS := {
 	"slum_brick_door_open": "slum_brick_door"
 }
 
+const EGRESS_TYPES := {
+	"stairs": -1,
+	"hole": -2,
+	"sewer_door": -2,
+	"ladder": 1,
+	"slum_brick_floor_stairs_down": -1,
+	"slum_brick_floor_stairs_up": 1
+}
+
 static func is_door(tile_type: String) -> bool:
 	return DOOR_PAIRS.has(tile_type)
 
@@ -130,10 +145,12 @@ const OBJECT_TEXTURE_KEYS := {
 	"bed": "bed",
 	"candelabra": "candelabra",
 	"woodchest": "woodchest",
+	"ladder": "ladder",
 	"stairs": "stairs",
 	"sewer_door": "sewer_door",
 	"slum_streetlamp": "slum_streetlamp",
 	"slum_trash": "slum_trash",
+	"hole": "hole",
 	"mount": null
 	# Add more here over time
 }
@@ -300,4 +317,11 @@ static func get_biome_folder_from_key(key: String) -> String:
 		"fep": return "forest_explore_path"
 		"vses": return "village_slums_explore_slumblock"
 		_: return "grassland_explore_fields"
+
+static func get_chunk_key_from_folder(folder: String) -> String:
+	match folder:
+		"grassland_explore_fields": return "gef"
+		"forest_explore_path": return "fep"
+		"village_slums_explore_slumblock": return "vses"
+		_: return "gef"  # fallback
 

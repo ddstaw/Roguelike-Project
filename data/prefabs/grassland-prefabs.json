@@ -99,6 +99,56 @@
 		"L": "res://assets/localmap-graphics/ladder.png",
 		"G": "res://assets/localmap-graphics/grass.png"
 	  }
-	}
+	},
+	{
+	  "name": "stone_tower_cellar_1",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"WBBBBBBBBBW",
+		"WFFFFFFFFFW",
+		"WFFFFFFFFFW",
+		"WFFFFFFFFFW",
+		"WFFFFFFFFFW",
+		"WFFFFFFFFFW",
+		"WFFFFFFFFFW",
+		"WFFFFFFFFFW",
+		"BBBBBBBBBBB"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"S": "res://assets/localmap-graphics/stairs.png",
+		"L": "res://assets/localmap-graphics/ladder.png",
+		"G": "res://assets/localmap-graphics/grass.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_cellar_2",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"WBBBBBBWGG",
+		"WFFFFFFWGG",
+		"WFFFFFFWGG",
+		"WFFFFFFWGG",
+		"WFFFFFFBBWG",
+		"WFFFFFFFFWG",
+		"WFFFFFFFFWG",
+		"WFFFFFFFFWG",
+		"BBBBBBBBBBG"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"S": "res://assets/localmap-graphics/stairs.png",
+		"L": "res://assets/localmap-graphics/ladder.png",
+		"G": "res://assets/localmap-graphics/grass.png"
+	  }
+	},
   ]
 }
