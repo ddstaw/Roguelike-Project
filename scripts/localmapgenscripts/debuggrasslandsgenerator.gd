@@ -100,11 +100,13 @@ func _on_tile_container_ready(container):
 	print("✅ Signal received. Starting chunk-based map generation...")
 	await generate_chunked_map(container)
 
-
 func generate_chunked_map(tile_container: Node) -> Array:
 	print("🌿 Starting chunk-based DebugGrasslandGenerator.generate_chunked_map()...")
 
 	# 🔄 STEP 0: Reset any lingering state from previous generation
+	LoadHandlerSingleton.clear_egress_register_for_biome("grass")
+	LoadHandlerSingleton.clear_prefab_register_for_biome("grass")
+	
 	if LoadHandlerSingleton.has_method("reset_chunk_state"):
 		LoadHandlerSingleton.reset_chunk_state()
 
@@ -119,7 +121,8 @@ func generate_chunked_map(tile_container: Node) -> Array:
 	var chunked_tile_data := {}
 	var chunked_object_data := {}
 	var chunk_blueprints := {}
-
+	var placed_structure_map := {}
+	
 	const CHUNK_SIZE = Vector2i(40, 40)
 
 	# 🧱 STEP 1: Define blueprint structure (uniform for grasslands)
@@ -148,16 +151,23 @@ func generate_chunked_map(tile_container: Node) -> Array:
 		print("🛤️ Path enabled → global path Y:", path_seed_y)
 
 	# 🏰 STEP 3: Load prefabs
+	var biome_key_short = Constants.get_biome_chunk_key(biome)
 	var tower_prefab := {}
-	var prefabs = load_prefab_data()
-	if prefabs.size() > 0:
-		var tower_variants := []
-		for p in prefabs:
-			if p.has("name") and p["name"].begins_with("stone_tower_variant_"):
-				tower_variants.append(p)
-		if tower_variants.size() > 0:
-			tower_prefab = tower_variants[randi() % tower_variants.size()]
-			print("🏰 Chosen prefab:", tower_prefab["name"])
+	var prefab_group := {}
+	var prefab_name_map := {}
+	var prefab_variants := []
+
+	var prefab_data_result = LoadHandlerSingleton.load_prefab_data(biome_key_short)
+	if prefab_data_result.size() == 2:
+		prefab_variants = prefab_data_result[0]
+		prefab_name_map = prefab_data_result[1]
+
+	if prefab_variants.size() > 0:
+		prefab_group = prefab_variants[randi() % prefab_variants.size()]
+		var floor_blueprint_name = prefab_group.get("floors", {}).get("0", "")
+		if floor_blueprint_name != "" and prefab_name_map.has(floor_blueprint_name):
+			tower_prefab = prefab_name_map[floor_blueprint_name]
+			print("🏰 Chosen prefab:", prefab_group["name"], "→ floor 0:", floor_blueprint_name)
 
 	# 🧠 STEP 4: Generate each chunk
 	for chunk_key in chunk_blueprints.keys():
@@ -167,14 +177,24 @@ func generate_chunked_map(tile_container: Node) -> Array:
 
 		print("🧱 Generating", chunk_key, "at origin", origin, "size:", size)
 
-		# ✅ STEP 4.1: Generate basic grid
 		var result = generate_chunk(origin, size, chunk_key)
 		var grid = result["grid"]
 
 		# 🏗️ STEP 4.2: Place prefab BEFORE flattening
 		if chunk_key == "chunk_1_1" and tower_prefab != null:
 			print("🏗 Placing prefab in", chunk_key)
-			place_structure(grid, tower_prefab, size)
+			var placed_at := place_structure(grid, tower_prefab, size)
+			placed_structure_map[chunk_key] = prefab_group["name"]
+
+			if placed_at != Vector2i(-1, -1):
+				var global_coords := placed_at + origin
+				LoadHandlerSingleton.register_prefab_data_for_chunk(
+					"grassland_explore_fields",
+					chunk_key,
+					prefab_group["name"],
+					global_coords,
+					0
+				)
 
 		# Inject cave hole tile (after prefab, before object layer is created)
 		if chunk_key == "chunk_1_1":
@@ -190,26 +210,33 @@ func generate_chunked_map(tile_container: Node) -> Array:
 					"tile": "hole",
 					"state": LoadHandlerSingleton.get_tile_state_for("hole")
 				}
-				LoadHandlerSingleton.add_egress_point({
+
+				var global_x = pos.x + origin.x
+				var global_y = pos.y + origin.y
+				var target_z = Constants.EGRESS_TYPES["hole"]
+
+				var egress = {
 					"type": "hole",
-					"target_z": Constants.EGRESS_TYPES["hole"],
-					"position": { "x": pos.x + origin.x, "y": pos.y + origin.y, "z": 0 },
+					"target_z": target_z,
+					"position": { "x": global_x, "y": global_y, "z": 0 },
 					"chunk": chunk_key,
 					"biome": biome
-				})
+				}
+
+				LoadHandlerSingleton.add_egress_point(egress)
+				LoadHandlerSingleton.register_egress_point(egress)
 				print("🕳️ Cave hole set at:", pos)
 			else:
 				print("⚠️ Could not place hole in", chunk_key)
 
-
-		# 🧹 STEP 4.3: NOW flatten grid after prefab placement
+		# 🧹 STEP 4.3: Flatten grid
 		var flat_tile_grid := {}
 		for x in range(size.x):
 			for y in range(size.y):
 				var key := "%d_%d" % [x, y]
 				flat_tile_grid[key] = grid[x][y]
 
-		# 🪑 STEP 4.4: Build object layer after prefab has modified tiles
+		# 🪑 STEP 4.4: Build object layer
 		var object_layer := []
 		for x in range(size.x):
 			object_layer.append([])
@@ -218,7 +245,7 @@ func generate_chunked_map(tile_container: Node) -> Array:
 
 		var placed_objects = ObjectPlacer.place_objects(grid, object_layer, biome)
 
-		# 🔍 Check TILE-based egress
+		# 🔍 TILE-based egress
 		for key in flat_tile_grid.keys():
 			var tile_data = flat_tile_grid[key]
 			var tile_name = tile_data.get("tile", "")
@@ -238,7 +265,7 @@ func generate_chunked_map(tile_container: Node) -> Array:
 						"biome": biome
 					})
 
-		# 🔍 Check OBJECT-based egress
+		# 🔍 OBJECT-based egress
 		for obj_id in placed_objects.keys():
 			var obj = placed_objects[obj_id]
 			var obj_type = obj.get("type", "")
@@ -255,7 +282,6 @@ func generate_chunked_map(tile_container: Node) -> Array:
 						"biome": biome
 					})
 
-		# 🗂️ STEP 4.5: Save chunk data
 		chunked_tile_data[chunk_key] = {
 			"chunk_coords": chunk_key.replace("chunk_", ""),
 			"chunk_origin": { "x": origin.x, "y": origin.y },
@@ -263,7 +289,6 @@ func generate_chunked_map(tile_container: Node) -> Array:
 		}
 		chunked_object_data[chunk_key] = placed_objects
 
-		# 🖼️ STEP 4.6: Render only center chunk
 		if chunk_key == "chunk_1_1" and tile_container != null and is_instance_valid(tile_container):
 			MapRenderer.render_map({ "tile_grid": flat_tile_grid }, { "objects": object_layer }, tile_container, chunk_key)
 
@@ -372,24 +397,7 @@ func generate_chunk(origin: Vector2i, size: Vector2i, chunk_key: String) -> Dict
 	}
 
 
-func load_prefab_data():
-	var path = "res://data/prefabs/grassland-prefabs.json"
-	if not FileAccess.file_exists(path):
-		print("❌ ERROR: Structure prefab file not found!")
-		return []
-
-	var file = FileAccess.open(path, FileAccess.READ)
-	var text = file.get_as_text()
-	file.close()
-
-	var parsed = JSON.parse_string(text)
-	if parsed == null or not parsed.has("prefabs"):
-		print("❌ ERROR: Structure prefab file failed to parse.")
-		return []
-	print("📦 Prefab data loaded:", parsed["prefabs"].size())
-	return parsed["prefabs"]
-
-func place_structure(grid: Array, prefab: Dictionary, chunk_size: Vector2i) -> void:
+func place_structure(grid: Array, prefab: Dictionary, chunk_size: Vector2i) -> Vector2i:
 	print("🏗 ENTERED place_structure() for:", prefab["name"])
 
 	var structure_width: int = prefab["width"]
@@ -464,10 +472,21 @@ func place_structure(grid: Array, prefab: Dictionary, chunk_size: Vector2i) -> v
 							"state": LoadHandlerSingleton.get_tile_state_for(tile_name)
 						}
 
+						# 🧭 Register prefab-based egress points (like stairs)
+						if Constants.EGRESS_TYPES.has(tile_name):
+							var global_pos = Vector3(gx, gy, 0)
+							LoadHandlerSingleton.register_egress_point({
+								"type": tile_name,
+								"target_z": Constants.EGRESS_TYPES[tile_name],
+								"position": { "x": global_pos.x, "y": global_pos.y, "z": global_pos.z },
+								"chunk": "chunk_1_1",
+								"biome": "grass"
+							})
+
 				structure_placed = true
-				break
+				return Vector2i(x, y)  # ✅ Return the top-left coords
 		if structure_placed:
 			break
 
-	if not structure_placed:
-		print("❌ Could not place prefab anywhere — even brute force failed.")
+	print("❌ Could not place prefab anywhere — even brute force failed.")
+	return Vector2i(-1, -1)  # ❌ Signal that nothing was placed

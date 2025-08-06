@@ -1,6 +1,36 @@
 {
   "prefabs": [
 	{
+	  "name": "stone_tower_1",
+	  "floors": {
+		"0": "stone_tower_variant_1",
+		"-1": "stone_tower_cellar_1"
+	  }
+	},
+	{
+	  "name": "stone_tower_2",
+	  "floors": {
+		"0": "stone_tower_variant_2",
+		"-1": "stone_tower_cellar_2"
+	  }
+	},
+	{
+	  "name": "stone_tower_3",
+	  "floors": {
+		"0": "stone_tower_variant_3",
+		"-1": "stone_tower_cellar_3"
+	  }
+	},
+	{
+	  "name": "stone_tower_4",
+	  "floors": {
+		"0": "stone_tower_variant_4",
+		"-1": "stone_tower_cellar_4"
+	  }
+	}
+  ],
+  "blueprints": [
+	{
 	  "name": "stone_tower_variant_1",
 	  "width": 11,
 	  "height": 9,
@@ -20,8 +50,8 @@
 		"B": "res://assets/localmap-graphics/stonewallbottom.png",
 		"F": "res://assets/localmap-graphics/stonefloor.png",
 		"D": "res://assets/localmap-graphics/stonedoor.png",
-		"S": "res://assets/localmap-graphics/stairs.png",
-		"L": "res://assets/localmap-graphics/ladder.png",
+		"S": "res://assets/localmap-graphics/stonefloor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/stonefloor_stairs_up.png",
 		"G": "res://assets/localmap-graphics/grass.png"
 	  }
 	},
@@ -45,8 +75,8 @@
 		"B": "res://assets/localmap-graphics/stonewallbottom.png",
 		"F": "res://assets/localmap-graphics/stonefloor.png",
 		"D": "res://assets/localmap-graphics/stonedoor.png",
-		"S": "res://assets/localmap-graphics/stairs.png",
-		"L": "res://assets/localmap-graphics/ladder.png",
+		"S": "res://assets/localmap-graphics/stonefloor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/stonefloor_stairs_up.png",
 		"G": "res://assets/localmap-graphics/grass.png"
 	  }
 	},
@@ -70,8 +100,8 @@
 		"B": "res://assets/localmap-graphics/stonewallbottom.png",
 		"F": "res://assets/localmap-graphics/stonefloor.png",
 		"D": "res://assets/localmap-graphics/stonedoor.png",
-		"S": "res://assets/localmap-graphics/stairs.png",
-		"L": "res://assets/localmap-graphics/ladder.png",
+		"S": "res://assets/localmap-graphics/stonefloor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/stonefloor_stairs_up.png",
 		"G": "res://assets/localmap-graphics/grass.png"
 	  }
 	},
@@ -95,8 +125,8 @@
 		"B": "res://assets/localmap-graphics/stonewallbottom.png",
 		"F": "res://assets/localmap-graphics/stonefloor.png",
 		"D": "res://assets/localmap-graphics/stonedoor.png",
-		"S": "res://assets/localmap-graphics/stairs.png",
-		"L": "res://assets/localmap-graphics/ladder.png",
+		"S": "res://assets/localmap-graphics/stonefloor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/stonefloor_stairs_up.png",
 		"G": "res://assets/localmap-graphics/grass.png"
 	  }
 	},
@@ -105,12 +135,90 @@
 	  "width": 11,
 	  "height": 9,
 	  "tiles": [
+		"AAWBBDBBWAA",
+		"AWBFFFFFBWA",
+		"WBFFFFFFFBW",
+		"WFFFFLFFFFW",
+		"WFFFFFFFFFW",
+		"WFFFFFFFFFW",
+		"BWFFFFFFFWB",
+		"ABBBBBBBBBA",
+		"AAAAAAAAAAA"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"S": "res://assets/localmap-graphics/stonefloor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/stonefloor_stairs_up.png",
+		"A": "res://assets/localmap-graphics/cavewallside.png",
+		"G": "res://assets/localmap-graphics/grass.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_cellar_2",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"WBBBBBBBBW",
+		"WFFFFFFFFW",
+		"WFFFFFFFFW",
+		"WFFFFFFFFW",
+		"WFFFLFFFFW",
+		"WFFFFFFFFW",
+		"WFFFFFFFFW",
+		"WFFFFFFFFW",
+		"BBBBBBBBBB"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"S": "res://assets/localmap-graphics/stonefloor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/stonefloor_stairs_up.png",
+		"A": "res://assets/localmap-graphics/cavewallside.png",
+		"G": "res://assets/localmap-graphics/grass.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_cellar_3",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"WBBBBBBWAA",
+		"WFFFFFFWAA",
+		"WFFLFFFWAA",
+		"WFFFFFFWAA",
+		"WFFFFFFBBWA",
+		"WFFFFFFFFWA",
+		"WFFFFFFFFWA",
+		"WFFFFFFFFWA",
+		"BBBBBBBBBBA"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"S": "res://assets/localmap-graphics/stonefloor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/stonefloor_stairs_up.png",
+		"A": "res://assets/localmap-graphics/cavewallside.png",
+		"G": "res://assets/localmap-graphics/grass.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_cellar_4",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
 		"WBBBBBBBBBW",
 		"WFFFFFFFFFW",
 		"WFFFFFFFFFW",
-		"WFFFFFFFFFW",
-		"WFFFFFFFFFW",
-		"WFFFFFFFFFW",
+		"WFFFFFFFFWB",
+		"WFFFFLFFFWA",
+		"WFFFFFFFFBW",
 		"WFFFFFFFFFW",
 		"WFFFFFFFFFW",
 		"BBBBBBBBBBB"
@@ -120,35 +228,11 @@
 		"B": "res://assets/localmap-graphics/stonewallbottom.png",
 		"F": "res://assets/localmap-graphics/stonefloor.png",
 		"D": "res://assets/localmap-graphics/stonedoor.png",
-		"S": "res://assets/localmap-graphics/stairs.png",
-		"L": "res://assets/localmap-graphics/ladder.png",
+		"S": "res://assets/localmap-graphics/stonefloor_stairs_down.png",
+		"L": "res://assets/localmap-graphics/stonefloor_stairs_up.png",
+		"A": "res://assets/localmap-graphics/cavewallside.png",
 		"G": "res://assets/localmap-graphics/grass.png"
 	  }
-	},
-	{
-	  "name": "stone_tower_cellar_2",
-	  "width": 11,
-	  "height": 9,
-	  "tiles": [
-		"WBBBBBBWGG",
-		"WFFFFFFWGG",
-		"WFFFFFFWGG",
-		"WFFFFFFWGG",
-		"WFFFFFFBBWG",
-		"WFFFFFFFFWG",
-		"WFFFFFFFFWG",
-		"WFFFFFFFFWG",
-		"BBBBBBBBBBG"
-	  ],
-	  "legend": {
-		"W": "res://assets/localmap-graphics/stonewallside.png",
-		"B": "res://assets/localmap-graphics/stonewallbottom.png",
-		"F": "res://assets/localmap-graphics/stonefloor.png",
-		"D": "res://assets/localmap-graphics/stonedoor.png",
-		"S": "res://assets/localmap-graphics/stairs.png",
-		"L": "res://assets/localmap-graphics/ladder.png",
-		"G": "res://assets/localmap-graphics/grass.png"
-	  }
-	},
+	}
   ]
 }

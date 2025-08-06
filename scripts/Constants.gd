@@ -18,6 +18,9 @@ const TILE_TEXTURES := {
 	"bed": preload("res://assets/localmap-graphics/bed.png"),
 	"candelabra": preload("res://assets/localmap-graphics/candlelabra.png"),
 	"stairs": preload("res://assets/localmap-graphics/stairs.png"),
+	"stone_stairs_up": preload("res://assets/localmap-graphics/stonefloor_stairs_up.png"),
+	"stone_stairs_down": preload("res://assets/localmap-graphics/stonefloor_stairs_down.png"),
+	"stonefloor_hole": preload("res://assets/localmap-graphics/stonefloor_hole.png"),
 	"woodchest": preload("res://assets/localmap-graphics/woodchest.png"),
 	"stonewallside": preload("res://assets/localmap-graphics/stonewallside.png"),
 	"stonewallsidewindow": preload("res://assets/localmap-graphics/stonewallsidewindow.png"),
@@ -82,6 +85,9 @@ const TEXTURE_TO_NAME := {
 	TILE_TEXTURES["stonewallbottomwindow"]: "stonewallbottomwindow",
 	TILE_TEXTURES["stonewallsidewindow"]: "stonewallsidewindow",
 	TILE_TEXTURES["ladder"]: "ladder",
+	TILE_TEXTURES["stone_stairs_up"]: "stone_stairs_up",
+	TILE_TEXTURES["stone_stairs_down"]: "stone_stairs_down",
+	TILE_TEXTURES["stonefloor_hole"]: "stonefloor_hole",
 	TILE_TEXTURES["stonedoor"]: "stonedoor",
 	TILE_TEXTURES["stonewallbottomwindow_broken"]: "stonewallbottomwindow_broken",
 	TILE_TEXTURES["stonewallbottomwindow_curtains"]: "stonewallbottomwindow_curtains",
@@ -134,7 +140,20 @@ const EGRESS_TYPES := {
 	"sewer_door": -2,
 	"ladder": 1,
 	"slum_brick_floor_stairs_down": -1,
+	"stone_stairs_up": 1,
+	"stone_stairs_down": -1,
 	"slum_brick_floor_stairs_up": 1
+}
+
+static var REVERSE_EGRESS_TYPES = {
+	"hole": "ladder",   # Assume hole goes down to z-2, reverse is ladder going up
+	"stone_stairs_down": "stone_stairs_up", # Stairs go both ways, same symbol
+	"stone_stairs_up": "stone_stairs_down", # Stairs go both ways, same symbol
+	"slum_brick_floor_stairs_down": "slum_brick_floor_stairs_up", # Stairs go both ways, same symbol
+	"slum_brick_floor_stairs_up": "slum_brick_floor_stairs_down", # Stairs go both ways, same symbol
+	"sewer_door": "ladder", # Stairs go both ways, same symbol
+	"stonefloor_hole": "ladder", # Stairs go both ways, same symbol
+	"ladder": "ladder"    # ladder to ladder 
 }
 
 static func is_door(tile_type: String) -> bool:
@@ -325,3 +344,27 @@ static func get_chunk_key_from_folder(folder: String) -> String:
 		"village_slums_explore_slumblock": return "vses"
 		_: return "gef"  # fallback
 
+static var BIOME_CONFIGS = {
+	"gef": {
+		"folder": "grassland_explore_fields",
+		"chunk_size": Vector2i(40, 40),
+		"grid_size": Vector2i(3, 3)
+	},
+	"fep": {
+		"folder": "forest_explore_path",
+		"chunk_size": Vector2i(32, 32),
+		"grid_size": Vector2i(2, 2)
+	},
+	"vses": {
+		"folder": "village_slums_explore_slumblock",
+		"chunk_size": Vector2i(48, 48),
+		"grid_size": Vector2i(4, 3)
+	}
+}
+
+static func get_biome_config(short_key: String) -> Dictionary:
+	return BIOME_CONFIGS.get(short_key, {
+		"folder": "default_chunk_folder",
+		"chunk_size": Vector2i(40, 40),
+		"grid_size": Vector2i(1, 1)
+	})

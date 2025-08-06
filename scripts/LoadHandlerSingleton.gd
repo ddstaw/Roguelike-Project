@@ -4,6 +4,8 @@ var current_chunk_id: String = ""
 var current_chunk_coords: Vector2i = Vector2i.ZERO
 var loaded_tile_chunks := {}
 var loaded_object_chunks := {}
+static var _chunk_structure_map: Dictionary = {}
+
 
 const Consts = preload("res://scripts/Constants.gd")
 
@@ -1858,3 +1860,185 @@ func get_egress_points() -> Array:
 
 func get_egress_points_for_z(target_z: int) -> Array:
 	return egress_points.filter(func(p): return p["target_z"] == target_z)
+
+static func get_egress_register_path(biome_folder: String) -> String:
+	return "user://saves/save1/localchunks/%s/egress_register.json" % biome_folder
+
+static func save_egress_register(biome_folder: String, egress_data: Dictionary) -> void:
+	var path = get_egress_register_path(biome_folder)
+	LoadHandlerSingleton.save_json_file(path, egress_data)
+
+static func load_egress_register(biome_folder: String) -> Dictionary:
+	var path = get_egress_register_path(biome_folder)
+	var data = LoadHandlerSingleton.load_json_file(path)
+	if typeof(data) == TYPE_DICTIONARY:
+		return data
+	print("⚠️ No egress register found or invalid format at:", path)
+	return {}
+
+static func load_prefab_data(biome_key: String = "gef") -> Array:
+	var prefab_path = get_prefab_json_path_for_biome(biome_key)
+	var instance = LoadHandlerSingleton  # reference to autoload singleton instance
+	var json = instance.load_json_file(prefab_path)
+
+	if json and json.has("prefabs") and json.has("blueprints"):
+		return [json["prefabs"], get_blueprint_map(json["blueprints"])]
+	else:
+		print("⚠️ Failed to load prefab data from:", prefab_path)
+		return []
+
+static func get_blueprint_map(blueprints: Array) -> Dictionary:
+	var result := {}
+	for blueprint in blueprints:
+		if blueprint.has("name"):
+			result[blueprint["name"]] = blueprint
+	return result
+
+static func register_egress_point(egress: Dictionary) -> void:
+	var biome_key := Constants.get_biome_chunk_key(egress["biome"])
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var current: Dictionary = LoadHandlerSingleton.load_egress_register(biome_folder)
+
+	var z: int = int(egress["position"].get("z", 0))
+	var chunk: String = str(egress["chunk"])
+	var chunk_key := "%s|z%d" % [chunk, z]
+
+	if not current.has(chunk_key):
+		current[chunk_key] = []
+
+	current[chunk_key].append(egress)
+
+	# 🪜 Generate reverse egress if applicable
+	if Constants.REVERSE_EGRESS_TYPES.has(egress["type"]):
+		var reverse_type = Constants.REVERSE_EGRESS_TYPES[egress["type"]]
+		var reverse_z = egress["target_z"]  # Corrected!
+		var reverse_target_z = z  # This points back to the origin
+
+		var reverse_chunk_key := "%s|z%d" % [chunk, reverse_z]
+
+		var reverse_egress = {
+			"type": reverse_type,
+			"target_z": reverse_target_z,
+			"position": {
+				"x": egress["position"]["x"],
+				"y": egress["position"]["y"],
+				"z": reverse_z
+			},
+			"chunk": chunk,
+			"biome": egress["biome"]
+		}
+
+		if not current.has(reverse_chunk_key):
+			current[reverse_chunk_key] = []
+
+		current[reverse_chunk_key].append(reverse_egress)
+
+	# 💾 Save updated egress register
+	LoadHandlerSingleton.save_egress_register(biome_folder, current)
+
+static func get_prefab_json_path_for_biome(biome_key_short: String) -> String:
+	match biome_key_short:
+		"gef":
+			return "res://data/prefabs/grassland-prefabs.json"
+		"vses":
+			return "res://data/prefabs/village-slums-prefabs.json"
+		# Add more as needed
+		_:
+			print("⚠️ No prefab path mapped for biome:", biome_key_short)
+			return ""
+
+static func set_chunk_structure_map(map_data: Dictionary) -> void:
+	_chunk_structure_map = map_data
+
+static func get_chunk_structure_map() -> Dictionary:
+	return _chunk_structure_map if _chunk_structure_map != null else {}
+
+static func clear_egress_register_for_biome(biome: String) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path = LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/egress_register.json" % biome_folder
+
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify({}, "\t"))  # Overwrite with empty dict
+		file.close()
+		print("🧹 Cleared egress_register for biome folder:", biome_folder)
+	else:
+		print("⚠️ Failed to open egress register file for clearing:", path)
+
+static func clear_prefab_register_for_biome(biome: String) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path = LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/prefab_register.json" % biome_folder
+
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify({}, "\t"))  # Overwrite with empty dict
+		file.close()
+		print("🧹 Cleared prefab_register for biome folder:", biome_folder)
+	else:
+		print("⚠️ Failed to open prefab register file for clearing:", path)
+
+static func register_prefab_data_for_chunk(biome_folder: String, chunk_key: String, prefab_id: String, coords: Vector2i, z_level: int = 0) -> void:
+	var current := load_prefab_register(biome_folder)
+	current[chunk_key] = {
+		"prefab_id": prefab_id,
+		"coords": { "x": coords.x, "y": coords.y },
+		"z_level": z_level
+	}
+	save_prefab_register(biome_folder, current)
+	
+static func save_prefab_register(biome_folder: String, data: Dictionary) -> void:
+	var path := LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/prefab_register.json" % biome_folder
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(data, "\t"))
+		file.close()
+		print("💾 Saved prefab_register for:", biome_folder)		
+
+	else:
+		print("⚠️ Failed to save prefab_register at:", path)
+
+static func load_prefab_register(biome_folder: String) -> Dictionary:
+	var path := LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/prefab_register.json" % biome_folder
+	print("🔍 Loading prefab_register from:", path)  # <-- Add this here
+	if FileAccess.file_exists(path):
+		var file := FileAccess.open(path, FileAccess.READ)
+		if file:
+			var content = file.get_as_text()
+			file.close()
+			var json = JSON.parse_string(content)
+			if typeof(json) == TYPE_DICTIONARY:
+				return json
+			else:
+				print("⚠️ Invalid JSON in prefab_register at:", path)
+	return {}
+
+static func get_blueprint_from_register_entry(prefab_entry: Dictionary, biome_key_short: String) -> Dictionary:
+	if not prefab_entry.has("prefab_id"):
+		print("⚠️ Prefab entry missing 'prefab_id':", prefab_entry)
+		return {}
+
+	var prefab_id = prefab_entry["prefab_id"]
+	var z_level = str(prefab_entry.get("z_level", "-1"))  # Default to -1 if not provided
+
+	var prefab_data = load_prefab_data(biome_key_short)
+	if prefab_data.size() != 2:
+		print("⚠️ Invalid prefab data structure for biome:", biome_key_short)
+		return {}
+
+	var all_prefabs = prefab_data[0]
+	var all_blueprints = prefab_data[1]
+
+	for prefab in all_prefabs:
+		if prefab.get("name", "") == prefab_id:
+			var blueprint_name = prefab.get("floors", {}).get(z_level, "")
+			if blueprint_name != "" and all_blueprints.has(blueprint_name):
+				print("📦 Blueprint found for prefab:", prefab_id, "Z:", z_level, "→", blueprint_name)
+				return all_blueprints[blueprint_name]
+			else:
+				print("⚠️ No blueprint found for", prefab_id, "at Z:", z_level)
+				return {}
+
+	print("⚠️ No matching prefab_id in list:", prefab_id)
+	return {}
