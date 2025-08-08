@@ -42,7 +42,8 @@ const TEXTURE_STONEFLOOR := Constants.TILE_TEXTURES["stonefloor"]
 const TEXTURE_BED := Constants.TILE_TEXTURES["bed"]
 const TEXTURE_CANDLELABRA := Constants.TILE_TEXTURES["candelabra"]
 const TEXTURE_STAIRS := Constants.TILE_TEXTURES["stairs"]
-const TEXTURE_LADDER := Constants.TILE_TEXTURES["ladder"]
+const TEXTURE_SHORT_LADDER := Constants.TILE_TEXTURES["short_ladder"]
+const TEXTURE_LONG_LADDER := Constants.TILE_TEXTURES["long_ladder"]
 const TEXTURE_WOODCHEST := Constants.TILE_TEXTURES["woodchest"]
 
 
@@ -59,7 +60,8 @@ const OBJECT_RULES = {
 	TEXTURE_BUSH: [],
 	TEXTURE_FLOWERS: [],
 	TEXTURE_HOLE: [],
-	TEXTURE_LADDER: [],
+	TEXTURE_SHORT_LADDER: [],
+	TEXTURE_LONG_LADDER: [],
 	TEXTURE_STAIRS: [TEXTURE_WOODCHEST],
 }
 

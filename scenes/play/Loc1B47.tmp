@@ -108,11 +108,6 @@ z_index = 6
 layout_mode = 2
 text = "World Map"
 
-[node name="WorldMap2" type="Button" parent="UILayer/DebugUI"]
-z_index = 6
-layout_mode = 2
-text = "World Map"
-
 [node name="ToggleFreePan" type="Button" parent="UILayer/DebugUI"]
 layout_mode = 2
 text = "Toggle Free Pan"

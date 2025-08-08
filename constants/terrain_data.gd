@@ -140,7 +140,13 @@ const TERRAIN_PROPERTIES := {
 		"buildable": true,
 		"blocks_movement": true
 	},
-	"ladder": {
+	"short_ladder": {
+		"blocks_vision": false,
+		"stairs_enter_up": true,
+		"buildable": true,
+		"blocks_movement": false
+	},
+	"long_ladder": {
 		"blocks_vision": false,
 		"stairs_enter_up": true,
 		"buildable": true,
@@ -246,6 +252,12 @@ const TERRAIN_PROPERTIES := {
 		"buildable": true,
 		"blocks_movement": false
 	},	
+	"stonefloor_hole": {
+		"blocks_vision": false,
+		"stairs_enter_down": true,
+		"buildable": true,
+		"blocks_movement": false
+	},	
 	"slum_wood_fence": {
 		"blocks_vision": true,
 		"wood_destroy": true,
@@ -253,6 +265,21 @@ const TERRAIN_PROPERTIES := {
 		"indoor_wall": true,
 		"buildable": true,
 		"blocks_movement": true
+	},
+	"cavewallbottom": {
+		"blocks_vision": true,
+		"stone_destroy": true,
+		"destroy_to": "dirt",
+		"indoor_wall": true,
+		"buildable": true,
+		"blocks_movement": true
+	},
+	"cavewallside": {
+		"blocks_vision": true,
+		"stone_destroy": true,
+		"destroy_to": "dirt",
+		"indoor_wall": true,
+		"buildable": true,
+		"blocks_movement": true
 	}
-	
 }

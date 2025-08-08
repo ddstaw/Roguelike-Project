@@ -25,7 +25,8 @@ const TILE_TEXTURES := {
 	"stonewallside": preload("res://assets/localmap-graphics/stonewallside.png"),
 	"stonewallsidewindow": preload("res://assets/localmap-graphics/stonewallsidewindow.png"),
 	"stonewallbottom": preload("res://assets/localmap-graphics/stonewallbottom.png"),
-	"ladder": preload("res://assets/localmap-graphics/ladder.png"),
+	"short_ladder": preload("res://assets/localmap-graphics/short_ladder.png"),
+	"long_ladder": preload("res://assets/localmap-graphics/long_ladder.png"),
 	"stonedoor": preload("res://assets/localmap-graphics/stonedoor.png"),
 	"stonedoor_open": preload("res://assets/localmap-graphics/stonedoor_open.png"),
 	"stonewallbottomwindow": preload("res://assets/localmap-graphics/stonewallbottomwindow.png"),
@@ -84,7 +85,8 @@ const TEXTURE_TO_NAME := {
 	TILE_TEXTURES["stonedoor_open"]: "stonedoor_open",
 	TILE_TEXTURES["stonewallbottomwindow"]: "stonewallbottomwindow",
 	TILE_TEXTURES["stonewallsidewindow"]: "stonewallsidewindow",
-	TILE_TEXTURES["ladder"]: "ladder",
+	TILE_TEXTURES["short_ladder"]: "short_ladder",
+	TILE_TEXTURES["long_ladder"]: "long_ladder",
 	TILE_TEXTURES["stone_stairs_up"]: "stone_stairs_up",
 	TILE_TEXTURES["stone_stairs_down"]: "stone_stairs_down",
 	TILE_TEXTURES["stonefloor_hole"]: "stonefloor_hole",
@@ -138,22 +140,27 @@ const EGRESS_TYPES := {
 	"stairs": -1,
 	"hole": -2,
 	"sewer_door": -2,
-	"ladder": 1,
+	"short_ladder": 1,
+	"long_ladder": 2,
 	"slum_brick_floor_stairs_down": -1,
 	"stone_stairs_up": 1,
 	"stone_stairs_down": -1,
+	"stonefloor_hole": -1,
 	"slum_brick_floor_stairs_up": 1
 }
 
 static var REVERSE_EGRESS_TYPES = {
-	"hole": "ladder",   # Assume hole goes down to z-2, reverse is ladder going up
+	"hole": "long_ladder",   # Assume hole goes down to z-2, reverse is ladder going up
 	"stone_stairs_down": "stone_stairs_up", # Stairs go both ways, same symbol
 	"stone_stairs_up": "stone_stairs_down", # Stairs go both ways, same symbol
 	"slum_brick_floor_stairs_down": "slum_brick_floor_stairs_up", # Stairs go both ways, same symbol
 	"slum_brick_floor_stairs_up": "slum_brick_floor_stairs_down", # Stairs go both ways, same symbol
-	"sewer_door": "ladder", # Stairs go both ways, same symbol
-	"stonefloor_hole": "ladder", # Stairs go both ways, same symbol
-	"ladder": "ladder"    # ladder to ladder 
+	"sewer_door": "long_ladder" # Stairs go both ways, same symbol
+}
+
+static var MANUAL_EGRESS_TYPES = {
+	"stonefloor_hole": true,
+	"short_ladder": true
 }
 
 static func is_door(tile_type: String) -> bool:
@@ -164,7 +171,8 @@ const OBJECT_TEXTURE_KEYS := {
 	"bed": "bed",
 	"candelabra": "candelabra",
 	"woodchest": "woodchest",
-	"ladder": "ladder",
+	"short_ladder": "short_ladder",
+	"long_ladder": "long_ladder",
 	"stairs": "stairs",
 	"sewer_door": "sewer_door",
 	"slum_streetlamp": "slum_streetlamp",
@@ -343,6 +351,13 @@ static func get_chunk_key_from_folder(folder: String) -> String:
 		"forest_explore_path": return "fep"
 		"village_slums_explore_slumblock": return "vses"
 		_: return "gef"  # fallback
+
+static func get_biome_name_from_key(key: String) -> String:
+	match key:
+		"gef": return "grass"
+		"fep": return "forest"
+		"vses": return "village-slums"
+		_: return "grass"  # fallback
 
 static var BIOME_CONFIGS = {
 	"gef": {

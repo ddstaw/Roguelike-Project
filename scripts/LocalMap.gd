@@ -29,6 +29,8 @@ var current_tile_chunk: Dictionary = {}
 var current_object_chunk: Dictionary = {}
 var current_chunk_id: String = ""
 var active_area_exit_popup: Node = null
+var current_z_level: int = 0
+
 
 const VISIBILITY_UPDATE_INTERVAL := 0.1  # seconds
 
@@ -101,6 +103,8 @@ func _ready():
 
 
 func load_and_render_local_map():
+	for child in tile_container.get_children():
+		child.queue_free()
 	print("📂 Loading local map data from saved JSONs...")
 
 	# 🔍 Get entry context and chunk info
@@ -1249,3 +1253,84 @@ func spawn_area_exit_popup():
 	active_area_exit_popup = popup
 	var player_tile = Vector2i(player.position.x / TILE_SIZE, player.position.y / TILE_SIZE)
 	popup.set_meta("trigger_tile", player_tile)
+
+func load_z_level(z: int):
+	print("📡 load_z_level called with Z:", z)
+	current_z_level = z
+	load_and_render_local_map()
+
+	# Read the saved spawn position (if any)
+	var placement_data = LoadHandlerSingleton.load_temp_placement()
+	var pos_data = placement_data.get("local_map", {}).get("spawn_pos", null)
+
+	if pos_data != null:
+		var spawn_tile = Vector2i(pos_data["x"], pos_data["y"])
+		call_deferred("_deferred_spawn_player", spawn_tile)
+	else:
+		print("⚠️ No saved spawn_pos in placement_data. Using default.")
+
+
+func _deferred_spawn_player(spawn_tile: Vector2i) -> void:
+	await get_tree().process_frame
+	var player = get_node_or_null("LocalMap/PlayerVisual")
+	if player == null:
+		print("❌ Could not find PlayerVisual node.")
+		return
+	player.position = Vector2(spawn_tile * TILE_SIZE)
+	player.last_grid_position = spawn_tile
+
+	update_fov_from_player(spawn_tile)
+	calculate_sunlight_levels()
+	update_object_visibility(spawn_tile)
+
+	print("🧭 Player spawned at:", spawn_tile)
+
+func get_egress_for_current_position(player_pos: Vector2i) -> Dictionary:
+	var placement = LoadHandlerSingleton.load_temp_placement()
+	var chunk_id = placement["local_map"].get("current_chunk_id", "")
+	var z_level = int(placement["local_map"].get("z_level", 0))
+	var biome_key = placement["local_map"].get("biome_key", "")
+	var biome = Constants.get_biome_name_from_key(biome_key)
+
+	var local_pos = {
+		"x": player_pos.x,
+		"y": player_pos.y,
+		"z": z_level
+	}
+
+	var key = "%s|z%d" % [chunk_id, z_level]
+	print("📦 Checking egress register for key:", key)
+	print("🧭 Player current tile:", local_pos, "Biome:", biome)
+
+	LoadHandlerSingleton.clear_cached_egress_register()
+	var egress_data = LoadHandlerSingleton.load_global_egress_data(true)
+	if not egress_data.has(key):
+		print("❌ No egress data found for key:", key)
+		return {}
+
+	# Determine chunk origin from chunk_id
+	var parts = chunk_id.replace("chunk_", "").split("_")
+	var chunk_coords = Vector2i(int(parts[0]), int(parts[1]))
+	var chunk_origin = chunk_coords * Constants.get_biome_config(Constants.get_biome_chunk_key(biome_key))["chunk_size"]
+
+	for egress in egress_data[key]:
+		var pos = egress["position"]
+		print("🔍 Checking egress entry:", egress)
+
+		# Standard check (as before)
+		if egress["biome"] == biome and pos["x"] == local_pos["x"] and pos["y"] == local_pos["y"] and pos["z"] == local_pos["z"]:
+			print("✅ Egress match found!")
+			return egress
+
+		# Fallback: Global-to-local translation
+		var local_x = pos["x"] - chunk_origin.x
+		var local_y = pos["y"] - chunk_origin.y
+		if egress["biome"] == biome and local_x == player_pos.x and local_y == player_pos.y and pos["z"] == z_level:
+			print("✅ Egress match via local translation!")
+			return egress
+
+		elif local_x == player_pos.x and local_y == player_pos.y and pos["z"] == z_level:
+			print("⚠️ Local pos matched, biome mismatch. Expected:", biome, "Found:", egress["biome"])
+
+	print("🚫 No matching egress found.")
+	return {}

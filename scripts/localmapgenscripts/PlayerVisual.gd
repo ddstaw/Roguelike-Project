@@ -45,6 +45,8 @@ func _unhandled_input(event):
 	if event.is_pressed():
 		if event.is_action("interact"):
 			handle_interact()
+		elif event.is_action("interact_egress"):  # 👈 Add this
+			handle_egress_check()
 		elif event.is_action("up_move"):
 			start_held_move(Vector2i(0, -1))
 		elif event.is_action("down_move"):
@@ -311,16 +313,56 @@ func handle_interact():
 				state["is_lit"] = not state.get("is_lit", false)
 				obj["state"] = state
 
-				# 🔄 Save updated object back into chunk memory
 				var obj_id = result["id"]
 				object_dict[obj_id] = obj
-
-				# 💾 Save the updated chunk
 				LoadHandlerSingleton.save_chunked_object_chunk(local_map.get_current_chunk_id(), object_dict)
-
-				# 🔁 Trigger visual refresh
 				local_map.update_object_at(check_pos)
 
 				print("🕯️ Toggled candelabra at", check_pos, "→", state["is_lit"])
 				found_interaction = true
 				break
+				
+func change_z_level(new_z: int, new_pos: Vector2i):
+	# Load and prepare temp placement
+	var placement_data = LoadHandlerSingleton.load_temp_placement()
+
+	if not placement_data.has("local_map"):
+		placement_data["local_map"] = {}
+
+	placement_data["local_map"]["z_level"] = new_z
+	placement_data["local_map"]["spawn_pos"] = { "x": new_pos.x, "y": new_pos.y }
+	placement_data["local_map"]["grid_position_local"] = { "x": new_pos.x, "y": new_pos.y }  # ✅ Sync actual position
+
+	LoadHandlerSingleton.save_temp_placement(placement_data)
+
+	# Debug confirmation
+	var confirm_data = LoadHandlerSingleton.load_temp_placement()
+	print("💾 Z-level set to:", confirm_data.get("local_map", {}).get("z_level", "missing"))
+	print("📍 Intended spawn point:", confirm_data.get("local_map", {}).get("spawn_pos", "missing"))
+	print("📍 Grid position set to:", confirm_data.get("local_map", {}).get("grid_position_local", "missing"))
+
+	# Trigger smooth transition
+	var SceneManager = get_node("/root/SceneManager")
+	SceneManager.current_play_scene_path = "res://scenes/play/LocalMap.tscn"
+	SceneManager.change_scene_to_file("res://scenes/play/ChunkToChunkRefresh.tscn")
+
+func handle_egress_check():
+	var local_map = get_tree().root.get_node("LocalMap")
+	if local_map == null:
+		print("❌ Cannot find LocalMap!")
+		return
+
+	var egress_data = local_map.get_egress_for_current_position(last_grid_position)
+	if egress_data.is_empty():
+		print("🚫 No egress point found at current tile.")
+		return
+
+	var new_z = egress_data.get("target_z", null)
+	var pos = egress_data.get("position", null)
+
+	if new_z == null or pos == null:
+		print("⚠️ Egress data incomplete. target_z or position missing.")
+		return
+
+	var new_pos = Vector2i(pos["x"], pos["y"])
+	change_z_level(new_z, new_pos)

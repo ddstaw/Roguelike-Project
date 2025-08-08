@@ -6,13 +6,15 @@ func generate_cellar_chunk(chunk_coords: Vector2i, biome_key: String, from_egres
 
 	match short_key:
 		"gef":
-			generate_all_grassland_cellars(biome_key, from_egress, biome_config, structure_map)  # 💡 Pass it down
+			var prefab_chunk: String = from_egress.get("chunk", "chunk_1_1")
+			generate_all_grassland_cellars(biome_key, from_egress, biome_config, structure_map, prefab_chunk)
 		"fep":
 			print("🌲 Forest cellar not implemented yet.")
 		"vses":
 			print("🏚️ Slum cellar not implemented yet.")
 		_:
 			print("⚠️ Unknown biome key:", biome_key)
+
 
 func generate_gef_cellar(chunk_coords: Vector2i, biome_key: String, from_egress: Dictionary, structure_map: Dictionary) -> void:
 	print("💥 ENTERED generate_gef_cellar")
@@ -123,6 +125,52 @@ func generate_gef_cellar(chunk_coords: Vector2i, biome_key: String, from_egress:
 	else:
 		print("⚠️ No prefab register entry for:", chunk_key)
 
+	# 🕳️ Inject random stonefloor_hole in Z-1
+	var valid_stonefloors := []
+	for x in range(chunk_size.x):
+		for y in range(chunk_size.y):
+			if grid[x][y].get("tile", "") == "stonefloor":
+				valid_stonefloors.append(Vector2i(x, y))
+
+	if valid_stonefloors.size() > 0:
+		var pick: Vector2i = valid_stonefloors[randi() % valid_stonefloors.size()]
+		grid[pick.x][pick.y] = {
+			"tile": "stonefloor_hole",
+			"state": LoadHandlerSingleton.get_tile_state_for("stonefloor_hole"),
+			"manual_egress": true  # 🔐 Prevent automatic re-registration
+		}
+
+		var egress = {
+			"type": "stonefloor_hole",
+			"target_z": -2,
+			"position": { "x": pick.x, "y": pick.y, "z": -1 },  # ⬅️ LOCAL COORDS
+			"chunk": chunk_key,
+			"biome": Constants.get_biome_name_from_key(biome_key_short)
+		}
+		LoadHandlerSingleton.register_egress_point(egress)
+
+		# Register corresponding ladder in Z-2
+		var global_x = origin.x + pick.x
+		var global_y = origin.y + pick.y
+		var ladder_chunk_coords = Vector2i(
+			floori(global_x / chunk_size.x),
+			floori(global_y / chunk_size.y)
+		)
+		var ladder_chunk_key = "chunk_%d_%d" % [ladder_chunk_coords.x, ladder_chunk_coords.y]
+
+		var ladder_egress = {
+			"type": "short_ladder",
+			"target_z": -1,
+			"position": { "x": pick.x, "y": pick.y, "z": -2 },  # ⬅️ LOCAL COORDS again
+			"chunk": chunk_key,
+			"biome": Constants.get_biome_name_from_key(biome_key_short)
+		}
+		LoadHandlerSingleton.register_egress_point(ladder_egress)
+		
+
+	else:
+		print("⚠️ No valid stonefloor tiles to inject stonefloor_hole.")
+
 	# 🧱 Flatten grid
 	var flat_tile_grid := {}
 	for x in range(chunk_size.x):
@@ -130,11 +178,43 @@ func generate_gef_cellar(chunk_coords: Vector2i, biome_key: String, from_egress:
 			var key = "%d_%d" % [x, y]
 			flat_tile_grid[key] = grid[x][y]
 
+		# 🔍 TILE-based egress scan (excluding manual)
+	for key in flat_tile_grid.keys():
+		var tile_data = flat_tile_grid[key]
+		if tile_data.get("manual_egress", false):
+			continue  # 🔒 Skip manually registered ones
+
+		var tile_name = tile_data.get("tile", "")
+		if Constants.EGRESS_TYPES.has(tile_name):
+			var parts = key.split("_")
+			if parts.size() == 2:
+				var local_x = int(parts[0])
+				var local_y = int(parts[1])
+				var global_x = origin.x + local_x
+				var global_y = origin.y + local_y
+				var target_z = Constants.EGRESS_TYPES[tile_name]
+				LoadHandlerSingleton.add_egress_point({
+					"type": tile_name,
+					"target_z": target_z,
+					"position": { "x": global_x, "y": global_y, "z": -1 },
+					"chunk": chunk_key,
+					"biome": Constants.get_biome_name_from_key(biome_key_short)
+
+				})
+
+
 	# 💾 Save to disk
+	var biome_name = Constants.get_biome_name_from_key(biome_key_short)
 	save_cellar_chunk(chunk_key, chunk_coords, chunk_size, biome_key_short, -1, flat_tile_grid, {})
 
 
-func generate_all_grassland_cellars(biome_key: String, from_egress: Dictionary, biome_config: Dictionary, structure_map: Dictionary) -> void:
+func generate_all_grassland_cellars(
+	biome_key: String,
+	from_egress: Dictionary,
+	biome_config: Dictionary,
+	structure_map: Dictionary,
+	prefab_chunk: String
+) -> void:
 	print("📦 ENTERED generate_all_grassland_cellars")
 	var chunk_blueprints = LoadHandlerSingleton.get_chunk_blueprints()
 	var grid_size: Vector2i = biome_config.get("grid_size", Vector2i(1, 1))
@@ -154,7 +234,7 @@ func generate_all_grassland_cellars(biome_key: String, from_egress: Dictionary, 
 				}
 
 			var egress_data = {}
-			if coords == Vector2i(1, 1):
+			if chunk_key == prefab_chunk:
 				egress_data = from_egress
 
 			generate_gef_cellar(coords, biome_key, egress_data, structure_map)

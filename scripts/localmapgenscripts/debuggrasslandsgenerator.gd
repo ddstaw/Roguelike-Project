@@ -101,6 +101,8 @@ func _on_tile_container_ready(container):
 	await generate_chunked_map(container)
 
 func generate_chunked_map(tile_container: Node) -> Array:
+	var allowed_chunks = ["chunk_0_1", "chunk_1_1", "chunk_2_1"]
+	var prefab_target_chunk = allowed_chunks[randi() % allowed_chunks.size()]
 	print("🌿 Starting chunk-based DebugGrasslandGenerator.generate_chunked_map()...")
 
 	# 🔄 STEP 0: Reset any lingering state from previous generation
@@ -181,9 +183,9 @@ func generate_chunked_map(tile_container: Node) -> Array:
 		var grid = result["grid"]
 
 		# 🏗️ STEP 4.2: Place prefab BEFORE flattening
-		if chunk_key == "chunk_1_1" and tower_prefab != null:
+		if chunk_key == prefab_target_chunk and tower_prefab != null:
 			print("🏗 Placing prefab in", chunk_key)
-			var placed_at := place_structure(grid, tower_prefab, size)
+			var placed_at := place_structure(grid, tower_prefab, size, chunk_key)
 			placed_structure_map[chunk_key] = prefab_group["name"]
 
 			if placed_at != Vector2i(-1, -1):
@@ -208,24 +210,21 @@ func generate_chunked_map(tile_container: Node) -> Array:
 				var pos: Vector2i = valid[randi() % valid.size()]
 				grid[pos.x][pos.y] = {
 					"tile": "hole",
-					"state": LoadHandlerSingleton.get_tile_state_for("hole")
+					"state": LoadHandlerSingleton.get_tile_state_for("hole"),
+					"manual_egress": true  # 🚫 Prevent double registration
 				}
 
-				var global_x = pos.x + origin.x
-				var global_y = pos.y + origin.y
 				var target_z = Constants.EGRESS_TYPES["hole"]
 
-				var egress = {
+				# 👇 USE LOCAL COORDS — like stone stairs
+				LoadHandlerSingleton.register_egress_point({
 					"type": "hole",
 					"target_z": target_z,
-					"position": { "x": global_x, "y": global_y, "z": 0 },
+					"position": { "x": pos.x, "y": pos.y, "z": 0 },
 					"chunk": chunk_key,
 					"biome": biome
-				}
-
-				LoadHandlerSingleton.add_egress_point(egress)
-				LoadHandlerSingleton.register_egress_point(egress)
-				print("🕳️ Cave hole set at:", pos)
+				})
+				print("🕳️ Cave hole set at (local):", pos)
 			else:
 				print("⚠️ Could not place hole in", chunk_key)
 
@@ -248,6 +247,9 @@ func generate_chunked_map(tile_container: Node) -> Array:
 		# 🔍 TILE-based egress
 		for key in flat_tile_grid.keys():
 			var tile_data = flat_tile_grid[key]
+			if tile_data.get("manual_egress", false):
+				continue  # 🔒 Skip manually registered egress tiles
+
 			var tile_name = tile_data.get("tile", "")
 			if Constants.EGRESS_TYPES.has(tile_name):
 				var parts = key.split("_")
@@ -397,7 +399,7 @@ func generate_chunk(origin: Vector2i, size: Vector2i, chunk_key: String) -> Dict
 	}
 
 
-func place_structure(grid: Array, prefab: Dictionary, chunk_size: Vector2i) -> Vector2i:
+func place_structure(grid: Array, prefab: Dictionary, chunk_size: Vector2i, chunk_key: String) -> Vector2i:
 	print("🏗 ENTERED place_structure() for:", prefab["name"])
 
 	var structure_width: int = prefab["width"]
@@ -479,7 +481,7 @@ func place_structure(grid: Array, prefab: Dictionary, chunk_size: Vector2i) -> V
 								"type": tile_name,
 								"target_z": Constants.EGRESS_TYPES[tile_name],
 								"position": { "x": global_pos.x, "y": global_pos.y, "z": global_pos.z },
-								"chunk": "chunk_1_1",
+								"chunk": chunk_key,
 								"biome": "grass"
 							})
 

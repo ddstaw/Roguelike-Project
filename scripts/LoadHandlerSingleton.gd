@@ -5,6 +5,7 @@ var current_chunk_coords: Vector2i = Vector2i.ZERO
 var loaded_tile_chunks := {}
 var loaded_object_chunks := {}
 static var _chunk_structure_map: Dictionary = {}
+static var _cached_egress_data := {}
 
 
 const Consts = preload("res://scripts/Constants.gd")
@@ -1771,6 +1772,15 @@ func get_chunk_origin(chunk_id: String) -> Vector2i:
 	var bp: Dictionary = blueprints[chunk_id]
 	return Vector2i(bp["origin"][0], bp["origin"][1])
 
+func get_chunk_origin_from_file(chunk_key: String, biome_key_short: String, z_level: int) -> Vector2i:
+	var biome_folder = Constants.get_chunk_folder_for_key(biome_key_short)
+	var path = get_chunked_tile_chunk_path(chunk_key, biome_key_short, str(z_level))
+	var chunk_data = load_json_file(path)
+	if chunk_data.has("chunk_origin"):
+		var o = chunk_data["chunk_origin"]
+		return Vector2i(o.get("x", 0), o.get("y", 0))
+	return Vector2i.ZERO
+
 func get_chunked_tile_chunk_path(chunk_id: String, key: String, z_level: String = "") -> String:
 	if z_level == "":
 		var placement = load_temp_localmap_placement()
@@ -1905,14 +1915,17 @@ static func register_egress_point(egress: Dictionary) -> void:
 
 	if not current.has(chunk_key):
 		current[chunk_key] = []
-
 	current[chunk_key].append(egress)
 
 	# 🪜 Generate reverse egress if applicable
-	if Constants.REVERSE_EGRESS_TYPES.has(egress["type"]):
+	if Constants.REVERSE_EGRESS_TYPES.has(egress["type"]) and not Constants.MANUAL_EGRESS_TYPES.has(egress["type"]):
 		var reverse_type = Constants.REVERSE_EGRESS_TYPES[egress["type"]]
-		var reverse_z = egress["target_z"]  # Corrected!
-		var reverse_target_z = z  # This points back to the origin
+		var reverse_z = egress["target_z"]
+		var reverse_target_z = z
+
+		# 🚫 Skip if the reverse Z == source Z (no self-loop egresses)
+		if reverse_z == z:
+			return
 
 		var reverse_chunk_key := "%s|z%d" % [chunk, reverse_z]
 
@@ -1931,10 +1944,19 @@ static func register_egress_point(egress: Dictionary) -> void:
 		if not current.has(reverse_chunk_key):
 			current[reverse_chunk_key] = []
 
-		current[reverse_chunk_key].append(reverse_egress)
+		# ✅ Prevent duplicate reverse entries
+		var is_duplicate := false
+		for existing in current[reverse_chunk_key]:
+			if existing["position"] == reverse_egress["position"] and existing["type"] == reverse_egress["type"]:
+				is_duplicate = true
+				break
 
-	# 💾 Save updated egress register
+		if not is_duplicate:
+			current[reverse_chunk_key].append(reverse_egress)
+
+	# 💾 Save final result
 	LoadHandlerSingleton.save_egress_register(biome_folder, current)
+
 
 static func get_prefab_json_path_for_biome(biome_key_short: String) -> String:
 	match biome_key_short:
@@ -2042,3 +2064,85 @@ static func get_blueprint_from_register_entry(prefab_entry: Dictionary, biome_ke
 
 	print("⚠️ No matching prefab_id in list:", prefab_id)
 	return {}
+
+static func load_global_egress_data(force_refresh := false) -> Dictionary:
+	if not force_refresh and _cached_egress_data.has("data"):
+		return _cached_egress_data["data"]
+
+	var placement = LoadHandlerSingleton.load_temp_placement()
+	var biome_key = placement.get("local_map", {}).get("biome_key", "")
+	var biome_folder = Constants.get_chunk_folder_for_key(biome_key)
+	var path = get_egress_register_path(biome_folder)
+
+	if not FileAccess.file_exists(path):
+		return {}
+
+	var contents = FileAccess.open(path, FileAccess.READ).get_as_text()
+	var parsed = JSON.parse_string(contents)
+	_cached_egress_data["data"] = parsed
+	return parsed
+
+static func reload_from_temp_placement():
+	print("🔄 reload_from_temp_placement called from singleton.")
+
+	var scene = Engine.get_main_loop().get_current_scene()
+	if scene == null:
+		print("❌ No current scene found!")
+		return
+
+	var local_map = Engine.get_main_loop().get_current_scene()
+	if local_map == null:
+		print("❌ LocalMap node NOT found!")
+		return
+
+	var placement_data = LoadHandlerSingleton.load_temp_placement()
+	var local_map_data = placement_data.get("local_map", {})
+	var z_level = local_map_data.get("z_level", null)
+
+	if z_level == null:
+		print("⚠️ Z-level missing from placement data!")
+		return
+
+	print("📡 Reloading LocalMap at Z-level:", z_level)
+	local_map.call_deferred("load_z_level", z_level)
+
+
+func change_z_level(new_z_level: int) -> void:
+	var path = get_temp_localmap_placement_path()
+	var file = FileAccess.open(path, FileAccess.READ)
+	var data = JSON.parse_string(file.get_as_text())
+	file.close()
+
+	data["local_map"]["z_level"] = str(new_z_level)
+
+	var file_write = FileAccess.open(path, FileAccess.WRITE)
+	file_write.store_string(JSON.stringify(data))
+	file_write.close()
+
+	print("💾 Z-level updated in temp placement to:", new_z_level)
+
+	# Properly call reload
+	call_deferred("reload_from_temp_placement")
+
+static func clear_cached_egress_register():
+	_cached_egress_data.clear()
+
+func get_combined_egress_list() -> Array:
+	var all_egresses := []
+	var seen := {}
+
+	# Grab in-memory points safely (non-static)
+	for e in self.egress_points:
+		var key := "%s_%d_%d_%d" % [e.chunk, e.position.x, e.position.y, e.position.z]
+		seen[key] = true
+		all_egresses.append(e)
+
+	# Add disk-persisted register entries
+	var egress_data := LoadHandlerSingleton.load_global_egress_data(true)
+	for chunk_key in egress_data.keys():
+		for e in egress_data[chunk_key]:
+			var key := "%s_%d_%d_%d" % [e.chunk, e.position.x, e.position.y, e.position.z]
+			if not seen.has(key):
+				all_egresses.append(e)
+
+	return all_egresses
