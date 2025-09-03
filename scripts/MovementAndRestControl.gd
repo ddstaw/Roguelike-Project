@@ -1,6 +1,8 @@
 extends Control
 
 const GRID_SIZE = 12  # Declare GRID_SIZE as a constant
+const INVENTORY_SCENE: String = "res://scenes/play/Inventory_LocalPlay.tscn"
+
 
 @onready var rest_button = $RestButton
 @onready var travel_log_control = get_node_or_null("/root/WorldMapTravel/LeftInfoContainer/TravelLogControl")
@@ -30,7 +32,13 @@ func _input(event):
 		# Check if numpad 5 is pressed
 	if event.is_action_pressed("rest_select"):  # Use "rest_select" for numpad 5
 		_on_rest_button_pressed()  # Trigger the same rest action
-
+	
+	# Inventory key press
+	if event.is_action_pressed("toggle_inventory"):
+		accept_event()
+		handle_inventory_toggle()
+		return  # Prevents movement/other logic firing in the same frame
+	
 	# Movement input handling
 	if event.is_action_pressed("up_move"):
 		move_player(Vector2(0, -1))  # Move up
@@ -49,6 +57,11 @@ func _input(event):
 	elif event.is_action_pressed("downright_move"):
 		move_player(Vector2(1, 1))  # Move down right
 		
+
+func handle_inventory_toggle() -> void:
+	# Minimal: just open the inventory scene.
+	# Your inventory script will read char_state and return to WorldMapTravel.
+	get_tree().change_scene_to_file(INVENTORY_SCENE)
 
 func _on_rest_button_pressed():
 	print("Before resting:")

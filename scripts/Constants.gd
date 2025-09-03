@@ -57,8 +57,13 @@ const TILE_TEXTURES := {
 	"slum_road_floor": preload("res://assets/localmap-graphics/terrain/village-slums/slum_road_floor.png"),
 	"caverock": preload("res://assets/localmap-graphics/caverock.png"),
 	"cavewallbottom": preload("res://assets/localmap-graphics/cavewallbottom.png"),
-	"cavewallside": preload("res://assets/localmap-graphics/cavewallside.png")
-	
+	"cavewallside": preload("res://assets/localmap-graphics/cavewallside.png"),
+	"orangecat": preload("res://assets/localmap-graphics/npcs/orange_cat.png"),
+	"greensnake": preload("res://assets/localmap-graphics/npcs/green_snake.png"),
+	"bluewizard": preload("res://assets/localmap-graphics/npcs/blue_wizard.png")
+
+
+
 }
 
 
@@ -118,7 +123,10 @@ const TEXTURE_TO_NAME := {
 	TILE_TEXTURES["candelabra_lit"]: "candelabra_lit",
 	TILE_TEXTURES["caverock"]: "caverock",
 	TILE_TEXTURES["cavewallbottom"]: "cavewallbottom",
-	TILE_TEXTURES["cavewallside"]: "cavewallside"
+	TILE_TEXTURES["cavewallside"]: "cavewallside",
+	TILE_TEXTURES["orangecat"]: "orangecat",
+	TILE_TEXTURES["greensnake"]: "greensnake",
+	TILE_TEXTURES["bluewizard"]: "bluewizard"
 }
 
 const TRANSITION_TEXTURES := {
@@ -182,9 +190,22 @@ const OBJECT_TEXTURE_KEYS := {
 	# Add more here over time
 }
 
+# Mapping of npc types to texture keys
+const NPC_TEXTURE_KEYS := {
+	"orangecat": "orangecat",
+	"greensnake": "greensnake",
+	"bluewizard": "bluewizard"
+	# Add more here over time
+}
+
 # Helper to get texture for an object type
 static func get_object_texture(type: String) -> Texture2D:
 	var key = OBJECT_TEXTURE_KEYS.get(type, null)
+	return TILE_TEXTURES.get(key, null)
+
+# Helper to get texture for an object type
+static func get_npc_texture(type: String) -> Texture2D:
+	var key = NPC_TEXTURE_KEYS.get(type, null)
 	return TILE_TEXTURES.get(key, null)
 
 const PLAYER_LOOKS_ASSETS := {
@@ -267,6 +288,8 @@ static func get_biome_label(biome: String) -> String:
 
 const TerrainData = preload("res://constants/terrain_data.gd")
 const ObjectData = preload("res://constants/object_data.gd")
+const NpcData = preload("res://constants/npc_data.gd")
+
 
 static func get_object_property(type: String, property: String, default_value: Variant = null) -> Variant:
 	return ObjectData.OBJECT_PROPERTIES.get(type, {}).get(property, default_value)

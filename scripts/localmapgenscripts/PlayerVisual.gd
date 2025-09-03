@@ -47,6 +47,9 @@ func _unhandled_input(event):
 			handle_interact()
 		elif event.is_action("interact_egress"):  # 👈 Add this
 			handle_egress_check()
+		elif event.is_action("toggle_inventory"):
+			print("fishbowl: Opening Inventory_LocalPlay.tscn")
+			handle_inventory_toggle()
 		elif event.is_action("up_move"):
 			start_held_move(Vector2i(0, -1))
 		elif event.is_action("down_move"):
@@ -69,6 +72,23 @@ func _unhandled_input(event):
 	elif event.is_released():
 		is_moving = false
 		held_direction = Vector2.ZERO
+
+func handle_inventory_toggle():
+	var placement_data = LoadHandlerSingleton.load_temp_placement()
+
+	if not placement_data.has("local_map"):
+		placement_data["local_map"] = {}
+
+	var grid_pos = Vector2i(position.x / TILE_SIZE, position.y / TILE_SIZE)
+	placement_data["local_map"]["grid_position_local"] = {
+		"x": grid_pos.x,
+		"y": grid_pos.y
+	}
+
+	LoadHandlerSingleton.save_temp_placement(placement_data)
+
+	print("💾 [Inventory Toggle] Saved grid_position_local:", grid_pos)
+	get_tree().change_scene_to_file("res://scenes/play/Inventory_LocalPlay.tscn")
 
 
 func move_player(dir: Vector2i):

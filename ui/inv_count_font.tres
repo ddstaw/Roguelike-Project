@@ -1,0 +1,6 @@
+[gd_resource type="FontVariation" load_steps=2 format=3 uid="uid://cgtpm8bq2xtym"]
+
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="1_cg2d1"]
+
+[resource]
+base_font = ExtResource("1_cg2d1")

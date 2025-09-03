@@ -23,6 +23,8 @@ func _ready():
 		print("🎯 Standard local map detected. Generating single-map JSONs...")
 		await GeneratorDispatcher.generate_local_map_to_jsons()
 
+	LoadHandlerSingleton.set_realm_char_state("localmap")
+	
 	await fade_in()
 
 func fade_in():

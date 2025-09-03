@@ -82,12 +82,14 @@ func load_map():
 	# ✅ Use `current_realm` to determine what to load
 	if current_realm == "worldmap":
 		print("🌍 Player is in the world map. Loading world map...")
+		LoadHandlerSingleton.set_realm_char_state("worldmap")
 		load_world_map()
 	elif current_realm == "citymap":
 		# ✅ Ensure city name exists
 		var city_name = character_position.get("citymap", {}).get("name", "")
 		if city_name != "":
 			print("🏙️ Player is in city:", city_name)
+			LoadHandlerSingleton.set_realm_char_state("city")
 			load_city_map(city_name)
 		else:
 			print("❌ ERROR: City name not found while in city state.")

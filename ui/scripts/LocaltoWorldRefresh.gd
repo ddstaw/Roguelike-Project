@@ -12,6 +12,7 @@ func _ready():
 	travel_label.text = "...you move on"  # Static message
 	travel_label.modulate.a = 0.0  # Start hidden
 
+	LoadHandlerSingleton.set_realm_char_state("worldmap")
 	# ✅ Start transition
 	fade_in()
 

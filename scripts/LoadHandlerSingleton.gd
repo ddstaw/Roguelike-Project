@@ -4,13 +4,14 @@ var current_chunk_id: String = ""
 var current_chunk_coords: Vector2i = Vector2i.ZERO
 var loaded_tile_chunks := {}
 var loaded_object_chunks := {}
+var loaded_npc_chunks := {}
 static var _chunk_structure_map: Dictionary = {}
 static var _cached_egress_data := {}
 
 
 const Consts = preload("res://scripts/Constants.gd")
 
-var elfhaven_proper: String = "sample elf have"  # Default values
+var elfhaven_proper: String = "sample elf haven"  # Default values
 var oldcity_proper: String = "sample old city"
 var dwarfcity_proper: String = "sample dwarf city"
 var capitalcity_proper: String = "sample cap city"
@@ -65,6 +66,7 @@ func get_save_file_path() -> String:
 func load_handler_data() -> Dictionary:
 	return load_json_file("user://saves/load_handler.json")
 
+
 # Retrieve paths based on the selected save slot
 func get_character_creation_path() -> String:
 	return get_save_file_path() + "characterdata/character_creation-save" + str(get_save_slot()) + ".json"
@@ -83,6 +85,9 @@ func get_temp_localmap_entities_path() -> String:
 	return get_save_file_path() + "local/local_temp/temp_localmap_entities" + str(get_save_slot()) + ".json"
 
 func get_temp_localmap_objects_path() -> String:
+	return get_save_file_path() + "local/local_temp/temp_localmap_objects" + str(get_save_slot()) + ".json"
+
+func get_temp_localmap_npcs_path() -> String:
 	return get_save_file_path() + "local/local_temp/temp_localmap_objects" + str(get_save_slot()) + ".json"
 
 func get_combat_stats_path() -> String:
@@ -126,6 +131,74 @@ func get_player_looks_path() -> String:
 
 func get_player_effects_path() -> String:
 	return get_save_file_path() + "characterdata/player_effects" + str(get_save_slot()) + ".json"
+
+
+func _charstate_default() -> Dictionary:
+	return {
+		"character_state": {
+			"incity": "N",
+			"inlocalmap": "N",
+			"inworldmap": "N"
+		}
+	}
+
+func load_char_state() -> Dictionary:
+	var path := get_charstate_path()
+	if !FileAccess.file_exists(path):
+		return _charstate_default()
+
+	var f := FileAccess.open(path, FileAccess.READ)
+	if f == null:
+		return _charstate_default()
+
+	var text := f.get_as_text()
+	f.close()
+
+	var j := JSON.new()
+	if j.parse(text) != OK or typeof(j.data) != TYPE_DICTIONARY:
+		return _charstate_default()
+
+	# Ensure the key exists even if file is partially formed
+	var data: Dictionary = j.data
+	if !data.has("character_state"):
+		data["character_state"] = _charstate_default()["character_state"]
+	return data
+
+func save_char_state(data: Dictionary) -> void:
+	var path := get_charstate_path()
+	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	if f == null:
+		push_warning("Could not open char_state file for writing: %s" % path)
+		return
+	f.store_string(JSON.stringify(data, "\t"))
+	f.close()
+
+# Call this to flip flags; values are "Y"/"N" to match your file
+func set_realm_char_state(realm: String) -> void:
+	var data := load_char_state()
+	var cs: Dictionary = data.get("character_state", {}).duplicate()
+
+	match realm.to_lower():
+		"worldmap":
+			cs["inworldmap"] = "Y"
+			cs["inlocalmap"] = "N"
+			cs["incity"] = "N"
+		"localmap":
+			cs["inworldmap"] = "N"
+			cs["inlocalmap"] = "Y"
+			cs["incity"] = "N"
+		"city":
+			cs["inworldmap"] = "N"
+			cs["inlocalmap"] = "N"
+			cs["incity"] = "Y"
+		_:
+			push_warning("Unknown realm '%s' passed to set_realm_char_state" % realm)
+
+	data["character_state"] = cs
+	save_char_state(data)
+
+
 
 func get_effective_vision_radius() -> int:
 	var base_radius := 2  # Minimum at night
@@ -772,6 +845,41 @@ func build_object_layer_from_objects(width: int, height: int, objects: Dictionar
 
 	return layer
 
+func build_npc_layer_from_npcs(width: int, height: int, npcs: Dictionary) -> Array:
+	var layer = []
+	for x in range(width):
+		layer.append([])
+		for y in range(height):
+			layer[x].append(null)
+
+	for npc_id in npcs:
+		var npc = npcs[npc_id]
+		if npc.has("position") and npc.has("type"):
+			var pos = npc["position"]
+			var x = int(pos["x"])
+			var y = int(pos["y"])
+			var type = npc["type"]
+
+			var texture = Constants.get_npc_texture(type)
+
+			# 🔁 Fallback to per-npc texture (used by mounts, etc)
+			if (texture == null) and npc.has("texture"):
+				texture = load(npc["texture"])
+
+			# ✅ Debug output
+			print("🧱 Npc [%s] at (%d, %d) — texture: %s" % [type, x, y, texture])
+
+			# ✅ Bounds safety
+			if x >= 0 and x < width and y >= 0 and y < height:
+				layer[x][y] = texture
+			else:
+				print("⚠️ Skipping object out of bounds: (%d, %d)" % [x, y])
+		else:
+			print("⚠️ NPC missing 'position' or 'type':", npc_id)
+
+	return layer
+
+
 func load_temp_localmap_objects() -> Dictionary:
 	var path = get_temp_localmap_objects_path()
 	if not FileAccess.file_exists(path):
@@ -783,6 +891,19 @@ func load_temp_localmap_objects() -> Dictionary:
 		return data["objects"]
 	else:
 		print("⚠️ WARNING: 'objects' key missing in objects file at:", path)
+		return {}
+
+func load_temp_localmap_npcs() -> Dictionary:
+	var path = get_temp_localmap_npcs_path()
+	if not FileAccess.file_exists(path):
+		print("❌ ERROR: temp_localmap_npcs.json not found at:", path)
+		return {}
+	
+	var data = load_json_file(path)
+	if data.has("npcs"):
+		return data["npcs"]
+	else:
+		print("⚠️ WARNING: 'npcs' key missing in npcs file at:", path)
 		return {}
 
 func get_current_mount_data() -> Dictionary:
@@ -1122,6 +1243,12 @@ func save_chunked_localmap_objects(chunked_objects: Dictionary):
 	var objects_path = get_temp_localmap_objects_path()
 	save_json_file(objects_path, { "chunks": chunked_objects })
 	print("💾 Chunked object data saved to:", objects_path)
+
+func save_chunked_localmap_npcs(chunked_objects: Dictionary):
+	var objects_path = get_temp_localmap_npcs_path()
+	save_json_file(objects_path, { "chunks": chunked_objects })
+	print("💾 Chunked object data saved to:", objects_path)
+
 
 func save_chunked_localmap_terrain():
 	var path = get_temp_localmap_terrain_path()
@@ -1474,6 +1601,29 @@ func load_chunked_object_chunk(chunk_id: String) -> Dictionary:
 		print("❌ ERROR: Invalid object chunk format:", raw)
 		return {}
 
+func load_chunked_npc_chunk(chunk_id: String) -> Dictionary:
+	var placement := load_temp_localmap_placement()
+	var biome_key: String = placement.get("local_map", {}).get("biome_key", "gef")
+
+	var path := get_chunked_npc_chunk_path(chunk_id, biome_key)
+
+	var raw = load_json_file(path)
+	if raw == null:
+		print("❌ ERROR: Failed to load npc chunk file at:", path)
+		return {}
+
+	if typeof(raw) != TYPE_DICTIONARY:
+		print("❌ ERROR: Loaded npc chunk is not a dictionary! Type:", typeof(raw))
+		return {}
+
+	# ✅ Avoid double-wrapping
+	if raw.has("npcs") and typeof(raw["npcs"]) == TYPE_DICTIONARY:
+		return raw
+	elif typeof(raw) == TYPE_DICTIONARY:
+		return { "npcs": raw }
+	else:
+		print("❌ ERROR: Invalid npc chunk format:", raw)
+		return {}
 
 func load_chunk_object_data(chunk_id: String) -> Dictionary:
 	var placement := load_temp_localmap_placement()
@@ -1487,6 +1637,17 @@ func load_chunk_object_data(chunk_id: String) -> Dictionary:
 
 	return load_json_file(path)
 
+func load_chunk_npc_data(chunk_id: String) -> Dictionary:
+	var placement := load_temp_localmap_placement()
+	var biome_key: String = placement.get("local_map", {}).get("biome_key", "gef")
+
+	var path := get_chunked_npc_chunk_path(chunk_id, biome_key)
+
+	if not FileAccess.file_exists(path):
+		print("❌ ERROR: Missing npc chunk:", chunk_id)
+		return {}
+
+	return load_json_file(path)
 
 # 🔨 Flattens a 2D grid of tile dictionaries into a global tile dictionary keyed by world position
 func flatten_tile_dict_grid(tile_dict_grid: Array, origin: Vector2i = Vector2i.ZERO) -> Dictionary:
@@ -1591,6 +1752,28 @@ func normalize_object_positions_in_chunk(obj_data: Dictionary, chunk_key: String
 
 	return obj_data
 
+func normalize_npc_positions_in_chunk(npc_data: Dictionary, chunk_key: String) -> Dictionary:
+	var placement = LoadHandlerSingleton.load_temp_placement()
+	var blueprints = placement.get("local_map", {}).get("chunk_blueprints", {})
+
+	if not blueprints.has(chunk_key):
+		push_warning("⚠️ normalize_npc_positions_in_chunk() → missing blueprint for %s" % chunk_key)
+		return npc_data  # fallback to global coords
+
+	var origin_data = blueprints[chunk_key].get("origin", [0, 0])
+	var chunk_origin = Vector2i(origin_data[0], origin_data[1])
+
+	if not npc_data.has("npcs"):
+		return npc_data
+
+	for npc_id in npc_data["npcs"]:
+		var pos = npc_data["npcs"][npc_id].get("position", {})
+		if pos.has("x") and pos.has("y"):
+			pos["x"] -= chunk_origin.x
+			pos["y"] -= chunk_origin.y
+
+	return npc_data
+
 func save_chunked_tile_chunk(chunk_id: String, tile_chunk: Dictionary) -> void:
 	var placement := load_temp_localmap_placement()
 	var biome_key: String = placement.get("local_map", {}).get("biome_key", "gef")
@@ -1608,6 +1791,16 @@ func save_chunked_object_chunk(chunk_id: String, object_chunk: Dictionary) -> vo
 	var path = get_chunked_object_chunk_path(chunk_id, biome_key)
 	save_json_file(path, object_chunk)
 	print("💾 Saved object chunk:", chunk_id, "to", path)
+
+func save_chunked_npc_chunk(chunk_id: String, npc_chunk: Dictionary) -> void:
+	var placement := load_temp_localmap_placement()
+	var biome_key: String = placement.get("local_map", {}).get("biome_key", "gef")
+
+
+	var path = get_chunked_npc_chunk_path(chunk_id, biome_key)
+	save_json_file(path, npc_chunk)
+	print("💾 Saved npc chunk:", chunk_id, "to", path)
+
 
 func chunk_exists(chunk_coords: Vector2i) -> bool:
 	var chunk_str = "%d_%d" % [chunk_coords.x, chunk_coords.y]
@@ -1797,6 +1990,15 @@ func get_chunked_object_chunk_path(chunk_id: String, key: String, z_level: Strin
 
 	var folder = Constants.get_chunk_folder_for_key(key)
 	return get_save_file_path() + "localchunks/" + folder + "/z" + z_level + "/chunk_object_" + chunk_id + ".json"
+
+func get_chunked_npc_chunk_path(chunk_id: String, key: String, z_level: String = "") -> String:
+	if z_level == "":
+		var placement = load_temp_localmap_placement()
+		z_level = str(placement.get("local_map", {}).get("z_level", "0"))
+
+	var folder = Constants.get_chunk_folder_for_key(key)
+	return get_save_file_path() + "localchunks/" + folder + "/z" + z_level + "/chunk_npc_" + chunk_id + ".json"
+
 
 	
 # Optional for entity + terrain mods if you plan to save those
@@ -2146,3 +2348,34 @@ func get_combined_egress_list() -> Array:
 				all_egresses.append(e)
 
 	return all_egresses
+
+# Returns player inventory as a Dictionary (key -> stack dict) or {} on failure.
+func load_player_inventory_dict() -> Dictionary:
+	var path: String = get_player_inventory_path()
+
+	var data: Variant = load_json_file(path)  # explicit Variant to avoid inference warning
+	if data == null:
+		print("⚠ Inventory file missing/invalid at: ", path)
+		return {}
+
+	if data is Dictionary:
+		# Your file is already a flat dict of stacks:
+		# {
+		#   "iBGJ531": { "display_name":"Wood Log", ... },
+		#   ...
+		# }
+		return data as Dictionary
+
+	print("⚠ Inventory JSON is not a Dictionary at: ", path)
+	return {}
+
+func save_player_inventory_dict(inv: Dictionary) -> void:
+	var path := get_player_inventory_path()
+	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
+	var f := FileAccess.open(path, FileAccess.WRITE)
+	if f:
+		# Wrap as { "inventory": {...} } for consistency
+		f.store_string(JSON.stringify({"inventory": inv}, "\t"))
+		f.close()
+	else:
+		push_warning("Could not write inventory to: %s" % path)

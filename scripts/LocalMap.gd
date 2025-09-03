@@ -4,7 +4,7 @@ extends Control
 @onready var world_map_button = $UILayer/DebugUI/WorldMap  # Adjust if needed
 @onready var generate_button = $UILayer/DebugUI/GenNewMapDebugButton
 @onready var toggle_free_pan_button = $UILayer/DebugUI/ToggleFreePan  # Free pan toggle button
-@onready var bottom_ui = $UIlayer/BottomUI  # ✅ Reference the BottomUI node
+@onready var bottom_ui = $UIlayer/LocalPlayUI/BottomUI  # ✅ Reference the BottomUI node
 @onready var dark_overlay = $UILayer/DarkOverlay
 @onready var light_overlay := $LightOverlay
 
@@ -27,6 +27,7 @@ var entry_context: Dictionary = {}
 var entry_type: String = "explore"  # Fallback
 var current_tile_chunk: Dictionary = {}
 var current_object_chunk: Dictionary = {}
+var current_npc_chunk: Dictionary = {}
 var current_chunk_id: String = ""
 var active_area_exit_popup: Node = null
 var current_z_level: int = 0
@@ -120,9 +121,12 @@ func load_and_render_local_map():
 	# 🧱 Load tile and object chunks
 	var tile_path = LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_id, biome_key, z_level)
 	var object_path = LoadHandlerSingleton.get_chunked_object_chunk_path(chunk_id, biome_key, z_level)
+	var npc_path = LoadHandlerSingleton.get_chunked_npc_chunk_path(chunk_id, biome_key, z_level)
 	
 	var tile_chunk = LoadHandlerSingleton.load_json_file(tile_path)
 	var object_chunk = LoadHandlerSingleton.load_json_file(object_path)
+	var npc_chunk = LoadHandlerSingleton.load_json_file(npc_path)
+
 	
 	# Wrap tile_chunk like load_chunked_tile_chunk does
 	if tile_chunk.has("tile_grid"):
@@ -136,8 +140,16 @@ func load_and_render_local_map():
 	else:
 		object_chunk = { "objects": {} }
 	
+	if npc_chunk.has("npcs"):
+		npc_chunk = npc_chunk
+	elif typeof(npc_chunk) == TYPE_DICTIONARY:
+		npc_chunk = { "npcs": npc_chunk }
+	else:
+		npc_chunk = { "npcs": {} }
+	
 	current_tile_chunk = tile_chunk
 	current_object_chunk = object_chunk
+	current_npc_chunk = npc_chunk
 
 	# ❌ Bail if anything failed
 	if tile_chunk == null or object_chunk == null:
@@ -145,7 +157,7 @@ func load_and_render_local_map():
 		return
 
 	# 🎨 Render map using chunks
-	MapRenderer.render_map(tile_chunk, object_chunk, tile_container, chunk_id)
+	MapRenderer.render_map(tile_chunk, object_chunk, npc_chunk, tile_container, chunk_id)
 	print("✅ Chunked local map rendered.")
 	var coords = LoadHandlerSingleton.get_current_chunk_coords()
 	MapRenderer.render_chunk_transitions(coords, tile_container)
@@ -434,7 +446,7 @@ func handle_panning(delta):
 	tile_container.position += move_vector * adjusted_speed * delta
 
 func update_time_label():
-	var time_label = get_node_or_null("UILayer/Time")
+	var time_label = get_node_or_null("UILayer/LocalPlayUI/Time")
 	if time_label:
 		var timedate = LoadHandlerSingleton.get_time_and_date()
 		if timedate.has("gametime"):
@@ -468,7 +480,7 @@ func update_dark_overlay():
 
 
 func update_local_flavor_image():
-	var flavor_image_node = $UILayer/TimeOfDayType  # Adjust this path if needed
+	var flavor_image_node = $UILayer/LocalPlayUI/TimeOfDayType # Adjust this path if needed
 	if flavor_image_node:
 		var flavor_texture = LoadHandlerSingleton.get_gametimeflavorlocal_image()
 		if flavor_texture:
@@ -480,7 +492,7 @@ func update_local_flavor_image():
 		print("❌ Error: TimeFlavorImage node not found.")
 
 func update_date_label():
-	var date_label = get_node("UILayer/Date")  # Update with correct path
+	var date_label = get_node("UILayer/LocalPlayUI/Date")  # Update with correct path
 	if date_label:
 		var date_value = LoadHandlerSingleton.get_date_name()
 		date_label.text = date_value
@@ -489,7 +501,7 @@ func update_date_label():
 		print("❌ Error: Date label node not found.")
 
 func update_realm_label():
-	var realm_label = get_node("UILayer/Realm")  # 🔁 Replace with your actual node path if different
+	var realm_label = get_node("UILayer/LocalPlayUI/Realm")  # 🔁 Replace with your actual node path if different
 
 	if realm_label:
 		var current_realm = LoadHandlerSingleton.get_current_realm()
@@ -508,7 +520,7 @@ func update_realm_label():
 		print("❌ Error: RealmLabel node not found.")
 
 func update_play_scene_name():
-	var label_node = get_node_or_null("UILayer/PlaySceneName")
+	var label_node = get_node_or_null("UILayer/LocalPlayUI/PlaySceneName")
 	if label_node == null:
 		print("❌ Error: PlaySceneName label not found.")
 		return
@@ -586,11 +598,11 @@ func update_local_progress_bars():
 
 	# Map node paths to their stat keys
 	var bar_paths = {
-		"health": "UILayer/LocalMetersContainer/HBoxLocalHealth/LocalHealthBar",
-		"stamina": "UILayer/LocalMetersContainer/HBoxLocalStamina/LocalStaminaBar",
-		"hunger": "UILayer/LocalMetersContainer/HBoxLocalHunger/LocalHungerBar",
-		"fatigue": "UILayer/LocalMetersContainer/HBoxLocalFatigue/LocalFatigueBar",
-		"sanity": "UILayer/LocalMetersContainer/HBoxLocalSanity/LocalSanityBar"
+		"health": "UILayer/LocalPlayUI/LocalMetersContainer/HBoxLocalHealth/LocalHealthBar",
+		"stamina": "UILayer/LocalPlayUI/LocalMetersContainer/HBoxLocalStamina/LocalStaminaBar",
+		"hunger": "UILayer/LocalPlayUI/LocalMetersContainer/HBoxLocalHunger/LocalHungerBar",
+		"fatigue": "UILayer/LocalPlayUI/LocalMetersContainer/HBoxLocalFatigue/LocalFatigueBar",
+		"sanity": "UILayer/LocalPlayUI/LocalMetersContainer/HBoxLocalSanity/LocalSanityBar"
 	}
 
 	for stat in bar_paths.keys():
@@ -1151,6 +1163,9 @@ func get_tile_chunk() -> Dictionary:
 
 func get_object_chunk() -> Dictionary:
 	return current_object_chunk
+
+func get_npc_chunk() -> Dictionary:
+	return current_npc_chunk
 
 func get_current_chunk_id() -> String:
 	return current_chunk_id

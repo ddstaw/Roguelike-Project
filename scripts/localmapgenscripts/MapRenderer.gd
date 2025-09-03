@@ -19,7 +19,7 @@ func _ready():
 	get_tree().root.add_child(self)  # ✅ Only add if not already in the scene
 	set_process(false)  # ✅ No need to run `_process()`
 	
-func render_map(tile_data: Dictionary, object_data: Dictionary, tile_container: Node, chunk_id: String) -> void:
+func render_map(tile_data: Dictionary, object_data: Dictionary, npc_data: Dictionary, tile_container: Node, chunk_id: String) -> void:
 	if tile_container == null:
 		print("❌ ERROR: tile_container is null!")
 		return
@@ -30,7 +30,7 @@ func render_map(tile_data: Dictionary, object_data: Dictionary, tile_container: 
 
 	# 🧹 Clear old stuff
 	for child in tile_container.get_children():
-		if child.name.begins_with("tile_") or child.name.begins_with("obj_"):
+		if child.name.begins_with("tile_") or child.name.begins_with("obj_") or child.name.begins_with("npc_"):
 			child.queue_free()
 
 	print("🖼 Rendering map from normalized chunk data...")
@@ -134,6 +134,51 @@ func render_map(tile_data: Dictionary, object_data: Dictionary, tile_container: 
 		else:
 			print("⚠️ Missing texture for object:", obj_type)
 			print("🧪 Texture for", obj_type, "→", obj_texture)
+
+		# 🧍 Render NPCs
+	if npc_data == null or not npc_data.has("npcs"):
+		print("⚠️ WARNING: npc_data is invalid or missing 'npcs'!", npc_data)
+		return
+
+	var npcs = npc_data["npcs"]
+	if typeof(npcs) != TYPE_DICTIONARY:
+		print("❌ ERROR: 'npcs' is not a dictionary!", npcs)
+		return
+
+	var npc_count := 0
+	for npc_id in npcs:
+		var npc = npcs[npc_id]
+		if not npc.has("position") or typeof(npc["position"]) != TYPE_DICTIONARY:
+			print("🚫 NPC position malformed:", npc_id, "→", npc.get("position"))
+			continue
+
+		var pos = npc["position"]
+		var local_x = int(pos["x"])
+		var local_y = int(pos["y"])
+
+		# 🧠 Basic fallback: use TEXTURES or a scene path
+		var npc_type = npc.get("type", "generic_npc")
+		var npc_texture: Texture2D = TEXTURES.get(npc_type, null)
+
+		if npc_texture != null:
+			var npc_node_name = "npc_%d_%d" % [local_x, local_y]
+			var old_npc = tile_container.get_node_or_null(npc_node_name)
+			if old_npc:
+				old_npc.queue_free()
+
+			var npc_sprite := Sprite2D.new()
+			npc_sprite.name = npc_node_name
+			npc_sprite.texture = npc_texture
+			npc_sprite.position = Vector2(local_x * TILE_SIZE, local_y * TILE_SIZE)
+			npc_sprite.z_index = 1  # Render above objects and tiles
+			npc_sprite.add_to_group("npc_sprites")
+			tile_container.add_child(npc_sprite)
+			npc_count += 1
+		else:
+			print("⚠️ Missing texture for NPC:", npc_type)
+
+	print("✅ NPCs rendered:", npc_count)
+
 
 	print("👶 TileContainer Children After Render:", tile_container.get_child_count())
 	print("✅ Map rendering complete.")

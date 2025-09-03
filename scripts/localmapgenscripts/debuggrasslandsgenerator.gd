@@ -292,7 +292,7 @@ func generate_chunked_map(tile_container: Node) -> Array:
 		chunked_object_data[chunk_key] = placed_objects
 
 		if chunk_key == "chunk_1_1" and tile_container != null and is_instance_valid(tile_container):
-			MapRenderer.render_map({ "tile_grid": flat_tile_grid }, { "objects": object_layer }, tile_container, chunk_key)
+			MapRenderer.render_map({ "tile_grid": flat_tile_grid }, { "objects": object_layer }, { "npcs": {} }, tile_container, chunk_key)
 
 	print("✅ All debug grassland chunks generated.")
 	print("📍 Egress points collected:", LoadHandlerSingleton.get_egress_points())

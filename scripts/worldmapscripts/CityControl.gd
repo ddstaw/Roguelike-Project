@@ -78,6 +78,7 @@ func enter_or_generate_city(city_data: Dictionary, player_position: Vector2):
 
 # Function to exit the city and return to the world map
 func exit_city():
+	LoadHandlerSingleton.set_realm_char_state("worldmap")
 	print("Exiting the city...")
 
 	var city_data_path = LoadHandlerSingleton.get_citydata_path()
