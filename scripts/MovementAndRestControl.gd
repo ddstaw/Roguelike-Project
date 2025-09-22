@@ -20,7 +20,7 @@ var rest_outcomes = [
 var starving_outcome = "You try to rest but you are starving, you feel tired and your sanity slipping."
 
 func _ready() -> void:
-	print("Movement and Rest Control is ready.")
+	#print("Movement and Rest Control is ready.")
 	rest_button.connect("pressed", Callable(self, "_on_rest_button_pressed"))
 	set_process_input(true)  # Handle input events like spacebar
 
@@ -64,9 +64,9 @@ func handle_inventory_toggle() -> void:
 	get_tree().change_scene_to_file(INVENTORY_SCENE)
 
 func _on_rest_button_pressed():
-	print("Before resting:")
+	#print("Before resting:")
 	TimeManager.print_time_and_date()
-	print("You have rested.")
+	#print("You have rested.")
 	
 	# Load the combat stats
 	var combat_stats_data = LoadHandlerSingleton.get_combat_stats()
@@ -88,7 +88,7 @@ func _on_rest_button_pressed():
 
 	# Check if values are missing
 	if hunger_current == null or sanity_current == null or fatigue_current == null or stamina_current == null or health_current == null:
-		print("Missing critical values from the JSON file!")
+		#print("Missing critical values from the JSON file!")
 		return
 
 	# Check if hunger is 0 and apply starving outcome
@@ -100,7 +100,7 @@ func _on_rest_button_pressed():
 		stamina_current = max(stamina_current - 22, 0)
 		fatigue_current = max(fatigue_current - 22, 0)
 
-		print("Starving! Health:", health_current, "Sanity:", sanity_current, "Stamina:", stamina_current, "Fatigue:", fatigue_current)
+		#print("Starving! Health:", health_current, "Sanity:", sanity_current, "Stamina:", stamina_current, "Fatigue:", fatigue_current)
 		selected_message = starving_outcome
 	else:
 		# Prepare weighted rest outcome list
@@ -144,7 +144,7 @@ func _on_rest_button_pressed():
 	# Log the selected message into the travel log
 	if travel_log_control:
 		travel_log_control.add_message_to_log(selected_message)
-		print("Added rest outcome to log:", selected_message)
+		#print("Added rest outcome to log:", selected_message)
 	else:
 		print("Error: TravelLogControl or Scroll not found.")
 
@@ -157,13 +157,13 @@ func _on_rest_button_pressed():
 
 	# Save the updated combat stats
 	LoadHandlerSingleton.save_combat_stats(combat_stats_data)
-	print("Combat stats saved.")
+	#print("Combat stats saved.")
 
 	# Call the update_progress_bars() to update the bars after resting
 	var world_map_control = get_node("/root/WorldMapTravel")  # Adjust the node path if necessary
 	if world_map_control:
 		world_map_control.update_progress_bars()
-		print("Updated progress bars.")
+		#print("Updated progress bars.")
 	else:
 		print("Error: WorldMapTravel node not found.")
 		
@@ -182,7 +182,7 @@ func _on_rest_button_pressed():
 	world_map_control.update_gametime_type()
 	
 	# After resting, print the current time and date again
-	print("After resting:")
+	#print("After resting:")
 	TimeManager.print_time_and_date()
 	
 func move_player(direction: Vector2):
@@ -194,7 +194,7 @@ func move_player(direction: Vector2):
 
 		# ✅ Correct biome retrieval per realm
 		var biome_name = LoadHandlerSingleton.get_biome_name(new_position)
-		print("🌍 DEBUG: Biome before updating JSON:", biome_name)
+		#print("🌍 DEBUG: Biome before updating JSON:", biome_name)
 		var cell_name = "cell_" + str(new_position.x) + "_" + str(new_position.y)
 
 		# ✅ Correctly update only the active realm
@@ -206,7 +206,7 @@ func move_player(direction: Vector2):
 		var world_map_control = get_node("/root/WorldMapTravel")  # Adjust if needed
 		if world_map_control:
 			world_map_control.update_biome_label()  # ⬅️ Add this line
-			print("🌍 Biome label updated after movement.")
+			#print("🌍 Biome label updated after movement.")
 		else:
 			print("⚠️ Warning: WorldMapTravel node not found!")
 			
@@ -277,7 +277,7 @@ func city_check(new_position: Vector2):
 				return  # ✅ Exit after finding a matching city
 
 	# If no city found, print a message
-	print("🚫 No city found at this position.")
+	#print("🚫 No city found at this position.")
 
 
 # Function to parse the position string into a Vector2
@@ -316,7 +316,7 @@ func update_city_data(city_name: String, biome: String, tile_position: Vector2):
 	city_data_file_write.store_string(JSON.stringify(city_data, "\t"))
 	city_data_file_write.close()
 
-	print("Updated city_data1.json with new city: " + city_name)
+	#print("Updated city_data1.json with new city: " + city_name)
 
 
 func generate_city_json_file(city_name: String):
@@ -338,7 +338,7 @@ func generate_city_json_file(city_name: String):
 	if city_grid_file != null:
 		city_grid_file.store_string(JSON.stringify({}, "\t"))  # Empty JSON structure
 		city_grid_file.close()
-		print("Empty city grid created at: " + city_grid_path)
+		#print("Empty city grid created at: " + city_grid_path)
 	else:
 		print("Failed to create city grid file: " + city_grid_path)
 
@@ -365,7 +365,7 @@ func update_city_data_with_map_path(city_name: String):
 	city_data_file.store_string(JSON.stringify(city_data, "\t"))
 	city_data_file.close()
 
-	print("Updated city grid path for " + city_name + " in city_data1.json.")
+	#print("Updated city grid path for " + city_name + " in city_data1.json.")
 
 		
 func is_valid_position(position: Vector2) -> bool:
@@ -403,7 +403,7 @@ func update_player_position(new_position: Vector2):
 		if file:
 			file.store_string(JSON.stringify(placement_data, "\t"))  # Save with formatting
 			file.close()
-			print("Player position updated in", current_realm, "to:", new_position)
+			#print("Player position updated in", current_realm, "to:", new_position)
 		else:
 			print("Error: Unable to save player position.")
 	else:
@@ -433,7 +433,7 @@ func update_biome_info(new_position: Vector2):
 	var biome_name = LoadHandlerSingleton.get_biome_name(new_position)
 
 	# ✅ Log biome information
-	print("🌍 Biome updated for", current_realm, "at", new_position, ":", biome_name)
+	#print("🌍 Biome updated for", current_realm, "at", new_position, ":", biome_name)
 
 	# ✅ If in worldmap, update the world biome label
 	if current_realm == "worldmap":
@@ -482,12 +482,12 @@ func travel_effects(current_position: Vector2):
 		# Add more conditions for other biomes as necessary
 
 		travel_log_control.add_message_to_log(message)
-		print("Travel effects applied. Hunger:", hunger_current, "Fatigue:", fatigue_current)
+		#print("Travel effects applied. Hunger:", hunger_current, "Fatigue:", fatigue_current)
 
 
 	# Save the updated combat stats
 	LoadHandlerSingleton.save_combat_stats(combat_stats_data)
-	print("Travel effects applied. Hunger:", hunger_current, "Fatigue:", fatigue_current)
+	#print("Travel effects applied. Hunger:", hunger_current, "Fatigue:", fatigue_current)
 
 	# Advance the game time by a set amount (similar to resting)
 	TimeManager.pass_two_hours()  # You can change the amount of time as needed
@@ -505,6 +505,6 @@ func travel_effects(current_position: Vector2):
 		world_map_control.update_gametime_type()
 	
 	# After resting, print the current time and date again
-	print("After resting:")
+	#print("After resting:")
 	TimeManager.print_time_and_date()
 

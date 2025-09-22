@@ -1,4 +1,4 @@
-[gd_scene load_steps=40 format=3 uid="uid://44m1uuvplkvu"]
+[gd_scene load_steps=41 format=3 uid="uid://44m1uuvplkvu"]
 
 [ext_resource type="Script" path="res://scripts/LocalMap.gd" id="1_u3bsn"]
 [ext_resource type="Theme" uid="uid://ds5x2cgvx5ioq" path="res://ui/TravelLogTheme.tres" id="2_nsfpq"]
@@ -29,6 +29,7 @@
 [ext_resource type="Texture2D" uid="uid://bxquj0swscny3" path="res://assets/localmap-graphics/ui-buttons/328x100-wea1.png" id="22_nbrqp"]
 [ext_resource type="Texture2D" uid="uid://clvv5ria214wy" path="res://assets/localmap-graphics/ui-buttons/hotbar-up.png" id="25_5wehe"]
 [ext_resource type="Texture2D" uid="uid://bs6bqodcaxdd1" path="res://assets/localmap-graphics/ui-buttons/hotbar-down.png" id="26_xy5mw"]
+[ext_resource type="Script" path="res://ui/scripts/LocalTravelLogControl.gd" id="30_gi8sa"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_wq2a5"]
 shader = ExtResource("3_p6j8g")
@@ -631,6 +632,7 @@ offset_left = 15.0
 offset_top = 885.0
 offset_right = 294.0
 offset_bottom = 1066.0
+script = ExtResource("30_gi8sa")
 
 [node name="TravelLogPanel" type="Panel" parent="UILayer/LocalPlayUI/TravelLogControl"]
 layout_mode = 0
@@ -640,10 +642,20 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_rh3e2")
 
 [node name="TravelLogScrollContainer" type="ScrollContainer" parent="UILayer/LocalPlayUI/TravelLogControl/TravelLogPanel"]
 layout_mode = 0
-offset_left = 11.0
-offset_top = 5.0
-offset_right = 267.0
-offset_bottom = 174.0
+offset_left = 8.0
+offset_top = 4.0
+offset_right = 272.0
+offset_bottom = 172.0
+horizontal_scroll_mode = 0
+
+[node name="TravelLogRichTextLabel" type="RichTextLabel" parent="UILayer/LocalPlayUI/TravelLogControl/TravelLogPanel/TravelLogScrollContainer"]
+custom_minimum_size = Vector2(256, 86)
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 19
+bbcode_enabled = true
+fit_content = true
+scroll_following = true
+autowrap_mode = 2
 
 [node name="DarkOverlay" type="ColorRect" parent="UILayer"]
 offset_left = -19.0
@@ -653,3 +665,12 @@ offset_bottom = 1101.0
 mouse_filter = 2
 color = Color(0, 0, 0, 0)
 metadata/_edit_lock_ = true
+
+[node name="NodeTransferWindow" type="Control" parent="UILayer"]
+process_mode = 3
+top_level = true
+z_index = 10
+layout_mode = 3
+anchors_preset = 0
+offset_right = 1920.0
+offset_bottom = 1080.0

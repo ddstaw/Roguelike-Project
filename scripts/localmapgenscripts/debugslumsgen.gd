@@ -112,7 +112,7 @@ func generate_chunked_map(tile_container: Node) -> Array:
 		var origin := Vector2i(data["origin"][0], data["origin"][1])
 		var size = Vector2i(data["size"][0], data["size"][1])
 
-		print("🧱 Generating", chunk_key, "at origin", origin)
+		#print("🧱 Generating", chunk_key, "at origin", origin)
 		var result = generate_chunk(origin, size, chunk_key)
 		var grid = result["grid"]
 

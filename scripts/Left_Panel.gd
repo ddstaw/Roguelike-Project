@@ -1,5 +1,7 @@
 extends Panel
 
+#This is Left_Panel, a child of parent control node Inventory_LocalPlay in res://scenes/play/Inventory_LocalPlay.tscn
+
 const ITEM_DATA := preload("res://constants/item_data.gd")
 const SLOT_SCENE := preload("res://scenes/play/ItemSlot.tscn")
 
@@ -9,6 +11,7 @@ const SLOT_SCENE := preload("res://scenes/play/ItemSlot.tscn")
 @onready var inv_grid: GridContainer     = $"/root/Inventory_LocalPlay/GridFrame/InvScroll/GridPadding/VBoxContainer/InventoryGrid"
 @onready var sort_label: Label           = $"/root/Inventory_LocalPlay/SortBar/SortLabel"
 @onready var grid_frame: Panel 			 = $"/root/Inventory_LocalPlay/GridFrame"
+@onready var inv_root := get_node("/root/Inventory_LocalPlay")  # 👈 reference to parent
 
 
 var _inventory: Dictionary = {}
@@ -106,12 +109,13 @@ func _validate_nodes() -> bool:
 
 func _load_inventory_from_save() -> void:
 	_inventory = LoadHandlerSingleton.load_player_inventory_dict()
+
+	# ✅ Normalize stack stats on load
 	for k in _inventory.keys():
-		var s = _inventory[k]
-		if typeof(s) == TYPE_DICTIONARY:
-			var dict_s: Dictionary = s
-			dict_s["_sort_key"] = _stack_sort_key(dict_s)
-			
+		var s: Dictionary = _inventory[k]
+		LoadHandlerSingleton.normalize_stack_stats(s)
+		s["_sort_key"] = _stack_sort_key(s)
+
 func _setup_scroll() -> void:
 	# Scroll modes
 	inv_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
@@ -267,10 +271,17 @@ func _refresh_grid() -> void:
 	var items := _collect_visible_stacks()
 	for s in items:
 		var slot := SLOT_SCENE.instantiate() as ItemSlot
-		slot.mouse_filter = Control.MOUSE_FILTER_STOP       # ✅
+		slot.mouse_filter = Control.MOUSE_FILTER_STOP
 		inv_grid.add_child(slot)
+
 		var tex := _icon_for(str(s.get("item_ID", "")))
 		slot.call_deferred("set_data", s, tex)
+
+		# ✅ Wire slot click → appraisal
+		slot.gui_input.connect(func(event: InputEvent):
+			if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+				inv_root.show_appraisal(s)
+		)
 
 	# --- Scroll behavior fix: force grid height ---
 	var slot_height: int = 72 + 6

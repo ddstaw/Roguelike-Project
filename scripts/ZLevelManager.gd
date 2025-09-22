@@ -4,14 +4,11 @@ extends Node
 @onready var CaveGen = preload("res://scripts/localmapgenscripts/cavegen.gd").new()
 
 func _ready():
-	print("🟢 ZLevelManager ready, kicking off generation...")
 	await process_z_down_egresses_for_biome("grass")
 
 func process_z_down_egresses_for_biome(biome_key: String) -> void:
-	print("▶ Starting Z-level processing for biome:", biome_key)
 	var short_key = Constants.get_biome_chunk_key(biome_key)
 	if short_key == "":
-		print("⚠️ Invalid biome key:", biome_key)
 		return
 
 	var biome_config = Constants.get_biome_config(short_key)
@@ -30,16 +27,13 @@ func process_z_down_egresses_for_biome(biome_key: String) -> void:
 				floori(egress.position.x / chunk_size.x),
 				floori(egress.position.y / chunk_size.y)
 			)
-			print("📦 Dispatching cellar gen for:", chunk_coords)
 			CellarGen.generate_cellar_chunk(chunk_coords, biome_key, egress, prefab_register)
 
 	# Wait a frame to ensure Z-1 I/O is flushed
 	await get_tree().process_frame
-	print("✅ Frame passed — refreshing egress list for Z-2 check")
 
 	# Step 2: Generate Z-2 Caves
 	egresses = LoadHandlerSingleton.get_combined_egress_list()
-	print("🔍 Egress count after refresh:", egresses.size())
 
 	var z2_chunks := {}
 
@@ -62,7 +56,5 @@ func process_z_down_egresses_for_biome(biome_key: String) -> void:
 
 	for coords in z2_chunks.keys():
 		var egress_data = z2_chunks[coords]
-		print("📦 Dispatching cave gen for:", coords)
 		CaveGen.generate_cave_chunk(coords, biome_key, egress_data)
 
-	print("◀ Ending Z-level processing for biome:", biome_key)

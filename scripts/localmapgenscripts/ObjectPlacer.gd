@@ -22,10 +22,10 @@ func load_placement_rules(biome: String):
 		print("❌ ERROR: Failed to parse JSON in", file_path)
 		object_rules = {}  # Prevent crashes with a fallback
 
-	print("✅ Loaded object placement rules for biome:", biome)
+	#print("✅ Loaded object placement rules for biome:", biome)
 
 func place_objects(grid, object_layer, biome_name := "default", objects := {}, start_id := 1, chunk_id := "") -> Dictionary:
-	print("🔧 Placing world objects for biome:", biome_name, "| chunk_id:", chunk_id)
+	#print("🔧 Placing world objects for biome:", biome_name, "| chunk_id:", chunk_id)
 
 	var rules = load_object_rules(biome_name)
 	if rules == null:
@@ -57,7 +57,7 @@ func load_object_rules(biome_name):
 		print("❌ ERROR: Failed to parse object rules JSON:", path)
 		return null
 
-	print("✅ load_object_rules // Loaded object placement rules for biome:", biome_name)
+	#print("✅ load_object_rules // Loaded object placement rules for biome:", biome_name)
 	return parsed_data
 
 # ✅ Checks if a position is adjacent to a cluster

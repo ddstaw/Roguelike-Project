@@ -38,7 +38,7 @@ func initialize(walk_grid: Array, tile_size: int) -> void:
 	await get_tree().process_frame
 	is_ready = true
 	emit_signal("ready_signal")
-	print("✅ LightOverlay.initialize() complete — light engine ready.")
+	#print("✅ LightOverlay.initialize() complete — light engine ready.")
 
 
 func update_light_map(
@@ -48,11 +48,11 @@ func update_light_map(
 	has_nightvision: bool
 ) -> void:
 	if light_texture == null or light_image == null:
-		print("❌ LightOverlay: light_texture or light_image is null — skipping update.")
+		#print("❌ LightOverlay: light_texture or light_image is null — skipping update.")
 		return
 
-	print("🌌 Updating light map in LightOverlay.gd")
-	print("🧪 Total dirty_tiles:", dirty_tiles.size())
+	#print("🌌 Updating light map in LightOverlay.gd")
+	#print("🧪 Total dirty_tiles:", dirty_tiles.size())
 
 	var min_fade_radius: float = 6.0
 	var max_distance_squared: float = pow(min_fade_radius, 2)

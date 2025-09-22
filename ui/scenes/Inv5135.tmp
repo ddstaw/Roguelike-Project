@@ -1,0 +1,214 @@
+[gd_scene load_steps=8 format=3 uid="uid://clyvf5fc8r7k7"]
+
+[ext_resource type="Script" path="res://ui/scripts/Left_Panel_Inv_mini.gd" id="1_thhnx"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="3_t5une"]
+[ext_resource type="ButtonGroup" uid="uid://b4bu3vkwq0vxa" path="res://ui/inv_sort_buttons.tres" id="4_s74px"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mmpnv"]
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bo7l5"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hig1n"]
+bg_color = Color(0.00229193, 7.99982e-05, 0.000742371, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hglyh"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[node name="Inventory_mini" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+
+[node name="Left_Panel" type="Panel" parent="."]
+z_index = 2
+layout_mode = 0
+offset_left = 1113.0
+offset_top = 35.0
+offset_right = 1888.0
+offset_bottom = 925.0
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_mmpnv")
+script = ExtResource("1_thhnx")
+
+[node name="LeftVBox" type="VBoxContainer" parent="Left_Panel"]
+z_index = 4
+layout_mode = 0
+offset_left = 20.0
+offset_top = 12.0
+offset_right = 763.0
+offset_bottom = 132.0
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
+
+[node name="FilterBar" type="HBoxContainer" parent="Left_Panel/LeftVBox"]
+z_index = 4
+layout_mode = 2
+mouse_filter = 2
+
+[node name="All" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " ALL "
+
+[node name="Weap" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " WEAPONS "
+
+[node name="Arm" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " ARMOR "
+
+[node name="Con" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " CONSUMABLES "
+
+[node name="Mats" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " MATERIALS "
+
+[node name="Loot" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " LOOT "
+
+[node name="GridFrame" type="Panel" parent="."]
+z_index = 3
+clip_contents = true
+layout_mode = 2
+offset_left = 1123.0
+offset_top = 59.0
+offset_right = 1877.0
+offset_bottom = 902.0
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_hig1n")
+
+[node name="InvScroll" type="ScrollContainer" parent="GridFrame"]
+z_index = 5
+layout_mode = 0
+offset_left = 13.0
+offset_top = 25.0
+offset_right = 739.0
+offset_bottom = 780.0
+focus_mode = 2
+mouse_filter = 0
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_hglyh")
+scroll_horizontal_custom_step = 40.0
+scroll_vertical_custom_step = 64.0
+vertical_scroll_mode = 2
+
+[node name="GridPadding" type="MarginContainer" parent="GridFrame/InvScroll"]
+layout_mode = 2
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GridFrame/InvScroll/GridPadding"]
+z_index = 4
+layout_mode = 2
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
+
+[node name="InventoryGrid" type="GridContainer" parent="GridFrame/InvScroll/GridPadding/VBoxContainer"]
+z_index = 4
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 0
+mouse_force_pass_scroll_events = false
+columns = 5
+
+[node name="SortBar" type="HBoxContainer" parent="."]
+z_index = 5
+layout_mode = 0
+offset_left = 1133.0
+offset_top = 848.0
+offset_right = 1872.0
+offset_bottom = 891.0
+mouse_filter = 2
+
+[node name="SortLabel" type="Label" parent="SortBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("3_t5une")
+theme_override_font_sizes/font_size = 20
+text = "Sort:"
+
+[node name="New" type="Button" parent="SortBar"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("4_s74px")
+text = " New "
+flat = true
+
+[node name="Alpha" type="Button" parent="SortBar"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("4_s74px")
+text = "Name"
+flat = true
+
+[node name="Weight" type="Button" parent="SortBar"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("4_s74px")
+text = " Weight "
+flat = true
+
+[node name="Value" type="Button" parent="SortBar"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("4_s74px")
+text = " Value "
+flat = true

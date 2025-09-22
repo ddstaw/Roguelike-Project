@@ -16,7 +16,7 @@ func generate_cave_chunk(chunk_coords: Vector2i, biome_key: String, from_egress:
 
 
 func generate_grassland_cave_chunk(chunk_coords: Vector2i, biome_key: String, biome_config: Dictionary, from_egress: Dictionary) -> void:
-	print("⛏️ ENTERED generate_cave_chunk for", chunk_coords)
+	#print("⛏️ ENTERED generate_cave_chunk for", chunk_coords)
 	var biome_key_short = Constants.get_biome_chunk_key(biome_key)
 	var chunk_key = "chunk_%d_%d" % [chunk_coords.x, chunk_coords.y]
 	var chunk_size = biome_config.get("chunk_size", Vector2i(40, 40))
@@ -66,36 +66,28 @@ func save_cave_chunk(
 	var tile_path = LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_key, biome_key_short, str(z_level))
 	var object_path = LoadHandlerSingleton.get_chunked_object_chunk_path(chunk_key, biome_key_short, str(z_level))
 
-	print("🧭 Saving cave chunk at tile path:", tile_path)
-	print("🧭 Saving cave chunk at object path:", object_path)
+	#print("🧭 Saving cave chunk at tile path:", tile_path)
+	#print("🧭 Saving cave chunk at object path:", object_path)
 
 	# 💾 Save tile JSON
 	var tile_file = FileAccess.open(tile_path, FileAccess.WRITE)
 	if tile_file:
 		tile_file.store_string(JSON.stringify(tile_json, "\t"))
 		tile_file.close()
-		print("💾 Saved cave tile chunk:", chunk_key, "→ Z:", z_level)
+		#print("💾 Saved cave tile chunk:", chunk_key, "→ Z:", z_level)
 	else:
-		printerr("⛔ Failed to open tile file for writing:", tile_path)
+		print("⛔ Failed to open tile file for writing:", tile_path)
 
 	# 💾 Save object JSON
 	var obj_file = FileAccess.open(object_path, FileAccess.WRITE)
 	if obj_file:
 		obj_file.store_string(JSON.stringify({ "objects": object_layer }, "\t"))
 		obj_file.close()
-		print("💾 Saved cave object chunk:", chunk_key, "→ Z:", z_level)
+		#print("💾 Saved cave object chunk:", chunk_key, "→ Z:", z_level)
 	else:
-		printerr("⛔ Failed to open object file for writing:", object_path)
+		print("⛔ Failed to open object file for writing:", object_path)
 
-	# ✅ Confirm tile file was written
-	var confirm_check = LoadHandlerSingleton.load_json_file(tile_path)
-	if confirm_check == null:
-		print("❌ Could not load saved tile file! Path was:", tile_path)
-	else:
-		print("🧪 Confirmed written tile_grid size:", confirm_check.get("tile_grid", {}).size())
 
-	print("🛠 Final Z-level INT:", z_level, "Type:", typeof(z_level))
-	
 func get_egress_for_caves_and_inject_to_chunk(
 	chunk_key: String,
 	chunk_coords: Vector2i,
@@ -105,37 +97,37 @@ func get_egress_for_caves_and_inject_to_chunk(
 	grid: Array,
 	rooms: Array,
 ) -> void:
-	print("⛄ SNOWBALL: Injecting egress for chunk_key:", chunk_key)
-	print("⛄ SNOWBALL: Chunk coords:", chunk_coords)
-	print("⛄ SNOWBALL: Chunk size:", chunk_size)
-	print("⛄ SNOWBALL: Origin used:", origin)
+	#print("⛄ SNOWBALL: Injecting egress for chunk_key:", chunk_key)
+	#print("⛄ SNOWBALL: Chunk coords:", chunk_coords)
+	#print("⛄ SNOWBALL: Chunk size:", chunk_size)
+	#print("⛄ SNOWBALL: Origin used:", origin)
 	
 	var rng := RandomNumberGenerator.new()
 	rng.seed = hash(chunk_coords)
 	
 	var biome_folder = Constants.get_chunk_folder_for_key(biome_key_short)
-	print("⛄ SNOWBALL: Biome folder resolved to:", biome_folder)
+	#print("⛄ SNOWBALL: Biome folder resolved to:", biome_folder)
 
 	var egress_register_path = LoadHandlerSingleton.get_egress_register_path(biome_folder)
-	print("⛄ SNOWBALL: Egress register path:", egress_register_path)
+	#print("⛄ SNOWBALL: Egress register path:", egress_register_path)
 
 	var egress_register = LoadHandlerSingleton.load_json_file(egress_register_path)
 	if typeof(egress_register) != TYPE_DICTIONARY:
-		print("⛄ SNOWBALL: ❌ Egress register failed to load or is not a Dictionary!")
+		#print("⛄ SNOWBALL: ❌ Egress register failed to load or is not a Dictionary!")
 		return
 
 	var z_key = "%s|z-2" % chunk_key
-	print("⛄ SNOWBALL: Looking for z_key:", z_key)
-	print("⛄ SNOWBALL: Available keys in egress_register:", egress_register.keys())
+	#print("⛄ SNOWBALL: Looking for z_key:", z_key)
+	#print("⛄ SNOWBALL: Available keys in egress_register:", egress_register.keys())
 
 	if not egress_register.has(z_key):
-		print("⛄ SNOWBALL: ❌ No egresses found for", z_key)
+		#print("⛄ SNOWBALL: ❌ No egresses found for", z_key)
 		return
 
 	var egresses: Array = egress_register[z_key]
 
 	for egress in egresses:
-		print("⛄ SNOWBALL: 🧩 Checking egress:", egress)
+		#print("⛄ SNOWBALL: 🧩 Checking egress:", egress)
 
 		var egress_type = egress.get("type", "")
 		if egress_type != "short_ladder" and egress_type != "long_ladder":
@@ -147,7 +139,7 @@ func get_egress_for_caves_and_inject_to_chunk(
 		var local_y = global_pos.y
 		var local_pos = Vector2i(local_x, local_y)
 
-		print("⛄ SNOWBALL: 🧭 Global pos:", global_pos, "→ Local pos:", local_pos)
+		#print("⛄ SNOWBALL: 🧭 Global pos:", global_pos, "→ Local pos:", local_pos)
 
 		if local_x >= 0 and local_x < chunk_size.x and local_y >= 0 and local_y < chunk_size.y:
 			carve_landing_pad(grid, local_pos, chunk_size, rooms, rng)
@@ -158,7 +150,7 @@ func get_egress_for_caves_and_inject_to_chunk(
 				"state": LoadHandlerSingleton.get_tile_state_for(egress_type),
 				"manual_egress": true
 			}
-			print("⛄ SNOWBALL: 🪜 Injected", egress_type, "at local", local_pos, "in", chunk_key)
+			#print("⛄ SNOWBALL: 🪜 Injected", egress_type, "at local", local_pos, "in", chunk_key)
 		else:
 			print("⛄ SNOWBALL: ⚠️ Egress out of bounds at", local_pos, "for", chunk_key)
 

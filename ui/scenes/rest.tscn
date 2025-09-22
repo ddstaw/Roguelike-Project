@@ -1,0 +1,322 @@
+[gd_scene load_steps=12 format=3 uid="uid://ftof1af8mp8n"]
+
+[ext_resource type="Script" path="res://ui/scripts/Left_Panel_Inv_mini.gd" id="1_g1110"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="2_gbogt"]
+[ext_resource type="ButtonGroup" uid="uid://b4bu3vkwq0vxa" path="res://ui/inv_sort_buttons.tres" id="3_foc6l"]
+[ext_resource type="Script" path="res://ui/scripts/NodeLootContainer.gd" id="4_qveus"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mmpnv"]
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bo7l5"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hig1n"]
+bg_color = Color(0.00229193, 7.99982e-05, 0.000742371, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hglyh"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_285p2"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ix5sw"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ghbme"]
+content_margin_left = 19.0
+content_margin_top = 9.0
+content_margin_right = 19.0
+content_margin_bottom = 9.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[node name="Inventory_mini" type="Control"]
+process_mode = 3
+top_level = true
+z_index = 6
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 1
+mouse_force_pass_scroll_events = false
+
+[node name="Left_Panel" type="Panel" parent="."]
+top_level = true
+z_index = 6
+layout_mode = 0
+offset_left = 1113.0
+offset_top = 71.0
+offset_right = 1888.0
+offset_bottom = 729.0
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_mmpnv")
+script = ExtResource("1_g1110")
+
+[node name="LeftVBox" type="VBoxContainer" parent="Left_Panel"]
+z_index = 4
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.00786517
+anchor_bottom = -0.00786517
+offset_left = 20.0
+offset_top = 74.0
+offset_right = 763.0
+offset_bottom = 194.0
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
+metadata/_edit_use_anchors_ = true
+
+[node name="FilterBar" type="HBoxContainer" parent="Left_Panel/LeftVBox"]
+z_index = 4
+layout_mode = 2
+mouse_filter = 2
+
+[node name="All" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " ALL "
+
+[node name="Weap" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " WEAPONS "
+
+[node name="Arm" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " ARMOR "
+
+[node name="Con" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " CONSUMABLES "
+
+[node name="Mats" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " MATERIALS "
+
+[node name="Loot" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
+layout_mode = 2
+size_flags_stretch_ratio = 1.85
+theme_override_constants/outline_size = 0
+theme_override_constants/h_separation = 0
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
+text = " LOOT "
+
+[node name="GridFrame" type="Panel" parent="."]
+z_index = 3
+clip_contents = true
+layout_mode = 2
+offset_left = 1123.0
+offset_top = 154.0
+offset_right = 1877.0
+offset_bottom = 805.0
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_hig1n")
+
+[node name="InvScroll" type="ScrollContainer" parent="GridFrame"]
+z_index = 5
+layout_mode = 0
+offset_left = 13.0
+offset_top = 25.0
+offset_right = 739.0
+offset_bottom = 598.0
+focus_mode = 2
+mouse_filter = 0
+mouse_force_pass_scroll_events = false
+theme_override_styles/panel = SubResource("StyleBoxFlat_hglyh")
+scroll_horizontal_custom_step = 40.0
+scroll_vertical_custom_step = 64.0
+vertical_scroll_mode = 2
+
+[node name="GridPadding" type="MarginContainer" parent="GridFrame/InvScroll"]
+layout_mode = 2
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="VBoxContainer" type="VBoxContainer" parent="GridFrame/InvScroll/GridPadding"]
+z_index = 4
+layout_mode = 2
+mouse_filter = 2
+mouse_force_pass_scroll_events = false
+
+[node name="InventoryGrid" type="GridContainer" parent="GridFrame/InvScroll/GridPadding/VBoxContainer"]
+z_index = 4
+layout_mode = 2
+size_flags_vertical = 3
+mouse_filter = 0
+mouse_force_pass_scroll_events = false
+columns = 5
+
+[node name="SortBar" type="HBoxContainer" parent="."]
+top_level = true
+z_index = 9
+layout_mode = 1
+anchors_preset = -1
+anchor_top = -0.12037
+anchor_bottom = -0.12037
+offset_left = 1133.0
+offset_top = 886.0
+offset_right = 1872.0
+offset_bottom = 929.0
+mouse_filter = 2
+metadata/_edit_use_anchors_ = true
+
+[node name="SortLabel" type="Label" parent="SortBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_gbogt")
+theme_override_font_sizes/font_size = 20
+text = "Sort:"
+
+[node name="New" type="Button" parent="SortBar"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("3_foc6l")
+text = " New "
+flat = true
+
+[node name="Alpha" type="Button" parent="SortBar"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("3_foc6l")
+text = "Name"
+flat = true
+
+[node name="Weight" type="Button" parent="SortBar"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("3_foc6l")
+text = " Weight "
+flat = true
+
+[node name="Value" type="Button" parent="SortBar"]
+layout_mode = 2
+toggle_mode = true
+button_group = ExtResource("3_foc6l")
+text = " Value "
+flat = true
+
+[node name="NodeTransferWindow" type="Control" parent="."]
+process_mode = 3
+top_level = true
+z_index = 6
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 597.0
+offset_top = 144.0
+offset_right = -825.0
+offset_bottom = -298.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="PanelContainer" type="Panel" parent="NodeTransferWindow"]
+top_level = true
+z_index = 13
+layout_mode = 0
+offset_left = 609.0
+offset_top = 158.0
+offset_right = 1083.0
+offset_bottom = 766.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_285p2")
+script = ExtResource("4_qveus")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="NodeTransferWindow/PanelContainer"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 90.0
+offset_right = 460.0
+offset_bottom = 524.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_ix5sw")
+
+[node name="MarginContainer" type="MarginContainer" parent="NodeTransferWindow/PanelContainer/ScrollContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="NodeTransferWindow/PanelContainer/ScrollContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="GridContainer" type="GridContainer" parent="NodeTransferWindow/PanelContainer/ScrollContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="Button" type="Button" parent="NodeTransferWindow/PanelContainer"]
+layout_mode = 2
+offset_left = 181.0
+offset_top = 554.0
+offset_right = 296.0
+offset_bottom = 589.0
+size_flags_horizontal = 4
+size_flags_vertical = 4
+theme_override_styles/normal = SubResource("StyleBoxFlat_ghbme")
+text = "Take All"
+
+[node name="Label" type="Label" parent="NodeTransferWindow/PanelContainer"]
+layout_mode = 2
+offset_left = 13.0
+offset_top = 15.0
+offset_right = 458.0
+offset_bottom = 77.0
+text = "YOU FOUND SOMETHING"
+
+[node name="ColorRect" type="ColorRect" parent="."]
+layout_mode = 1
+offset_right = 1920.0
+offset_bottom = 1080.0
+color = Color(0, 0, 0, 0.533333)
+metadata/_edit_lock_ = true

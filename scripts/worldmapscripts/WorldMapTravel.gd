@@ -13,7 +13,7 @@ var last_position: Vector2 = Vector2(-1, -1)  # Initialize with an invalid posit
 var position_initialized = false
 
 func _ready() -> void:
-	print("Parent script is ready. Attempting to load the map...")
+	#print("Parent script is ready. Attempting to load the map...")
 	
 	# ✅ Connect LoadHandlerSingleton's signal to reload the map
 	LoadHandlerSingleton.request_map_reload.connect(load_map)
@@ -66,14 +66,14 @@ func _input(event):
 
 func load_map():
 	position_initialized = false  # Reset to allow initialization on new map load
-	print("🗺️ Starting load_map function...")
+	#print("🗺️ Starting load_map function...")
 
 	# ✅ Load worldmap_placement.json instead of char_stateX.json
 	var placement_data = LoadHandlerSingleton.load_json_file(LoadHandlerSingleton.get_worldmap_placement_path())
 
 	# ✅ Ensure character_position exists
 	if not placement_data.has("character_position"):
-		print("❌ ERROR: 'character_position' not found in worldmap_placement.json.")
+		#print("❌ ERROR: 'character_position' not found in worldmap_placement.json.")
 		return
 
 	var character_position = placement_data["character_position"]
@@ -81,7 +81,7 @@ func load_map():
 
 	# ✅ Use `current_realm` to determine what to load
 	if current_realm == "worldmap":
-		print("🌍 Player is in the world map. Loading world map...")
+		#print("🌍 Player is in the world map. Loading world map...")
 		LoadHandlerSingleton.set_realm_char_state("worldmap")
 		load_world_map()
 	elif current_realm == "citymap":
@@ -98,11 +98,11 @@ func load_map():
 
 # Function to load the world map
 func load_world_map():
-	print("🌍 Loading world map...")
+	#print("🌍 Loading world map...")
 	await get_tree().process_frame  # Give time for the map to load
 	var map_display = get_node("MapControl/SubViewportContainer/SubViewport/WorldTextureRect")
 	if map_display:
-		print("✅ Found WorldTextureRect, initializing world map display...")
+		#print("✅ Found WorldTextureRect, initializing world map display...")
 		map_display.init_map_display()
 		update_world_name_label()
 	else:
@@ -110,7 +110,7 @@ func load_world_map():
 
 # ✅ Function to load the city map
 func load_city_map(city_name: String):
-	print("🏙️ Loading city map for:", city_name)
+	#print("🏙️ Loading city map for:", city_name)
 
 	# ✅ Get city grid path from city_data1.json
 	var city_data_path = LoadHandlerSingleton.get_citydata_path()
@@ -118,7 +118,7 @@ func load_city_map(city_name: String):
 
 	# ✅ Ensure city data exists
 	if not city_data.has("city_data") or not city_data["city_data"].has(city_name):
-		print("❌ ERROR: No city data found for", city_name)
+		#print("❌ ERROR: No city data found for", city_name)
 		return
 
 	var city_grid_path = city_data["city_data"][city_name]["city_grid"]
@@ -127,7 +127,7 @@ func load_city_map(city_name: String):
 	# ✅ Load the city grid into the world map display
 	var map_display = get_node("MapControl/SubViewportContainer/SubViewport/WorldTextureRect")
 	if map_display:
-		print("✅ Found WorldTextureRect, loading city grid...")
+		#print("✅ Found WorldTextureRect, loading city grid...")
 		map_display.grid_data = city_grid_data["grid"]
 		map_display.create_grid()
 
@@ -150,7 +150,7 @@ func load_city_map(city_name: String):
 func initialize_position():
 	# Only proceed if not yet initialized
 	if position_initialized:
-		print("Position already initialized; skipping.")
+		#print("Position already initialized; skipping.")
 		return
 
 	await get_tree().process_frame  # Ensure all nodes are fully initialized
@@ -167,7 +167,7 @@ func initialize_position():
 
 		# Calculate display position
 		var world_position = Vector2(x, y)
-		print("Setting player display position to:", world_position)
+		#print("Setting player display position to:", world_position)
 
 		# Get the WorldTextureRect node and set visibility to false initially
 		var world_texture_rect = get_node("MapControl/SubViewportContainer/SubViewport/WorldTextureRect")
@@ -186,14 +186,14 @@ func initialize_position():
 func update_biome_label():
 	var biome_label = get_node("RightInfoContainerBiome/BiomeLabel")
 	if not biome_label:
-		print("❌ Error: BiomeLabel node not found.")
+		#print("❌ Error: BiomeLabel node not found.")
 		return
 
 	var current_position = LoadHandlerSingleton.get_player_position()
 	var biome_name = LoadHandlerSingleton.get_biome_name(current_position)
 
-	print("📍 Current Position:", current_position)
-	print("🌍 Biome Name Before Check:", biome_name)
+	#print("📍 Current Position:", current_position)
+	#print("🌍 Biome Name Before Check:", biome_name)
 
 	# ✅ Use village proper name if available
 	if biome_name == "village" and LoadHandlerSingleton.villages.has(current_position):
@@ -215,7 +215,7 @@ func update_biome_label():
 		_:
 			biome_label.text = Constants.get_biome_label(biome_name)
 
-	print("✅ Biome label updated to:", biome_label.text)
+	#print("✅ Biome label updated to:", biome_label.text)
 
 		
 # Function to retrieve the village name based on the player's current position
@@ -247,7 +247,7 @@ func update_gametime_flavor():
 		var flavor_texture = LoadHandlerSingleton.get_gametimeflavor_image()  # Use the singleton to get the flavor image
 		if flavor_texture:
 			flavor_image_node.texture = flavor_texture
-			print("Flavor image updated successfully.")
+			#print("Flavor image updated successfully.")
 		else:
 			print("Error: Failed to load texture for gametime flavor.")
 	else:
@@ -261,7 +261,7 @@ func update_gametime_type():
 		var time_type_value = LoadHandlerSingleton.get_gametimetype()  # Use the singleton to get gametimetype
 		if time_type_value != "":
 			time_type_node.text = time_type_value
-			print("Gametime type updated to:", time_type_value)
+			#print("Gametime type updated to:", time_type_value)
 		else:
 			print("Error: Failed to retrieve gametimetype.")
 	else:
@@ -275,7 +275,7 @@ func update_weather_label():
 	if weather_label:
 		var weather_value = LoadHandlerSingleton.get_gameweather()  # Use the singleton to get the weather
 		weather_label.text = weather_value
-		print("Weather label updated to:", weather_value)
+		#print("Weather label updated to:", weather_value)
 	else:
 		print("Error: WeatherLabel node not found at the specified path.")
 
@@ -301,7 +301,7 @@ func update_world_name_label():
 		else:
 			worldmap_name_label.text = "Unknown Realm"  # Fallback text
 
-		print("🌍 Updated world name label:", worldmap_name_label.text)  # Debugging
+		#print("🌍 Updated world name label:", worldmap_name_label.text)  # Debugging
 	else:
 		print("❌ Error: WorldMapName node not found.")
 
@@ -393,7 +393,7 @@ func load_player_position() -> Dictionary:
 						"current_realm": current_realm
 					}
 					
-					print("Player position loaded:", player_position)
+					#print("Player position loaded:", player_position)
 				else:
 					print("No character_position found in worldmap_placement JSON.")
 			else:
@@ -452,7 +452,7 @@ func set_effective_attributes():
 		if base_attributes_file:
 			base_attributes_file.store_string(JSON.stringify(attributes_data, "\t"))  # Save with formatting
 			base_attributes_file.close()
-			print("Base attributes successfully updated with effective attributes.")
+			#print("Base attributes successfully updated with effective attributes.")
 		else:
 			print("Error: Failed to open base attributes file for writing at:", base_attributes_path)
 	else:
@@ -492,7 +492,7 @@ func update_combat_stats():
 			if combat_stats_file:
 				combat_stats_file.store_string(JSON.stringify(combat_stats, "\t"))  # Save with formatting
 				combat_stats_file.close()
-				print("Combat stats successfully updated.")
+				#print("Combat stats successfully updated.")
 			else:
 				print("Error: Failed to open combat stats file for writing at:", combat_stats_path)
 		else:
@@ -567,5 +567,5 @@ func update_fatigue_ui(combat_stats_data) -> void:
 # Function to set play scene after yielding for a frame
 func set_play_scene_after_idle() -> void:
 	await get_tree().process_frame  # Wait for one frame
-	print("Setting play scene after yielding one frame...")
+	#print("Setting play scene after yielding one frame...")
 	SceneManager.set_play_scene("res://scenes/play/WorldMapTravel.tscn")

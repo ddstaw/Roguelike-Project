@@ -62,7 +62,7 @@ func add_message_to_log(message_text: String):
 		new_message_label.text = message_text
 		apply_font_styling_for_log(new_message_label)
 		log_vbox.add_child(new_message_label)
-		print("Added message to log: ", message_text)
+		#print("Added message to log: ", message_text)
 	else:
 		print("MessageLogVBox not found.")
 

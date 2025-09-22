@@ -20,7 +20,7 @@ var player_position = {}
 
 func _ready():
 	# Initialize the map display using the singleton
-	print("Initializing map display...")
+	#print("Initializing map display...")
 	init_map_display()
 	
 # Lazy load a tile
@@ -100,7 +100,7 @@ func display_player_character(player_position: Vector2):
 	player_character_node.z_index = 10  # ✅ Higher than all map markers
 
 	add_child(player_character_node)  # Add the new player character node to the scene
-	print("Goofy Player character displayed at:", player_character_node.position)
+	#print("Goofy Player character displayed at:", player_character_node.position)
 	
 
 	# Inside WorldTravel-TextureRect.gd
@@ -108,9 +108,7 @@ func remove_player_character():
 	if has_node("PlayerCharacter"):  # Adjust the node path as necessary
 		var player_character = get_node("PlayerCharacter")
 		player_character.queue_free()  # This will remove the player character from the scene
-		print("Player character removed.")
-	else:
-		print("No player character found to remove.")
+		#print("Player character removed.")
 
 func update_map_markers():
 	var investigations = LoadHandlerSingleton.load_json_file(LoadHandlerSingleton.get_investigate_localmaps_path())

@@ -129,6 +129,13 @@ const TEXTURE_TO_NAME := {
 	TILE_TEXTURES["bluewizard"]: "bluewizard"
 }
 
+const NPC_TYPE_TO_TEXTURE_KEY := {
+	"CRE0001": "orangecat",
+	"CRE0002": "greensnake",
+	"NPC0001": "bluewizard"
+}
+
+
 const TRANSITION_TEXTURES := {
 	"north": preload("res://assets/localmap-graphics/transitions/north.png"),
 	"east": preload("res://assets/localmap-graphics/transitions/east.png"),
@@ -349,10 +356,10 @@ static func get_spawn_offset_for_biome(biome: String) -> Vector2i:
 
 static func get_chunk_folder_for_key(key: String) -> String:
 	match key:
-		"gef": return "grassland_explore_fields"
-		"fep": return "forest_explore_path"
-		"vses": return "village_slums_explore_slumblock"
-		_: return "default_chunk_folder"  # fallback for safety
+		"gef", "grassland_explore_fields": return "grassland_explore_fields"
+		"fep", "forest_explore_path": return "forest_explore_path"
+		"vses", "village_slums_explore_slumblock": return "village_slums_explore_slumblock"
+		_: return "default_chunk_folder"
 
 static func get_biome_chunk_key(biome: String) -> String:
 	match biome:
@@ -406,3 +413,4 @@ static func get_biome_config(short_key: String) -> Dictionary:
 		"chunk_size": Vector2i(40, 40),
 		"grid_size": Vector2i(1, 1)
 	})
+

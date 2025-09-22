@@ -1,9 +1,10 @@
-[gd_scene load_steps=9 format=3 uid="uid://dx0u4u7xebjtq"]
+[gd_scene load_steps=12 format=3 uid="uid://dx0u4u7xebjtq"]
 
 [ext_resource type="Script" path="res://scripts/localmapscripts/Inventory_LocalPlay.gd" id="1_u761t"]
 [ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="2_bnac2"]
 [ext_resource type="Script" path="res://scripts/Left_Panel.gd" id="2_lok6c"]
 [ext_resource type="ButtonGroup" uid="uid://b4bu3vkwq0vxa" path="res://ui/inv_sort_buttons.tres" id="4_vogvc"]
+[ext_resource type="Texture2D" uid="uid://b8stnbuqfi6go" path="res://assets/inv/iron_knight_helm.png" id="5_xxuut"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mmpnv"]
 bg_color = Color(0, 0, 0, 1)
@@ -28,6 +29,20 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bxuxr"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oeydw"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
 
 [node name="Inventory_LocalPlay" type="Control"]
 layout_mode = 3
@@ -55,7 +70,7 @@ script = ExtResource("2_lok6c")
 [node name="LeftVBox" type="VBoxContainer" parent="Left_Panel"]
 z_index = 4
 layout_mode = 0
-offset_left = 20.0
+offset_left = 31.0
 offset_top = 12.0
 offset_right = 763.0
 offset_bottom = 132.0
@@ -225,3 +240,136 @@ grow_vertical = 2
 mouse_filter = 2
 mouse_force_pass_scroll_events = false
 color = Color(0, 0, 0, 1)
+
+[node name="PlayerInvWeightLabel" type="Label" parent="."]
+top_level = true
+z_index = 3
+layout_mode = 0
+offset_left = 1655.0
+offset_top = 844.0
+offset_right = 1862.0
+offset_bottom = 883.0
+theme_override_font_sizes/font_size = 21
+text = "PLAYER WEIGHT"
+
+[node name="AppraisalPanel" type="Panel" parent="."]
+z_index = 2
+layout_mode = 0
+offset_left = 758.0
+offset_top = 59.0
+offset_right = 1126.0
+offset_bottom = 902.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bxuxr")
+
+[node name="MarginContainer" type="MarginContainer" parent="AppraisalPanel"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 5.0
+offset_right = 361.0
+offset_bottom = 834.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="AppraisalPanel/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="AppraisalPanel/MarginContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="MarginContainerItem" type="MarginContainer" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 60
+theme_override_constants/margin_top = 30
+theme_override_constants/margin_right = 60
+theme_override_constants/margin_bottom = 10
+
+[node name="ItemIcon" type="TextureRect" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainerItem"]
+custom_minimum_size = Vector2(210, 230)
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("5_xxuut")
+
+[node name="Panel" type="Panel" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainerItem"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_oeydw")
+
+[node name="MarginContainer" type="MarginContainer" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 20
+
+[node name="VBoxContainer" type="VBoxContainer" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="ItemNameLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+theme_override_font_sizes/font_size = 23
+text = "Pigface Knight Helm"
+autowrap_mode = 3
+
+[node name="DurabilityLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "Good Condition 92/100"
+autowrap_mode = 3
+
+[node name="ValueLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "Value: 20"
+autowrap_mode = 3
+
+[node name="BonusLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "+5 Def, -5 Dex
+"
+autowrap_mode = 3
+
+[node name="Spacer3" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+autowrap_mode = 3
+
+[node name="DesLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+theme_override_font_sizes/font_size = 19
+text = "A knightly helm crafted with great skill. Provides ample protection with a price to nimbleness"
+autowrap_mode = 3
+
+[node name="Spacer" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+autowrap_mode = 3
+
+[node name="CompareTitle" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "COMPARED TO CURRENT"
+autowrap_mode = 3
+
+[node name="CompareLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "DEF << 5
+DEX >> 5"
+autowrap_mode = 3
+
+[node name="Spacer2" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+autowrap_mode = 3
+
+[node name="DismantleTitle" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "DISMANTLES TO:"
+autowrap_mode = 3
+
+[node name="DismantleLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "Metal Scraps, Leather"
+autowrap_mode = 3

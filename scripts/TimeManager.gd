@@ -18,8 +18,8 @@ func print_time_and_date():
 	if time_data != null:
 		var gametime = time_data.get("gametime", "Unknown time")
 		var gamedate = time_data.get("gamedate", "Unknown date")
-		print("Game Time: ", gametime)
-		print("Game Date: ", gamedate)
+		#print("Game Time: ", gametime)
+		#print("Game Date: ", gamedate)
 	else:
 		print("Failed to load time and date.")
 
@@ -87,7 +87,7 @@ func save_time_data(time_data: Dictionary) -> void:
 		var json_string = JSON.stringify(time_data, "\t", true)  # Save data with indentation for formatting
 		file.store_string(json_string)
 		file.close()
-		print("Time data saved successfully to path: ", path)
+		#print("Time data saved successfully to path: ", path)
 	else:
 		print("Error: Unable to save time data.")
 		
@@ -131,10 +131,10 @@ func update_time_by_hours(current_time_string: String, hours_to_add: int) -> Str
 
 
 func update_gametime_flavor2(time_data: Dictionary) -> void:
-	print("update_gametime_flavor called")
+	#print("update_gametime_flavor called")
 
 	var military_time = time_data["miltime"]
-	print("Current military time:", military_time)
+	#print("Current military time:", military_time)
 
 	# Extract hours from military time
 	var hour = int(military_time.substr(0, 2))
@@ -161,7 +161,7 @@ func update_gametime_flavor2(time_data: Dictionary) -> void:
 		local_flavor_image_path = LOCAL_LATE_NIGHT_FLAVOR
 		gametimetype = "Late Night"
 
-	print("Flavor image path determined:", flavor_image_path)
+	#print("Flavor image path determined:", flavor_image_path)
 
 	# Check if anything has changed
 	var changed := false
@@ -169,17 +169,17 @@ func update_gametime_flavor2(time_data: Dictionary) -> void:
 	if time_data.get("gametimeflavor", "") != flavor_image_path:
 		time_data["gametimeflavor"] = flavor_image_path
 		changed = true
-		print("Flavor image updated successfully to:", flavor_image_path)
+		#print("Flavor image updated successfully to:", flavor_image_path)
 
 	if time_data.get("gametimeflavorlocal", "") != local_flavor_image_path:
 		time_data["gametimeflavorlocal"] = local_flavor_image_path
 		changed = true
-		print("Local flavor image updated successfully to:", local_flavor_image_path)
+		#print("Local flavor image updated successfully to:", local_flavor_image_path)
 
 	if time_data.get("gametimetype", "") != gametimetype:
 		time_data["gametimetype"] = gametimetype
 		changed = true
-		print("Gametimetype updated successfully to:", gametimetype)
+		#print("Gametimetype updated successfully to:", gametimetype)
 
 	# Update worldmap UI if needed
 	if changed:
@@ -190,8 +190,6 @@ func update_gametime_flavor2(time_data: Dictionary) -> void:
 			print("Error: WorldMapTravel node not found.")
 
 		save_time_data(time_data)
-	else:
-		print("No update needed for flavor image or gametimetype.")
 
 # Adjusted function to return total minutes without conversion
 func get_total_minutes(hour: int, minute: int, period: String) -> int:
@@ -204,7 +202,7 @@ func get_total_minutes(hour: int, minute: int, period: String) -> int:
 func pass_minutes(mins: int):
 	var time_data = LoadHandlerSingleton.get_time_and_date()
 	if time_data == null:
-		print("⛔ Cannot pass minutes: time data missing.")
+		#print("⛔ Cannot pass minutes: time data missing.")
 		return
 
 	var current_time = time_data["gametime"]
@@ -245,3 +243,120 @@ func pass_minutes(mins: int):
 func _ready():
 	# Initialization code only if needed, but no automatic printing
 	pass
+
+func advance_datetime(time_dict: Dictionary, minutes_to_add: int) -> Dictionary:
+	var dummy_data = {
+		"gametime": time_dict["time"],
+		"gamedate": time_dict["date"]
+	}
+	
+	# Temporarily overwrite real time data (safe for one-shot)
+	var current_time = dummy_data["gametime"]
+	var time_parts = current_time.strip_edges().split(" ")
+	var period = time_parts[1]
+	var hour_min = time_parts[0].split(":")
+	var hour = int(hour_min[0])
+	var minute = int(hour_min[1])
+
+	# Convert to 24-hour
+	if period == "PM" and hour != 12:
+		hour += 12
+	elif period == "AM" and hour == 12:
+		hour = 0
+
+	var total_minutes = hour * 60 + minute + minutes_to_add
+	var days_passed = int(total_minutes / 1440)
+	hour = (total_minutes / 60) % 24
+	minute = total_minutes % 60
+
+	# Convert back to 12-hour
+	var new_period = "AM"
+	if hour >= 12:
+		new_period = "PM"
+	if hour > 12:
+		hour -= 12
+	elif hour == 0:
+		hour = 12
+
+	var new_time = str(hour) + ":" + str(minute).pad_zeros(2) + " " + new_period
+
+	# Increment date if needed
+	var current_date = time_dict["date"]
+	var new_date = TimeManager.add_days_to_date_string(current_date, days_passed)
+
+
+	return {
+		"time": new_time,
+		"date": new_date
+	}
+
+func add_days_to_date_string(date_str: String, days: int) -> String:
+	var date_parts = date_str.split(" ")
+	var month_name = date_parts[0]
+	var day = int(date_parts[1].replace(",", ""))
+	var year = int(date_parts[2])
+
+	var month := 1
+	match month_name:
+		"January":
+			month = 1
+		"February":
+			month = 2
+		"March":
+			month = 3
+		"April":
+			month = 4
+		"May":
+			month = 5
+		"June":
+			month = 6
+		"July":
+			month = 7
+		"August":
+			month = 8
+		"September":
+			month = 9
+		"October":
+			month = 10
+		"November":
+			month = 11
+		"December":
+			month = 12
+		_:
+			month = 1
+
+	var dt = {
+		"year": year,
+		"month": month,
+		"day": day,
+		"hour": 0,
+		"minute": 0,
+		"second": 0
+	}
+
+	var unix = Time.get_unix_time_from_datetime_dict(dt)
+	unix += days * 86400
+
+	var new_dt = Time.get_datetime_dict_from_unix_time(unix)
+	var new_month = get_month_string(new_dt.month)
+	var new_day = new_dt.day
+	var new_year = new_dt.year
+
+	return "%s %d, %d" % [new_month, new_day, new_year]
+
+func get_month_string(month: int) -> String:
+	match month:
+		1: return "January"
+		2: return "February"
+		3: return "March"
+		4: return "April"
+		5: return "May"
+		6: return "June"
+		7: return "July"
+		8: return "August"
+		9: return "September"
+		10: return "October"
+		11: return "November"
+		12: return "December"
+		_: return "Unknown"
+

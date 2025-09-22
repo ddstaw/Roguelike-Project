@@ -63,6 +63,10 @@ var noise := FastNoiseLite.new()
 # 🌲 Tree location tracker (if needed later for spacing logic)
 var tree_positions := {}
 
+const NpcPoolData = preload("res://constants/npc_pool_data.gd")
+
+var chunked_npc_data := {}
+
 
 func _ready() -> void:
 	randomize()  # Ensures randi/randf are not locked to the same sequence
@@ -108,6 +112,10 @@ func generate_chunked_map(tile_container: Node) -> Array:
 	# 🔄 STEP 0: Reset any lingering state from previous generation
 	LoadHandlerSingleton.clear_egress_register_for_biome("grass")
 	LoadHandlerSingleton.clear_prefab_register_for_biome("grass")
+	LoadHandlerSingleton.clear_node_register_for_biome("grass")
+	LoadHandlerSingleton.clear_storage_register_for_biome("grass")
+	LoadHandlerSingleton.clear_vendor_register_for_biome("grass")
+
 	
 	if LoadHandlerSingleton.has_method("reset_chunk_state"):
 		LoadHandlerSingleton.reset_chunk_state()
@@ -120,10 +128,16 @@ func generate_chunked_map(tile_container: Node) -> Array:
 	path_seed_y = -1
 
 	var biome := "grass"
+	var biome_key := Constants.get_biome_chunk_key(biome)   
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var npc_rules: Dictionary = NpcPoolData.NPC_POOLS.get(biome_folder, {})
+	LoadHandlerSingleton.save_npc_pool(biome, npc_rules)
+	var chunked_npc_data := {}
 	var chunked_tile_data := {}
 	var chunked_object_data := {}
 	var chunk_blueprints := {}
 	var placed_structure_map := {}
+	
 	
 	const CHUNK_SIZE = Vector2i(40, 40)
 
@@ -177,7 +191,7 @@ func generate_chunked_map(tile_container: Node) -> Array:
 		var origin := Vector2i(data["origin"][0], data["origin"][1])
 		var size = Vector2i(data["size"][0], data["size"][1])
 
-		print("🧱 Generating", chunk_key, "at origin", origin, "size:", size)
+		#print("🧱 Generating", chunk_key, "at origin", origin, "size:", size)
 
 		var result = generate_chunk(origin, size, chunk_key)
 		var grid = result["grid"]
@@ -243,6 +257,14 @@ func generate_chunked_map(tile_container: Node) -> Array:
 				object_layer[x].append(null)
 
 		var placed_objects = ObjectPlacer.place_objects(grid, object_layer, biome)
+		
+		# 🧍 Place NPCs using new NPCPlacer
+		var placed_npcs = MapNpcPlacer.place_npcs(grid, placed_objects, chunk_key, origin, npc_rules)
+		print("🐾 NPC placement rules for chunk", chunk_key, ":", npc_rules)
+		print("🐾 Placed NPCs count:", placed_npcs.size(), "for chunk", chunk_key)
+		chunked_npc_data[chunk_key] = { "npcs": placed_npcs }
+		LoadHandlerSingleton.chunked_npc_data[chunk_key] = { "npcs": placed_npcs }  # 👈 Add this line
+		LoadHandlerSingleton.save_chunked_npc_chunk(chunk_key, { "npcs": placed_npcs })
 
 		# 🔍 TILE-based egress
 		for key in flat_tile_grid.keys():
@@ -291,13 +313,30 @@ func generate_chunked_map(tile_container: Node) -> Array:
 		}
 		chunked_object_data[chunk_key] = placed_objects
 
+		var z_level = "0"
+		var tile_path = LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_key, biome_key, z_level)
+		var object_path = LoadHandlerSingleton.get_chunked_object_chunk_path(chunk_key, biome_key, z_level)
+		var npc_path = LoadHandlerSingleton.get_chunked_npc_chunk_path(chunk_key, biome_key, z_level)
+
+		LoadHandlerSingleton.save_json_file(tile_path, chunked_tile_data[chunk_key])
+		LoadHandlerSingleton.save_json_file(object_path, placed_objects)
+		LoadHandlerSingleton.save_json_file(npc_path, { "npcs": placed_npcs })
+
+
+
 		if chunk_key == "chunk_1_1" and tile_container != null and is_instance_valid(tile_container):
-			MapRenderer.render_map({ "tile_grid": flat_tile_grid }, { "objects": object_layer }, { "npcs": {} }, tile_container, chunk_key)
+			MapRenderer.render_map({ "tile_grid": flat_tile_grid }, { "objects": object_layer }, { "npcs": placed_npcs }, tile_container, chunk_key)
 
 	print("✅ All debug grassland chunks generated.")
+	var placement = LoadHandlerSingleton.load_temp_placement()
+	if not placement.has("local_map"):
+		placement["local_map"] = {}
+
+	placement["local_map"]["biome_key"] = biome_folder
+	LoadHandlerSingleton.save_temp_placement(placement)
 	print("📍 Egress points collected:", LoadHandlerSingleton.get_egress_points())
 	ZLevelManager.process_z_down_egresses_for_biome("grassland_explore_fields")
-	return [chunked_tile_data, chunked_object_data, chunk_blueprints, "gef"]
+	return [chunked_tile_data, chunked_object_data, chunk_blueprints, biome_folder, chunked_npc_data]
 
 
 func generate_chunk(origin: Vector2i, size: Vector2i, chunk_key: String) -> Dictionary:

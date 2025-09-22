@@ -21,8 +21,8 @@ func add_message_to_log(message_text: String):
 		var v_scrollbar = scroll_container.get_v_scroll_bar()
 		if v_scrollbar:
 			v_scrollbar.value = v_scrollbar.max_value
-			print("Scrolled to the bottom.")
+			#print("Scrolled to the bottom.")
 		
-		print("Added message to log:", message_text)
+		#print("Added message to log:", message_text)
 	else:
 		print("Error: TravelLogRichTextLabel not found at the specified path.")

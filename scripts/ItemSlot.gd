@@ -1,6 +1,8 @@
 extends Control
 class_name ItemSlot
 
+signal item_clicked(slot: ItemSlot, shift: bool)  # 🆕 Scene-aware signal
+
 @export var icon_padding: int = 4  # tweak in Inspector
 
 var icon: TextureRect
@@ -8,6 +10,8 @@ var count: Label
 var is_selected := false
 var normal_style := StyleBoxFlat.new()
 var selected_style := StyleBoxFlat.new()
+var item_data: Dictionary = {}  # 🆕 Optional: store stack info if needed later
+var stack_id: String = ""
 
 
 
@@ -37,10 +41,12 @@ func _ready() -> void:
 
 func _gui_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		print("Slot clicked:", name)
+		print("🖱️ ItemSlot click detected on:", name)
+		var shift_pressed := Input.is_action_pressed("ui_shift")
 		is_selected = true
 		_update_visual_state()
-		get_tree().set_input_as_handled()
+		emit_signal("item_clicked", self, shift_pressed)  # 🆕 Shift-aware click
+		accept_event()
 
 func _update_visual_state() -> void:
 	if is_selected:
@@ -82,3 +88,5 @@ func set_data(stack: Dictionary, tex: Texture2D) -> void:
 	count.visible = q > 1
 	tooltip_text = str(stack.get("display_name", stack.get("item_ID", "Item")))
 
+	stack_id = str(stack.get("unique_ID", ""))  # ✅ Save ID for transfer
+	name = stack_id  # Optional but helpful for debugging

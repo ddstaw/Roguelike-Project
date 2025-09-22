@@ -17,11 +17,11 @@ func generate_cellar_chunk(chunk_coords: Vector2i, biome_key: String, from_egres
 
 
 func generate_gef_cellar(chunk_coords: Vector2i, biome_key: String, from_egress: Dictionary, structure_map: Dictionary) -> void:
-	print("💥 ENTERED generate_gef_cellar")
+	#print("💥 ENTERED generate_gef_cellar")
 	var biome_key_short = Constants.get_biome_chunk_key(biome_key)  # the correct function
 	var biome_folder = Constants.get_chunk_folder_for_key(biome_key_short)
-	print("🌍 cellar biome_key_short =", biome_key_short)
-	print("🌍 cellar biome_folder =", biome_folder)
+	#print("🌍 cellar biome_key_short =", biome_key_short)
+	#print("🌍 cellar biome_folder =", biome_folder)
 	var chunk_key = "chunk_%d_%d" % [chunk_coords.x, chunk_coords.y]
 
 	var chunk_size = Vector2i(40, 40)
@@ -51,7 +51,7 @@ func generate_gef_cellar(chunk_coords: Vector2i, biome_key: String, from_egress:
 	var prefab_data = LoadHandlerSingleton.load_prefab_register(biome_folder)
 	if prefab_data.has(chunk_key):
 		var entry = prefab_data[chunk_key]
-		print("📥 Found prefab register entry:", entry)
+		#print("📥 Found prefab register entry:", entry)
 
 		var prefab_id = entry.get("prefab_id", "")
 		var z_level = -1  # We're *in* cellar gen, this should be explicit
@@ -85,45 +85,44 @@ func generate_gef_cellar(chunk_coords: Vector2i, biome_key: String, from_egress:
 
 				var local_x = coords["x"] - origin.x
 				var local_y = coords["y"] - origin.y
-				print("📍 Placing prefab:", prefab_id, "at local:", local_x, local_y, "within chunk", chunk_key)
+				#print("📍 Placing prefab:", prefab_id, "at local:", local_x, local_y, "within chunk", chunk_key)
 
 				for y in range(height):
 					if y >= tiles.size():
-						print("⚠️ Tile row index out of bounds:", y)
+						#print("⚠️ Tile row index out of bounds:", y)
 						continue
 
 					var row = tiles[y]
 					for x in range(width):
 						if x >= row.length():
-							print("⚠️ Row too short at x =", x, "in row", y, "| Row content:", row)
+							#print("⚠️ Row too short at x =", x, "in row", y, "| Row content:", row)
 							continue
 
 						var grid_x = local_x + x
 						var grid_y = local_y + y
 
 						if grid_x >= chunk_size.x or grid_y >= chunk_size.y:
-							print("⚠️ Skipping out-of-bounds grid index:", grid_x, grid_y)
+							#print("⚠️ Skipping out-of-bounds grid index:", grid_x, grid_y)
 							continue
 
 						var symbol = row[x]
 						var tex_path = legend.get(symbol, null)
 						if tex_path == null:
-							print("⚠️ Unknown symbol in legend:", symbol, "at", x, y)
+							#print("⚠️ Unknown symbol in legend:", symbol, "at", x, y)
 							continue
 
 						var tex = load(tex_path)
 						if tex == null:
-							print("❌ Failed to load texture at:", tex_path, "for symbol:", symbol)
+							#print("❌ Failed to load texture at:", tex_path, "for symbol:", symbol)
 							continue
 
 						var tile_name = Constants.TEXTURE_TO_NAME.get(tex, "dirt")
-						print("✅ Placing tile:", tile_name, "at", grid_x, grid_y, "for symbol:", symbol)
+						#print("✅ Placing tile:", tile_name, "at", grid_x, grid_y, "for symbol:", symbol)
 						grid[grid_x][grid_y] = {
 							"tile": tile_name,
 							"state": LoadHandlerSingleton.get_tile_state_for(tile_name)
 						}
-	else:
-		print("⚠️ No prefab register entry for:", chunk_key)
+
 
 	# 🕳️ Inject random stonefloor_hole in Z-1
 	var valid_stonefloors := []
@@ -168,8 +167,6 @@ func generate_gef_cellar(chunk_coords: Vector2i, biome_key: String, from_egress:
 		LoadHandlerSingleton.register_egress_point(ladder_egress)
 		
 
-	else:
-		print("⚠️ No valid stonefloor tiles to inject stonefloor_hole.")
 
 	# 🧱 Flatten grid
 	var flat_tile_grid := {}
@@ -215,7 +212,7 @@ func generate_all_grassland_cellars(
 	structure_map: Dictionary,
 	prefab_chunk: String
 ) -> void:
-	print("📦 ENTERED generate_all_grassland_cellars")
+	#print("📦 ENTERED generate_all_grassland_cellars")
 	var chunk_blueprints = LoadHandlerSingleton.get_chunk_blueprints()
 	var grid_size: Vector2i = biome_config.get("grid_size", Vector2i(1, 1))
 	var chunk_size: Vector2i = biome_config.get("chunk_size", Vector2i(40, 40))
@@ -250,19 +247,10 @@ func save_cellar_chunk(chunk_key: String, chunk_coords: Vector2i, chunk_size: Ve
 	}
 
 	var tile_path = LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_key, biome_key_short, str(z_level))
-	print("🛠 Saving cellar at Z:", z_level, "with chunk key:", chunk_key)
-	print("🧾 Cellar TILE FILE PATH:", tile_path)
+	#print("🛠 Saving cellar at Z:", z_level, "with chunk key:", chunk_key)
+	#print("🧾 Cellar TILE FILE PATH:", tile_path)
 	var object_path = LoadHandlerSingleton.get_chunked_object_chunk_path(chunk_key, biome_key_short, str(z_level))
 
 	LoadHandlerSingleton.save_json_file(tile_path, tile_json)
 	LoadHandlerSingleton.save_json_file(object_path, { "objects": object_layer })
-
-
-	print("💾 Cellar chunk saved:", chunk_key, "→ Z:", z_level)
-	var confirm_check = LoadHandlerSingleton.load_json_file(tile_path)
-	if confirm_check == null:
-		print("❌ Could not load saved tile file! Path was:", tile_path)
-	else:
-		print("🧪 Confirmed written tile_grid size:", confirm_check.get("tile_grid", {}).size())
-	print("🛠 Final Z-level INT:", z_level, "Type:", typeof(z_level))
 

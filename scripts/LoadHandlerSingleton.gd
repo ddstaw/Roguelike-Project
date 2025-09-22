@@ -5,11 +5,14 @@ var current_chunk_coords: Vector2i = Vector2i.ZERO
 var loaded_tile_chunks := {}
 var loaded_object_chunks := {}
 var loaded_npc_chunks := {}
+var chunked_npc_data: Dictionary = {}
 static var _chunk_structure_map: Dictionary = {}
 static var _cached_egress_data := {}
 
-
 const Consts = preload("res://scripts/Constants.gd")
+const NodeTable := preload("res://constants/node_table.gd")
+const ItemData := preload("res://constants/item_data.gd") # adjust!
+
 
 var elfhaven_proper: String = "sample elf haven"  # Default values
 var oldcity_proper: String = "sample old city"
@@ -19,6 +22,10 @@ var villages: Dictionary = {}
 
 # ✅ Add the signal and function HERE:
 signal request_map_reload
+
+# -------------------------------------------------------------------
+# 🌍 LOCAL MAP SAVE/LOAD
+# -------------------------------------------------------------------
 
 func trigger_map_reload():
 	print("🔄 Requesting map reload...")
@@ -65,6 +72,18 @@ func get_save_file_path() -> String:
 # Centralized function to retrieve load_handler.json data
 func load_handler_data() -> Dictionary:
 	return load_json_file("user://saves/load_handler.json")
+
+
+# -------------------------------------------------------------------
+# 💾 SAVE / LOAD SYSTEM
+# -------------------------------------------------------------------
+
+
+
+
+
+
+
 
 
 # Retrieve paths based on the selected save slot
@@ -250,15 +269,33 @@ func load_player_gear() -> Dictionary:
 	
 func load_player_inventory() -> Dictionary:
 	var path = get_player_inventory_path()
-	return load_json_file(path)
-		
+	var inv: Dictionary = load_json_file(path)
+
+	# ✅ Normalize each stack
+	for uid in inv.keys():
+		LoadHandlerSingleton.normalize_stack_stats(inv[uid])
+
+	return inv
+
 func save_player_gear(data: Dictionary) -> void:
 	var path = get_player_gear_path()
 	save_json_file(path, data)
+	LoadHandlerSingleton.recalc_player_and_mount_weight()
 
 func save_player_inventory(data: Dictionary) -> void:
+	# If data is an inventory struct or includes inventory, normalize
+	for uid in data.keys():
+		normalize_stack_stats(data[uid])
+
 	var path = get_player_inventory_path()
 	save_json_file(path, data)
+	LoadHandlerSingleton.recalc_player_and_mount_weight()
+
+	
+func save_base_attributes(data: Dictionary) -> void:
+	var path = get_base_attributes_path()
+	save_json_file(path, data)
+	LoadHandlerSingleton.recalc_player_and_mount_weight()
 
 func save_player_effects(data: Dictionary) -> void:
 	var path = get_player_effects_path()
@@ -427,7 +464,7 @@ func get_biome_from_world(position: Vector2, realm_data: Dictionary) -> String:
 
 	var biome_name = biomes[y][x]
 
-	print("✅ Found biome:", biome_name, "at position:", position)
+	#print("✅ Found biome:", biome_name, "at position:", position)
 
 	return biome_name
 
@@ -570,7 +607,7 @@ func save_combat_stats(combat_stats_data: Dictionary) -> void:
 		var json_string = JSON.stringify(combat_stats_data, "\t", true)  # Add indentation with tabs for better formatting
 		file.store_string(json_string)  # Write the modified stats to the file
 		file.close()
-		print("Combat stats saved successfully to path: ", path)  # Use regular print in Godot 4
+		#print("Combat stats saved successfully to path: ", path)  # Use regular print in Godot 4
 	else:
 		print("Error: Unable to save combat stats.")
 
@@ -665,7 +702,7 @@ func update_biome_and_cell_in_json(new_biome: String, new_cell_name: String):
 		if file:
 			file.store_string(JSON.stringify(placement_data, "\t"))
 			file.close()
-			print("✅ JSON Updated: Biome is now", new_biome, "in", current_realm)
+			#print("✅ JSON Updated: Biome is now", new_biome, "in", current_realm)
 		else:
 			print("❌ ERROR: Failed to save biome data.")
 	else:
@@ -701,7 +738,7 @@ func save_json_file(path: String, data: Dictionary) -> void:
 	if file:
 		file.store_string(JSON.stringify(data, "\t"))  # ✅ Pretty formatting with tabs
 		file.close()
-		print("💾 Saved JSON file:", path)
+		#print("💾 Saved JSON file:", path)
 	else:
 		print("❌ Error: Unable to save JSON file at path:", path)
 		
@@ -990,7 +1027,7 @@ func get_all_equipped_light_sources() -> Array:
 
 	var gear_data = load_json_file(get_player_gear_path())
 	if gear_data == null:
-		print("⚠️ Gear file missing. No light sources equipped.")
+		#print("⚠️ Gear file missing. No light sources equipped.")
 		return equipped_sources
 
 	var slots = [
@@ -1002,7 +1039,7 @@ func get_all_equipped_light_sources() -> Array:
 
 	var all_item_data = load_json_file("res://data/inhand_items.json")
 	if all_item_data == null:
-		print("❌ ERROR: Failed to load inhand_items.json")
+		#print("❌ ERROR: Failed to load inhand_items.json")
 		return equipped_sources
 
 	for slot_id in slots:
@@ -1031,7 +1068,7 @@ func build_walkability_grid(tile_grid_raw: Dictionary, object_data_raw: Dictiona
 	max_x += 1
 	max_y += 1
 
-	print("📏 Detected tile grid size — max_x:", max_x, "max_y:", max_y)
+	#print("📏 Detected tile grid size — max_x:", max_x, "max_y:", max_y)
 
 	# Initialize the walkability grid
 	for y in range(max_y):
@@ -1064,7 +1101,7 @@ func build_walkability_grid(tile_grid_raw: Dictionary, object_data_raw: Dictiona
 		walkability_grid[y][x]["tile_state"] = state
 
 	# Fill object info from flat-format object data
-	print("🧱 Processing %d object(s) into walk grid..." % object_data_raw.size())
+	#print("🧱 Processing %d object(s) into walk grid..." % object_data_raw.size())
 	for obj_id in object_data_raw.keys():
 		var obj: Dictionary = object_data_raw[obj_id]
 		if obj.has("position") and obj.has("type"):
@@ -1074,12 +1111,12 @@ func build_walkability_grid(tile_grid_raw: Dictionary, object_data_raw: Dictiona
 			var obj_type: String = obj["type"]
 
 			if x == -1 or y == -1:
-				print("⚠️ Skipping malformed object:", obj_id)
+				#print("⚠️ Skipping malformed object:", obj_id)
 				continue
 
 			if y < walkability_grid.size() and x < walkability_grid[y].size():
 				walkability_grid[y][x]["object_type"] = obj_type
-				print("✅ Added object to grid:", obj_id, "→", obj_type, "at", x, y)
+				#print("✅ Added object to grid:", obj_id, "→", obj_type, "at", x, y)
 			else:
 				print("❌ Object out of bounds:", obj_id, "→", x, y, "grid size:", max_x, "x", max_y)
 		else:
@@ -1182,7 +1219,7 @@ func is_underground() -> bool:
 func save_all_chunked_localmap_files( 
 	grid_chunks: Dictionary,
 	object_chunks: Dictionary,
-	entities := {},
+	entities := {},  # 👈 This will be used for NPCs
 	terrain_mods := {},
 	biome_key: String = "gef"
 ) -> void:
@@ -1197,7 +1234,6 @@ func save_all_chunked_localmap_files(
 		var tile_data: Dictionary = grid_chunks[chunk_id]
 
 		if typeof(tile_data) != TYPE_DICTIONARY:
-			print("❌ ERROR: Tile data for", chunk_id, "is not a Dictionary! Skipping.")
 			continue
 
 		var raw_tile_grid = tile_data.get("tile_grid", {})
@@ -1213,107 +1249,103 @@ func save_all_chunked_localmap_files(
 		}
 
 		save_json_file(tile_path, payload)
-		print("💾 Saved normalized tile chunk to:", tile_path)
 
 	# 💾 Save each individual object chunk file (with normalized positions)
 	for chunk_id in object_chunks.keys():
 		var object_data: Dictionary = object_chunks[chunk_id]
 
 		if typeof(object_data) != TYPE_DICTIONARY:
-			print("❌ ERROR: Object data for", chunk_id, "is not a Dictionary! Skipping.")
 			continue
 
 		var normalized_objects = normalize_object_positions_in_chunk(object_data, chunk_id)
 		var obj_path = get_chunked_object_chunk_path(chunk_id, biome_key)
 
 		save_json_file(obj_path, normalized_objects)
-		print("💾 Saved normalized object chunk to:", obj_path)
+
+	# 💾 Save each individual NPC chunk file (raw for now — add normalization later)
+	for chunk_id in entities.keys():
+		var npc_data: Dictionary = entities[chunk_id]
+
+		if typeof(npc_data) != TYPE_DICTIONARY:
+			continue
+
+		var npc_path = get_chunked_npc_chunk_path(chunk_id, biome_key)
+		save_json_file(npc_path, npc_data)
 
 	# ✅ Update placement file
 	save_chunked_localmap_placement()
-
 
 func save_chunked_localmap_layout(chunk_data: Dictionary):
 	var layout_path = get_temp_localmap_layout_path()
 	var full_data = { "chunks": chunk_data }
 	save_json_file(layout_path, full_data)
-	print("💾 Chunked layout saved to:", layout_path)
 
 func save_chunked_localmap_objects(chunked_objects: Dictionary):
 	var objects_path = get_temp_localmap_objects_path()
 	save_json_file(objects_path, { "chunks": chunked_objects })
-	print("💾 Chunked object data saved to:", objects_path)
 
-func save_chunked_localmap_npcs(chunked_objects: Dictionary):
-	var objects_path = get_temp_localmap_npcs_path()
-	save_json_file(objects_path, { "chunks": chunked_objects })
-	print("💾 Chunked object data saved to:", objects_path)
+func save_chunked_localmap_npcs(chunked_npcs: Dictionary):
+	var npcs_path = get_temp_localmap_npcs_path()
+	save_json_file(npcs_path, { "chunks": chunked_npcs })
 
 
 func save_chunked_localmap_terrain():
 	var path = get_temp_localmap_terrain_path()
 	save_json_file(path, { "modified_terrain": {} })
-	print("🪨 Blank terrain state saved (chunked).")
 
 func save_chunked_localmap_entities(entities: Dictionary):
 	var path = get_temp_localmap_entities_path()
 	save_json_file(path, { "entities": entities })
-	print("📁 Blank chunked entities file saved.")
 	
 func chunked_mount_placement(chunk_key: String) -> void:
-	print("🐎 Mount Placement Started for:", chunk_key)
 
 	var placement_file := LoadHandlerSingleton.load_temp_localmap_placement()
 	if placement_file == null or not placement_file.has("local_map"):
-		print("❌ ERROR: Invalid placement file!")
 		return
 
 	# 🔍 Pull blueprint-driven chunk size + origin safely
 	var chunk_blueprints: Dictionary = placement_file["local_map"].get("chunk_blueprints", {})
 	if not chunk_blueprints.has(chunk_key):
-		print("❌ ERROR: No chunk blueprint found for", chunk_key)
 		return
 
 	var blueprint: Dictionary = chunk_blueprints.get(chunk_key, {})
 	if not blueprint.has("size") or not blueprint.has("origin"):
-		print("❌ ERROR: Chunk blueprint missing size or origin for", chunk_key)
 		return
 
 	var raw_size = blueprint["size"]
 	var raw_origin = blueprint["origin"]
 
 	if typeof(raw_size) != TYPE_ARRAY or raw_size.size() != 2:
-		print("❌ ERROR: Invalid size format in blueprint for %s: %s" % [chunk_key, str(raw_size)])
 		return
 	if typeof(raw_origin) != TYPE_ARRAY or raw_origin.size() != 2:
-		print("❌ ERROR: Invalid origin format in blueprint for %s: %s" % [chunk_key, str(raw_origin)])
+		#print("❌ ERROR: Invalid origin format in blueprint for %s: %s" % [chunk_key, str(raw_origin)])
 		return
 
 	var chunk_size: Vector2i = Vector2i(raw_size[0], raw_size[1])
 	var chunk_origin: Vector2i = Vector2i(raw_origin[0], raw_origin[1])
 	var biome_key: String = placement_file.local_map.get("biome_key", "gef")  # Fallback to "gef" if not set
 	
-	print("🔎 chunk_key =", chunk_key)
-	print("🔎 biome_key =", biome_key)
+	#print("🔎 chunk_key =", chunk_key)
+	#print("🔎 biome_key =", biome_key)
 
 	var tile_chunk_raw = load_json_file(get_chunked_tile_chunk_path(chunk_key, biome_key))
 	if tile_chunk_raw == null:
-		print("❌ ERROR: Failed to load tile chunk for", chunk_key)
+		#print("❌ ERROR: Failed to load tile chunk for", chunk_key)
 		return
 
 	var tile_chunk = tile_chunk_raw as Dictionary
 	if tile_chunk == null or not tile_chunk.has("tile_grid"):
-		print("❌ ERROR: Invalid or missing tile data for", chunk_key)
+		#print("❌ ERROR: Invalid or missing tile data for", chunk_key)
 		return
 
 	var object_data_raw = load_json_file(get_chunked_object_chunk_path(chunk_key, biome_key))
 	if object_data_raw == null:
-		print("❌ ERROR: Failed to load object chunk for", chunk_key)
+		#print("❌ ERROR: Failed to load object chunk for", chunk_key)
 		return
 
 	var object_data = object_data_raw as Dictionary
 	if object_data == null:
-		print("⚠️ Warning: Object chunk isn't a dictionary — defaulting to empty.")
+		#print("⚠️ Warning: Object chunk isn't a dictionary — defaulting to empty.")
 		object_data = {}
 
 	var tile_data: Dictionary = tile_chunk["tile_grid"]
@@ -1330,9 +1362,9 @@ func chunked_mount_placement(chunk_key: String) -> void:
 	var local_spawn := center
 	var global_spawn := chunk_origin + local_spawn
 
-	print("🔍 Chunk Size:", chunk_size)
-	print("🔍 Spawn Center:", local_spawn)
-	print("🔍 Occupied Positions:", occupied_positions.size())
+	#print("🔍 Chunk Size:", chunk_size)
+	#print("🔍 Spawn Center:", local_spawn)
+	#print("🔍 Occupied Positions:", occupied_positions.size())
 
 	var mount_data := LoadHandlerSingleton.get_current_mount_data()
 	var raw_tiles := mount_data.get("tiles", []) as Array
@@ -1364,30 +1396,30 @@ func chunked_mount_placement(chunk_key: String) -> void:
 					var key := "%d_%d" % [pos.x, pos.y]
 
 					if not tile_data.has(key):
-						print("⛔ REJECTED %s — no tile" % key)
+						#print("⛔ REJECTED %s — no tile" % key)
 						can_place = false
 						break
 
 					var terrain: String = tile_data[key].get("tile", "")
 					if terrain not in valid_terrain_types:
-						print("⛔ REJECTED %s — bad terrain: %s" % [key, terrain])
+						#print("⛔ REJECTED %s — bad terrain: %s" % [key, terrain])
 						can_place = false
 						break
 
 					if occupied_positions.has(pos):
-						print("⛔ REJECTED %s — already occupied" % key)
+						#print("⛔ REJECTED %s — already occupied" % key)
 						can_place = false
 						break
 
 					if pos == local_spawn:
-						print("⛔ REJECTED %s — same as player spawn" % key)
+						#print("⛔ REJECTED %s — same as player spawn" % key)
 						can_place = false
 						break
 
 				if can_place:
 					candidates.append(base)
 
-		print("🔎 Found", candidates.size(), "valid mount placement candidates.")
+		#print("🔎 Found", candidates.size(), "valid mount placement candidates.")
 
 		if candidates.size() > 0:
 			var base_mount_pos: Vector2i = candidates.front()
@@ -1410,7 +1442,7 @@ func chunked_mount_placement(chunk_key: String) -> void:
 
 	else:
 		print("⚠️ Mount tiles or size invalid!")
-
+	
 	save_json_file(get_chunked_object_chunk_path(chunk_key, biome_key), object_data)
 
 func save_chunked_localmap_placement():
@@ -1422,14 +1454,14 @@ func save_chunked_localmap_placement():
 
 	var placement_file := LoadHandlerSingleton.load_temp_localmap_placement()
 	if placement_file == null or not placement_file.has("local_map"):
-		print("❌ ERROR: Invalid placement file!")
+		#print("❌ ERROR: Invalid placement file!")
 		return
 
 	var chunk_key: String = placement_file.local_map.get("current_chunk_id", spawn_chunk)
 	var chunk_blueprints = placement_file.local_map.get("chunk_blueprints", {})
 
 	if not chunk_blueprints.has(chunk_key):
-		print("❌ ERROR: Missing blueprint for chunk:", chunk_key)
+		#print("❌ ERROR: Missing blueprint for chunk:", chunk_key)
 		return
 
 	var blueprint: Dictionary = chunk_blueprints[chunk_key]
@@ -1449,7 +1481,7 @@ func save_chunked_localmap_placement():
 
 	var tile_chunk_data = load_json_file(get_chunked_tile_chunk_path(chunk_key, biome_key, str(z_level)))
 	if tile_chunk_data == null or not tile_chunk_data.has("tile_grid"):
-		print("❌ ERROR: Failed to load tile grid from chunk:", chunk_key)
+		#print("❌ ERROR: Failed to load tile grid from chunk:", chunk_key)
 		return
 	var tile_chunk: Dictionary = tile_chunk_data
 
@@ -1459,9 +1491,17 @@ func save_chunked_localmap_placement():
 		object_data = object_data_raw
 	else:
 		print("⚠️ Warning: Object chunk missing or malformed for:", chunk_key)
+	
+	var npc_data_raw = load_json_file(get_chunked_npc_chunk_path(chunk_key, biome_key, str(z_level)))
+	var npc_data: Dictionary = {}
+	if npc_data_raw != null and typeof(npc_data_raw) == TYPE_DICTIONARY:
+		npc_data = npc_data_raw
+	else:
+		print("⚠️ Warning: NPC chunk missing or malformed for:", chunk_key)
+
 
 	if tile_chunk == null or not tile_chunk.has("tile_grid"):
-		print("❌ ERROR: Failed to load tile grid from chunk:", chunk_key)
+		#print("❌ ERROR: Failed to load tile grid from chunk:", chunk_key)
 		return
 	if typeof(object_data) != TYPE_DICTIONARY:
 		object_data = {}
@@ -1496,7 +1536,7 @@ func save_chunked_localmap_placement():
 		local_spawn = valid_spawn_tiles[0]
 
 	var global_spawn = chunk_origin + local_spawn
-	print("📍 Player spawn (global):", global_spawn, "| Local:", local_spawn, "| Chunk size:", chunk_size)
+	#print("📍 Player spawn (global):", global_spawn, "| Local:", local_spawn, "| Chunk size:", chunk_size)
 
 	var placement_data = placement_file.duplicate(true)
 	placement_data["local_map"]["grid_position"] = { "x": global_spawn.x, "y": global_spawn.y }
@@ -1530,7 +1570,7 @@ func save_chunked_localmap_placement():
 
 
 	save_json_file(get_temp_localmap_placement_path(), placement_data)
-	print("📌 Final placement saved with updated spawn info.")
+	#print("📌 Final placement saved with updated spawn info.")
 
 
 func load_chunked_tile_chunk(chunk_id: String) -> Dictionary:
@@ -1538,18 +1578,18 @@ func load_chunked_tile_chunk(chunk_id: String) -> Dictionary:
 	var biome_key: String = placement.get("local_map", {}).get("biome_key", "gef")
 
 	var path := get_chunked_tile_chunk_path(chunk_id, biome_key)
-	print("📄 Trying to load tile chunk file:", path)
+	#print("📄 Trying to load tile chunk file:", path)
 
 	var data = load_json_file(path)
 	if data == null:
-		print("❌ ERROR: Failed to load tile chunk file at:", path)
+		#print("❌ ERROR: Failed to load tile chunk file at:", path)
 		return {}
 
 	if not data.has("tile_grid"):
-		print("⚠️ WARNING: tile chunk missing 'tile_grid' key!", data)
+		#print("⚠️ WARNING: tile chunk missing 'tile_grid' key!", data)
 		return {}
 
-	print("✅ Loaded tile chunk:", chunk_id, "with", data["tile_grid"].size(), "tiles")
+	#print("✅ Loaded tile chunk:", chunk_id, "with", data["tile_grid"].size(), "tiles")
 	
 	# 🧼 Wrap only what render_map expects
 	return {
@@ -1562,18 +1602,18 @@ func load_chunk_tile_data(chunk_id: String) -> Dictionary:
 	var biome_key: String = placement.get("local_map", {}).get("biome_key", "gef")
 
 	var path := get_chunked_tile_chunk_path(chunk_id, biome_key)
-	print("📄 Trying to load tile chunk file:", path)
+	#print("📄 Trying to load tile chunk file:", path)
 
 	var data = load_json_file(path)
 	if data == null:
-		print("❌ ERROR: Failed to load tile chunk file at:", path)
+		#print("❌ ERROR: Failed to load tile chunk file at:", path)
 		return {}
 
 	if not data.has("tile_grid"):
-		print("⚠️ WARNING: tile chunk missing 'tile_grid' key!", data)
+		#print("⚠️ WARNING: tile chunk missing 'tile_grid' key!", data)
 		return {}
 
-	print("✅ Loaded tile chunk:", chunk_id, "with", data["tile_grid"].size(), "tiles")
+	#print("✅ Loaded tile chunk:", chunk_id, "with", data["tile_grid"].size(), "tiles")
 	return data
 
 
@@ -1585,11 +1625,11 @@ func load_chunked_object_chunk(chunk_id: String) -> Dictionary:
 
 	var raw = load_json_file(path)
 	if raw == null:
-		print("❌ ERROR: Failed to load object chunk file at:", path)
+		#print("❌ ERROR: Failed to load object chunk file at:", path)
 		return {}
 
 	if typeof(raw) != TYPE_DICTIONARY:
-		print("❌ ERROR: Loaded object chunk is not a dictionary! Type:", typeof(raw))
+		#print("❌ ERROR: Loaded object chunk is not a dictionary! Type:", typeof(raw))
 		return {}
 
 	# ✅ Avoid double-wrapping
@@ -1598,7 +1638,7 @@ func load_chunked_object_chunk(chunk_id: String) -> Dictionary:
 	elif typeof(raw) == TYPE_DICTIONARY:
 		return { "objects": raw }
 	else:
-		print("❌ ERROR: Invalid object chunk format:", raw)
+		#print("❌ ERROR: Invalid object chunk format:", raw)
 		return {}
 
 func load_chunked_npc_chunk(chunk_id: String) -> Dictionary:
@@ -1609,11 +1649,11 @@ func load_chunked_npc_chunk(chunk_id: String) -> Dictionary:
 
 	var raw = load_json_file(path)
 	if raw == null:
-		print("❌ ERROR: Failed to load npc chunk file at:", path)
+		#print("❌ ERROR: Failed to load npc chunk file at:", path)
 		return {}
 
 	if typeof(raw) != TYPE_DICTIONARY:
-		print("❌ ERROR: Loaded npc chunk is not a dictionary! Type:", typeof(raw))
+		#print("❌ ERROR: Loaded npc chunk is not a dictionary! Type:", typeof(raw))
 		return {}
 
 	# ✅ Avoid double-wrapping
@@ -1622,7 +1662,7 @@ func load_chunked_npc_chunk(chunk_id: String) -> Dictionary:
 	elif typeof(raw) == TYPE_DICTIONARY:
 		return { "npcs": raw }
 	else:
-		print("❌ ERROR: Invalid npc chunk format:", raw)
+		#print("❌ ERROR: Invalid npc chunk format:", raw)
 		return {}
 
 func load_chunk_object_data(chunk_id: String) -> Dictionary:
@@ -1632,7 +1672,7 @@ func load_chunk_object_data(chunk_id: String) -> Dictionary:
 	var path := get_chunked_object_chunk_path(chunk_id, biome_key)
 
 	if not FileAccess.file_exists(path):
-		print("❌ ERROR: Missing object chunk:", chunk_id)
+		#print("❌ ERROR: Missing object chunk:", chunk_id)
 		return {}
 
 	return load_json_file(path)
@@ -1644,7 +1684,7 @@ func load_chunk_npc_data(chunk_id: String) -> Dictionary:
 	var path := get_chunked_npc_chunk_path(chunk_id, biome_key)
 
 	if not FileAccess.file_exists(path):
-		print("❌ ERROR: Missing npc chunk:", chunk_id)
+		#print("❌ ERROR: Missing npc chunk:", chunk_id)
 		return {}
 
 	return load_json_file(path)
@@ -1780,7 +1820,7 @@ func save_chunked_tile_chunk(chunk_id: String, tile_chunk: Dictionary) -> void:
 
 	var path = get_chunked_tile_chunk_path(chunk_id, biome_key)
 	save_json_file(path, tile_chunk)
-	print("💾 Saved tile chunk:", chunk_id, "to", path)
+	#print("💾 Saved tile chunk:", chunk_id, "to", path)
 
 
 func save_chunked_object_chunk(chunk_id: String, object_chunk: Dictionary) -> void:
@@ -1790,17 +1830,35 @@ func save_chunked_object_chunk(chunk_id: String, object_chunk: Dictionary) -> vo
 
 	var path = get_chunked_object_chunk_path(chunk_id, biome_key)
 	save_json_file(path, object_chunk)
-	print("💾 Saved object chunk:", chunk_id, "to", path)
+	#print("💾 Saved object chunk:", chunk_id, "to", path)
 
 func save_chunked_npc_chunk(chunk_id: String, npc_chunk: Dictionary) -> void:
-	var placement := load_temp_localmap_placement()
-	var biome_key: String = placement.get("local_map", {}).get("biome_key", "gef")
+	var placement = load_temp_localmap_placement()
+	if placement == null:
+		push_warning("⚠️ No placement data found when saving NPC chunk.")
+		return
 
+	var lm = placement.get("local_map", {})
+	var stored_biome = str(lm.get("biome_key", ""))
+	if stored_biome == "":
+		push_error("❌ Missing biome_key in placement when saving NPC chunk " + str(chunk_id))
+		return
 
-	var path = get_chunked_npc_chunk_path(chunk_id, biome_key)
+	# normalize: if we got a folder (e.g. "grassland_explore_fields"), convert to short key ("gef")
+	var biome_key_for_path = stored_biome
+	if stored_biome.contains("_"):
+		biome_key_for_path = Constants.get_biome_chunk_key(stored_biome)
+
+	var z_level = str(lm.get("z_level", "0"))
+	var path = get_chunked_npc_chunk_path(chunk_id, biome_key_for_path, z_level)
+
+	# ensure directory exists
+	var dir_path = path.get_base_dir()
+	if not DirAccess.dir_exists_absolute(dir_path):
+		DirAccess.make_dir_recursive_absolute(dir_path)
+
 	save_json_file(path, npc_chunk)
-	print("💾 Saved npc chunk:", chunk_id, "to", path)
-
+	print("💾 Saved NPC chunk:", chunk_id, "→", path)
 
 func chunk_exists(chunk_coords: Vector2i) -> bool:
 	var chunk_str = "%d_%d" % [chunk_coords.x, chunk_coords.y]
@@ -1812,13 +1870,13 @@ func chunk_exists(chunk_coords: Vector2i) -> bool:
 	if valid_chunks.size() > 0:
 		# We're enforcing chunk limits
 		var exists = valid_chunks.has(chunk_str)
-		print("🔒 Checking chunk validity:", chunk_str, "| Valid:", exists)
+		#print("🔒 Checking chunk validity:", chunk_str, "| Valid:", exists)
 		return exists
 
 	# If no valid_chunks list, fallback to explored_chunks only
 	var explored = placement.get("local_map", {}).get("explored_chunks", {}).get("0", [])
 	var exists = explored.has(chunk_str)
-	print("🔎 Checking chunk exists (fallback):", chunk_str, "| Explored:", exists)
+	#print("🔎 Checking chunk exists (fallback):", chunk_str, "| Explored:", exists)
 	return exists
 
 
@@ -1829,7 +1887,7 @@ func get_current_chunk_coords() -> Vector2i:
 	if parts.size() == 2:
 		return Vector2i(int(parts[0]), int(parts[1]))
 	else:
-		print("❌ Invalid chunk ID format in get_current_chunk_coords():", chunk_id)
+		#print("❌ Invalid chunk ID format in get_current_chunk_coords():", chunk_id)
 		return Vector2i(0, 0)
 
 func mark_chunk_as_explored(chunk_coords: Vector2i):
@@ -1843,7 +1901,7 @@ func mark_chunk_as_explored(chunk_coords: Vector2i):
 
 	if not chunk_str in explored_map[z_level]:
 		explored_map[z_level].append(chunk_str)
-		print("🗺️ Marked chunk as explored:", chunk_str)
+		#print("🗺️ Marked chunk as explored:", chunk_str)
 		placement["local_map"]["explored_chunks"] = explored_map
 		LoadHandlerSingleton.save_temp_placement(placement)
 
@@ -1853,7 +1911,7 @@ func save_temp_placement(data: Dictionary) -> void:
 	if file:
 		file.store_string(JSON.stringify(data, "\t"))  # Save with pretty indentation
 		file.close()
-		print("💾 Saved placement data to:", path)
+		#print("💾 Saved placement data to:", path)
 	else:
 		print("❌ Failed to open placement file for writing at:", path)
 
@@ -1864,7 +1922,7 @@ func is_tile_walkable_in_chunk(chunk_coords: Vector2i, tile_pos_global: Vector2i
 	var object_chunk: Dictionary = load_chunked_object_chunk(chunk_id)
 
 	if tile_chunk == null or object_chunk == null:
-		print("❌ Could not load chunk data for:", chunk_id)
+		#print("❌ Could not load chunk data for:", chunk_id)
 		return false
 
 	if object_chunk.has("objects"):
@@ -1873,7 +1931,7 @@ func is_tile_walkable_in_chunk(chunk_coords: Vector2i, tile_pos_global: Vector2i
 	var placement: Dictionary = load_temp_localmap_placement()
 	var blueprints: Dictionary = placement.get("local_map", {}).get("chunk_blueprints", {})
 	if not blueprints.has(chunk_id):
-		print("❌ No blueprint found for chunk:", chunk_id)
+		#print("❌ No blueprint found for chunk:", chunk_id)
 		return false
 
 	var origin_data: Array = blueprints[chunk_id].get("origin", [0, 0])
@@ -1884,14 +1942,14 @@ func is_tile_walkable_in_chunk(chunk_coords: Vector2i, tile_pos_global: Vector2i
 	var current_chunk_origin := LoadHandlerSingleton.get_chunk_origin(LoadHandlerSingleton.get_current_chunk_id())
 	if tile_pos_global.x < 0 or tile_pos_global.y < 0:
 		actual_global_tile = current_chunk_origin + tile_pos_global
-		print("🛠 Adjusted local tile to global:", tile_pos_global, "+", current_chunk_origin, "→", actual_global_tile)
+		#print("🛠 Adjusted local tile to global:", tile_pos_global, "+", current_chunk_origin, "→", actual_global_tile)
 
 	var local_pos: Vector2i = actual_global_tile - chunk_origin
 	var key: String = "%d_%d" % [local_pos.x, local_pos.y]
 
 	var tile_grid: Dictionary = tile_chunk.get("tile_grid", {})
 	if not tile_grid.has(key):
-		print("⛔ Tile key missing:", key, "→ Global:", actual_global_tile, "→ Local:", local_pos, "in chunk:", chunk_id)
+		#print("⛔ Tile key missing:", key, "→ Global:", actual_global_tile, "→ Local:", local_pos, "in chunk:", chunk_id)
 		return false
 
 	var tile_entry: Dictionary = tile_grid.get(key, {})
@@ -1899,7 +1957,7 @@ func is_tile_walkable_in_chunk(chunk_coords: Vector2i, tile_pos_global: Vector2i
 	var object: Dictionary = Constants.find_object_at(object_chunk, local_pos.x, local_pos.y)
 	var object_type: String = object.get("type", "") if object else ""
 
-	print("🌐 Walkability check — Chunk:", chunk_id, "| Global tile:", actual_global_tile, "| Origin:", chunk_origin, "| Local:", local_pos, "| Terrain:", terrain, "| Object:", object_type)
+	#print("🌐 Walkability check — Chunk:", chunk_id, "| Global tile:", actual_global_tile, "| Origin:", chunk_origin, "| Local:", local_pos, "| Terrain:", terrain, "| Object:", object_type)
 
 	return not Constants.is_blocking_movement(terrain, object_type)
 
@@ -2021,7 +2079,7 @@ func clear_chunks_for_key(key: String) -> void:
 var _chunk_blueprints := {}  # This must stay outside a function
 
 func reset_chunk_state():
-	print("♻️ Resetting chunk-related transient state...")
+	#print("♻️ Resetting chunk-related transient state...")
 
 	# ✅ Clear currently tracked chunk state
 	current_chunk_id = ""
@@ -2036,7 +2094,7 @@ func reset_chunk_state():
 
 	# ✅ Clear blueprints dictionary
 	_chunk_blueprints.clear()
-	print("✅ Blueprint keys AFTER reset:", _chunk_blueprints.keys())  # ✅ This is valid now
+	#print("✅ Blueprint keys AFTER reset:", _chunk_blueprints.keys())  # ✅ This is valid now
 
 	# ✅ Optional: clear any cached chunk info from other systems
 	if Engine.has_singleton("ChunkTools"):
@@ -2074,7 +2132,7 @@ func get_egress_points_for_z(target_z: int) -> Array:
 	return egress_points.filter(func(p): return p["target_z"] == target_z)
 
 static func get_egress_register_path(biome_folder: String) -> String:
-	return "user://saves/save1/localchunks/%s/egress_register.json" % biome_folder
+	return LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/egress_register.json" % biome_folder
 
 static func save_egress_register(biome_folder: String, egress_data: Dictionary) -> void:
 	var path = get_egress_register_path(biome_folder)
@@ -2085,7 +2143,7 @@ static func load_egress_register(biome_folder: String) -> Dictionary:
 	var data = LoadHandlerSingleton.load_json_file(path)
 	if typeof(data) == TYPE_DICTIONARY:
 		return data
-	print("⚠️ No egress register found or invalid format at:", path)
+	#print("⚠️ No egress register found or invalid format at:", path)
 	return {}
 
 static func load_prefab_data(biome_key: String = "gef") -> Array:
@@ -2096,7 +2154,7 @@ static func load_prefab_data(biome_key: String = "gef") -> Array:
 	if json and json.has("prefabs") and json.has("blueprints"):
 		return [json["prefabs"], get_blueprint_map(json["blueprints"])]
 	else:
-		print("⚠️ Failed to load prefab data from:", prefab_path)
+		#print("⚠️ Failed to load prefab data from:", prefab_path)
 		return []
 
 static func get_blueprint_map(blueprints: Array) -> Dictionary:
@@ -2186,7 +2244,7 @@ static func clear_egress_register_for_biome(biome: String) -> void:
 	if file:
 		file.store_string(JSON.stringify({}, "\t"))  # Overwrite with empty dict
 		file.close()
-		print("🧹 Cleared egress_register for biome folder:", biome_folder)
+		#print("🧹 Cleared egress_register for biome folder:", biome_folder)
 	else:
 		print("⚠️ Failed to open egress register file for clearing:", path)
 
@@ -2199,7 +2257,7 @@ static func clear_prefab_register_for_biome(biome: String) -> void:
 	if file:
 		file.store_string(JSON.stringify({}, "\t"))  # Overwrite with empty dict
 		file.close()
-		print("🧹 Cleared prefab_register for biome folder:", biome_folder)
+		#print("🧹 Cleared prefab_register for biome folder:", biome_folder)
 	else:
 		print("⚠️ Failed to open prefab register file for clearing:", path)
 
@@ -2218,14 +2276,14 @@ static func save_prefab_register(biome_folder: String, data: Dictionary) -> void
 	if file:
 		file.store_string(JSON.stringify(data, "\t"))
 		file.close()
-		print("💾 Saved prefab_register for:", biome_folder)		
+		#print("💾 Saved prefab_register for:", biome_folder)		
 
 	else:
 		print("⚠️ Failed to save prefab_register at:", path)
 
 static func load_prefab_register(biome_folder: String) -> Dictionary:
 	var path := LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/prefab_register.json" % biome_folder
-	print("🔍 Loading prefab_register from:", path)  # <-- Add this here
+	#print("🔍 Loading prefab_register from:", path)  # <-- Add this here
 	if FileAccess.file_exists(path):
 		var file := FileAccess.open(path, FileAccess.READ)
 		if file:
@@ -2240,7 +2298,7 @@ static func load_prefab_register(biome_folder: String) -> Dictionary:
 
 static func get_blueprint_from_register_entry(prefab_entry: Dictionary, biome_key_short: String) -> Dictionary:
 	if not prefab_entry.has("prefab_id"):
-		print("⚠️ Prefab entry missing 'prefab_id':", prefab_entry)
+		#print("⚠️ Prefab entry missing 'prefab_id':", prefab_entry)
 		return {}
 
 	var prefab_id = prefab_entry["prefab_id"]
@@ -2248,7 +2306,7 @@ static func get_blueprint_from_register_entry(prefab_entry: Dictionary, biome_ke
 
 	var prefab_data = load_prefab_data(biome_key_short)
 	if prefab_data.size() != 2:
-		print("⚠️ Invalid prefab data structure for biome:", biome_key_short)
+		#print("⚠️ Invalid prefab data structure for biome:", biome_key_short)
 		return {}
 
 	var all_prefabs = prefab_data[0]
@@ -2258,13 +2316,13 @@ static func get_blueprint_from_register_entry(prefab_entry: Dictionary, biome_ke
 		if prefab.get("name", "") == prefab_id:
 			var blueprint_name = prefab.get("floors", {}).get(z_level, "")
 			if blueprint_name != "" and all_blueprints.has(blueprint_name):
-				print("📦 Blueprint found for prefab:", prefab_id, "Z:", z_level, "→", blueprint_name)
+				#print("📦 Blueprint found for prefab:", prefab_id, "Z:", z_level, "→", blueprint_name)
 				return all_blueprints[blueprint_name]
 			else:
-				print("⚠️ No blueprint found for", prefab_id, "at Z:", z_level)
+				#print("⚠️ No blueprint found for", prefab_id, "at Z:", z_level)
 				return {}
 
-	print("⚠️ No matching prefab_id in list:", prefab_id)
+	#print("⚠️ No matching prefab_id in list:", prefab_id)
 	return {}
 
 static func load_global_egress_data(force_refresh := false) -> Dictionary:
@@ -2273,10 +2331,19 @@ static func load_global_egress_data(force_refresh := false) -> Dictionary:
 
 	var placement = LoadHandlerSingleton.load_temp_placement()
 	var biome_key = placement.get("local_map", {}).get("biome_key", "")
+	if biome_key == "":
+		push_error("❌ [load_global_egress_data] Missing biome_key in temp placement.")
+		return {}
+
+	# 🔁 Convert long-form → short-form
+	biome_key = Constants.get_biome_chunk_key(biome_key)
+
+	# 🔁 Now convert short-form → folder path
 	var biome_folder = Constants.get_chunk_folder_for_key(biome_key)
 	var path = get_egress_register_path(biome_folder)
 
 	if not FileAccess.file_exists(path):
+		push_warning("⚠️ [load_global_egress_data] Egress register file does not exist at path: " + path)
 		return {}
 
 	var contents = FileAccess.open(path, FileAccess.READ).get_as_text()
@@ -2284,17 +2351,18 @@ static func load_global_egress_data(force_refresh := false) -> Dictionary:
 	_cached_egress_data["data"] = parsed
 	return parsed
 
+
 static func reload_from_temp_placement():
-	print("🔄 reload_from_temp_placement called from singleton.")
+	#print("🔄 reload_from_temp_placement called from singleton.")
 
 	var scene = Engine.get_main_loop().get_current_scene()
 	if scene == null:
-		print("❌ No current scene found!")
+		#print("❌ No current scene found!")
 		return
 
 	var local_map = Engine.get_main_loop().get_current_scene()
 	if local_map == null:
-		print("❌ LocalMap node NOT found!")
+		#print("❌ LocalMap node NOT found!")
 		return
 
 	var placement_data = LoadHandlerSingleton.load_temp_placement()
@@ -2302,10 +2370,10 @@ static func reload_from_temp_placement():
 	var z_level = local_map_data.get("z_level", null)
 
 	if z_level == null:
-		print("⚠️ Z-level missing from placement data!")
+		#print("⚠️ Z-level missing from placement data!")
 		return
 
-	print("📡 Reloading LocalMap at Z-level:", z_level)
+	#print("📡 Reloading LocalMap at Z-level:", z_level)
 	local_map.call_deferred("load_z_level", z_level)
 
 
@@ -2321,7 +2389,7 @@ func change_z_level(new_z_level: int) -> void:
 	file_write.store_string(JSON.stringify(data))
 	file_write.close()
 
-	print("💾 Z-level updated in temp placement to:", new_z_level)
+	#print("💾 Z-level updated in temp placement to:", new_z_level)
 
 	# Properly call reload
 	call_deferred("reload_from_temp_placement")
@@ -2349,33 +2417,814 @@ func get_combined_egress_list() -> Array:
 
 	return all_egresses
 
-# Returns player inventory as a Dictionary (key -> stack dict) or {} on failure.
 func load_player_inventory_dict() -> Dictionary:
 	var path: String = get_player_inventory_path()
-
-	var data: Variant = load_json_file(path)  # explicit Variant to avoid inference warning
-	if data == null:
-		print("⚠ Inventory file missing/invalid at: ", path)
+	var data: Variant = load_json_file(path)
+	if data == null or not (data is Dictionary):
 		return {}
 
-	if data is Dictionary:
-		# Your file is already a flat dict of stacks:
-		# {
-		#   "iBGJ531": { "display_name":"Wood Log", ... },
-		#   ...
-		# }
-		return data as Dictionary
+	# ✅ Normalize each stack
+	for uid in data.keys():
+		LoadHandlerSingleton.normalize_stack_stats(data[uid])
 
-	print("⚠ Inventory JSON is not a Dictionary at: ", path)
-	return {}
+	return data
 
 func save_player_inventory_dict(inv: Dictionary) -> void:
+	# Auto-flatten if someone passed in a wrapped dict
+	if inv.has("inventory") and inv["inventory"] is Dictionary:
+		inv = inv["inventory"]
+
+	# Normalize all stacks
+	for uid in inv.keys():
+		normalize_stack_stats(inv[uid])
+
 	var path := get_player_inventory_path()
 	DirAccess.make_dir_recursive_absolute(path.get_base_dir())
 	var f := FileAccess.open(path, FileAccess.WRITE)
 	if f:
-		# Wrap as { "inventory": {...} } for consistency
-		f.store_string(JSON.stringify({"inventory": inv}, "\t"))
+		f.store_string(JSON.stringify(inv, "\t"))
 		f.close()
 	else:
 		push_warning("Could not write inventory to: %s" % path)
+
+
+static func get_loot_register_path(biome_folder: String) -> String:
+	return LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/loot_register.json" % biome_folder
+
+static func load_loot_register(biome: String) -> Dictionary:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_loot_register_path(biome_folder)
+	return LoadHandlerSingleton.load_json_file(path)
+
+static func save_loot_register(biome: String, data: Dictionary) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_loot_register_path(biome_folder)
+	LoadHandlerSingleton.save_json_file(path, data)
+
+static func get_node_register_path(biome_folder: String) -> String:
+	return LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/node_register.json" % biome_folder
+
+static func load_node_register(biome: String) -> Dictionary:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_node_register_path(biome_folder)
+	return LoadHandlerSingleton.load_json_file(path)
+
+static func save_node_register(biome: String, data: Dictionary) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_node_register_path(biome_folder)
+	LoadHandlerSingleton.save_json_file(path, data)
+
+static func get_pile_register_path(biome_folder: String) -> String:
+	return LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/pile_register.json" % biome_folder
+
+static func load_pile_register(biome: String) -> Dictionary:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_pile_register_path(biome_folder)
+	return LoadHandlerSingleton.load_json_file(path)
+
+static func save_pile_register(biome: String, data: Dictionary) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_pile_register_path(biome_folder)
+	LoadHandlerSingleton.save_json_file(path, data)
+
+static func get_storage_register_path(biome_folder: String) -> String:
+	return LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/storage_register.json" % biome_folder
+
+static func load_storage_register(biome: String) -> Dictionary:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_storage_register_path(biome_folder)
+	return LoadHandlerSingleton.load_json_file(path)
+
+static func save_storage_register(biome: String, data: Dictionary) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_storage_register_path(biome_folder)
+	LoadHandlerSingleton.save_json_file(path, data)
+
+static func get_vendor_register_path(biome_folder: String) -> String:
+	return LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/vendor_register.json" % biome_folder
+
+static func load_vendor_register(biome: String) -> Dictionary:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_vendor_register_path(biome_folder)
+	return LoadHandlerSingleton.load_json_file(path)
+
+static func save_vendor_register(biome: String, data: Dictionary) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_vendor_register_path(biome_folder)
+	LoadHandlerSingleton.save_json_file(path, data)
+
+static func reset_node_register_for_biome(biome: String, current_datetime: Dictionary) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var register: Dictionary = LoadHandlerSingleton.load_node_register(biome)
+
+	var changed := false
+
+	for z_level in register.keys():
+		for chunk_key in register[z_level].keys():
+			var chunk: String = chunk_key
+			for biome_data_key in register[z_level][chunk_key].keys():
+				for node_id_key in register[z_level][chunk_key][biome_data_key].keys():
+					var node_id: String = node_id_key
+					var node: Dictionary = register[z_level][chunk_key][biome_data_key][node_id]
+					
+					if node.has("reset_at") and is_datetime_expired(node["reset_at"], current_datetime):
+						node["inventory"].clear()
+						node["last_looted"] = current_datetime
+						node["reset_at"] = calculate_next_reset(current_datetime)
+						changed = true
+
+	if changed:
+		LoadHandlerSingleton.save_node_register(biome, register)
+
+static func clear_node_register_for_biome(biome: String) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path = LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/node_register.json" % biome_folder
+
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify({}, "\t"))  # Overwrite with empty dict
+		file.close()
+	else:
+		print("⚠️ Failed to open node register file for clearing:", path)
+
+static func is_datetime_expired(reset_at: Dictionary, current: Dictionary) -> bool:
+	var reset_minutes = TimeManager.get_total_minutes_from_string(reset_at["time"])
+	var current_minutes = TimeManager.get_total_minutes_from_string(current["time"])
+
+	if reset_at["date"] != current["date"]:
+		# Naively assume day rollover means it's expired
+		return true
+
+	return current_minutes >= reset_minutes
+
+static func calculate_next_reset(current: Dictionary) -> Dictionary:
+	var temp_time = {
+		"date": current["date"],
+		"time": current["time"]
+	}
+
+	# Let TimeManager advance the temp object (you'd need to expose a method for this)
+	var result = TimeManager.advance_datetime(temp_time, 1440)  # ⏰ Add 1440 minutes (1 day)
+
+	return {
+		"date": result["date"],
+		"time": result["time"]
+	}
+
+static func get_node_table() -> Dictionary:
+	return NodeTable.NODE_TABLE
+
+static func get_node_pool(node_type: String) -> Dictionary:
+	var table: Dictionary = NodeTable.NODE_TABLE
+	if not table.has(node_type):
+		return {}
+	return table[node_type].get("possible_items", {})
+	
+static func roll_node_loot(node_type: String, rolls: int = 3, rng: RandomNumberGenerator = null) -> Dictionary:
+	var pool: Dictionary = get_node_pool(node_type)
+	if pool.is_empty():
+		return {}
+
+	var local_rng: RandomNumberGenerator = rng if rng != null else RandomNumberGenerator.new()
+	if rng == null:
+		local_rng.randomize()
+
+	var weighted: Array[Dictionary] = []
+	for item_id in pool.keys():
+		var entry: Dictionary = pool[item_id]
+		var weight: int = int(entry.get("weight", 1))
+		if weight > 0:
+			weighted.append({"id": String(item_id), "w": weight})
+
+	if weighted.is_empty():
+		return {}
+
+	var rare_cap: int = 999999
+	var node_def: Dictionary = NodeTable.NODE_TABLE.get(node_type, {})
+	if node_def.has("max_rare"):
+		rare_cap = int(node_def["max_rare"])
+
+	var rolled: Dictionary = {}
+	var rare_count: int = 0
+
+	for i in range(rolls):
+		var pick_id: String = _weighted_pick(weighted, local_rng)
+		if pick_id == "":
+			continue
+
+		var is_rare: bool = String(pool[pick_id].get("rarity", "common")) == "rare"
+		if is_rare and rare_count >= rare_cap:
+			# try to pick a non-rare instead
+			var fallback_id: String = _weighted_pick(weighted, local_rng, true, pool)
+			if fallback_id == "":
+				continue
+			pick_id = fallback_id
+			is_rare = false
+
+		var max_q: int = int(pool[pick_id].get("max_qty", 1))
+		var qty: int = local_rng.randi_range(1, max_q)
+
+		rolled[pick_id] = int(rolled.get(pick_id, 0)) + qty
+		if is_rare:
+			rare_count += 1
+
+	return rolled
+
+
+static func _weighted_pick(weighted: Array[Dictionary], rng: RandomNumberGenerator, prefer_non_rare: bool = false, pool: Dictionary = {}) -> String:
+	var total: int = 0
+	for e in weighted:
+		if prefer_non_rare and pool.size() > 0 and String(pool[e["id"]].get("rarity", "common")) == "rare":
+			continue
+		total += int(e["w"])
+
+	if total <= 0:
+		return ""
+
+	var roll: int = rng.randi_range(1, total)
+	var accum: int = 0
+
+	for e in weighted:
+		if prefer_non_rare and pool.size() > 0 and String(pool[e["id"]].get("rarity", "common")) == "rare":
+			continue
+		accum += int(e["w"])
+		if roll <= accum:
+			return String(e["id"])
+
+	return ""
+
+# adjust the path at the top of the file:
+# const ItemData := preload("res://constants/item_data.gd")
+
+static func expand_loot_to_inventory(rolled: Dictionary, timestamp: Dictionary = {}) -> Dictionary:
+	var inv: Dictionary = {}
+	var rng: RandomNumberGenerator = RandomNumberGenerator.new()
+	rng.randomize()
+
+	for item_id in rolled.keys():
+		var qty: int = int(rolled[item_id])
+
+		var base: Dictionary = ItemData.ITEM_PROPERTIES.get(item_id, {}).duplicate(true)
+		var display_name: String = String(base.get("base_display_name", String(item_id)))
+		var type_str: String = String(base.get("type", "Loot"))
+		var weight_per: float = float(base.get("weight_per", 0.0))
+		var avg_value_per: int = int(base.get("avg_value_per", 0))
+
+		# Explicit timestamp fields
+		var date_str: String = String(timestamp.get("date", ""))
+		var time_str: String = String(timestamp.get("time", ""))
+
+		# Generate unique ID
+		var uid: String = _make_unique_id(rng)
+
+		# Add runtime-specific fields
+		base["display_name"] = display_name
+		base["item_ID"] = String(item_id)
+		base["unique_ID"] = uid
+		base["date"] = date_str
+		base["time"] = time_str
+		base["type"] = type_str
+		base["weight"] = weight_per
+		base["value"] = avg_value_per * qty
+		base["qty"] = qty
+
+		inv[uid] = base
+
+	return inv
+
+
+static func _make_unique_id(rng: RandomNumberGenerator) -> String:
+	# lightweight unique id
+	return "i%08X" % rng.randi()
+
+static func ensure_node_entry_with_loot(biome: String, z_key: String, chunk_key: String, biome_key: String, node_id: String, node_type: String, position: Vector2, current_dt: Dictionary) -> void:
+	# Load
+	var register: Dictionary = LoadHandlerSingleton.load_node_register(biome)
+	if not register.has(z_key):
+		register[z_key] = {}
+	if not register[z_key].has(chunk_key):
+		register[z_key][chunk_key] = {}
+	if not register[z_key][chunk_key].has(biome_key):
+		register[z_key][chunk_key][biome_key] = {}
+
+	# Create if missing
+	if not register[z_key][chunk_key][biome_key].has(node_id):
+		var rolled := roll_node_loot(node_type, 3)  # tune rolls per node type
+		var inv := expand_loot_to_inventory(rolled, current_dt)
+
+		register[z_key][chunk_key][biome_key][node_id] = {
+			"position": [int(position.x), int(position.y)],
+			"last_looted": current_dt,
+			"reset_at": calculate_next_reset(current_dt), # you already have this
+			"inventory": inv
+		}
+		LoadHandlerSingleton.save_node_register(biome, register)
+
+static func get_node_entry(biome: String, z: String, chunk: String, biome_key: String, node_id: String) -> Dictionary:
+	var register := load_node_register(biome)
+	if register.has(z) and register[z].has(chunk) and register[z][chunk].has(biome_key) and register[z][chunk][biome_key].has(node_id):
+		return register[z][chunk][biome_key][node_id]
+	return {}
+
+static func update_node_inventory(
+	biome: String,
+	z_key: String,
+	chunk_key: String,
+	biome_key: String,
+	node_id: String,
+	inventory: Dictionary
+) -> void:
+	var register := load_node_register(biome)
+
+	print("🌿 Updating node:", biome, z_key, chunk_key, biome_key, node_id)
+	print("📒 Node register keys:", register.keys())
+
+	if not register.has(z_key):
+		push_warning("⚠️ z_key not found: %s" % z_key)
+		return
+	if not register[z_key].has(chunk_key):
+		push_warning("⚠️ chunk_key not found: %s" % chunk_key)
+		return
+	if not register[z_key][chunk_key].has(biome_key):
+		push_warning("⚠️ biome_key not found: %s" % biome_key)
+		return
+	if not register[z_key][chunk_key][biome_key].has(node_id):
+		push_warning("⚠️ node_id not found: %s" % node_id)
+		return
+
+		# ✅ Normalize inventory stacks
+	for uid in inventory.keys():
+		LoadHandlerSingleton.normalize_stack_stats(inventory[uid])
+
+	# ✅ Apply update
+	register[z_key][chunk_key][biome_key][node_id]["inventory"] = inventory
+
+	print("✅ Updated node entry:", node_id, "→", inventory.keys())
+
+	save_node_register(biome, register)
+
+func get_mount_inv_path() -> String:
+	return get_save_file_path() + "characterdata/mount_inventory" + str(get_save_slot()) + ".json"
+
+func load_mount_inv() -> Dictionary:
+	var path = get_mount_inv_path()
+	var data: Variant = load_json_file(path)
+	if data == null or not (data is Dictionary):
+		return {}
+
+	# ✅ Normalize all stacks
+	for uid in data.keys():
+		LoadHandlerSingleton.normalize_stack_stats(data[uid])
+
+	return data
+
+
+func save_mount_inv(data: Dictionary) -> void:
+	# ✅ Normalize before save
+	for uid in data.keys():
+		LoadHandlerSingleton.normalize_stack_stats(data[uid])
+
+	var path = get_mount_inv_path()
+	save_json_file(path, data)
+	LoadHandlerSingleton.recalc_player_and_mount_weight()
+
+
+static func ensure_storage_entry_with_loot(
+	biome: String,
+	z_key: String,
+	chunk_key: String,
+	biome_key: String,
+	storage_id: String,
+	storage_type: String,
+	position: Vector2,
+	timestamp: Dictionary
+) -> void:
+	var register := LoadHandlerSingleton.load_storage_register(biome)
+
+	# Ensure nesting exists
+	if not register.has(z_key):
+		register[z_key] = {}
+	if not register[z_key].has(chunk_key):
+		register[z_key][chunk_key] = {}
+	if not register[z_key][chunk_key].has(biome_key):
+		register[z_key][chunk_key][biome_key] = {}
+
+	# ✅ If already has this storage_id, do nothing (chest has already rolled)
+	if register[z_key][chunk_key][biome_key].has(storage_id):
+		return
+
+	# Otherwise, first interaction → roll loot
+	var rolled := roll_node_loot(storage_type, 3)
+	var inv := expand_loot_to_inventory(rolled, timestamp)
+
+	register[z_key][chunk_key][biome_key][storage_id] = {
+		"position": [int(position.x), int(position.y)],
+		"inventory": inv,
+		"storage_type": storage_type,
+		"rolled_once": true,   # optional marker, can help debugging
+		"created_at": timestamp
+	}
+
+	LoadHandlerSingleton.save_storage_register(biome, register)
+
+
+static func clear_storage_register_for_biome(biome: String) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path = LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/storage_register.json" % biome_folder
+
+	var file = FileAccess.open(path, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify({}, "\t"))  # Overwrite with empty dict
+		file.close()
+	else:
+		print("⚠️ Failed to open storage register file for clearing:", path)
+
+func get_localmap_biome_key() -> String:
+	var path: String = get_temp_localmap_placement_path()
+	var data: Dictionary = load_json_file(path)
+	var lm: Dictionary = data.get("local_map", {})
+	return String(lm.get("biome_key", "unknown"))
+
+func get_localmap_z_key() -> String:
+	var path: String = get_temp_localmap_placement_path()
+	var data: Dictionary = load_json_file(path)
+	var lm: Dictionary = data.get("local_map", {})
+	return str(lm.get("z_level", 0))
+
+func get_chunk_key_for_pos(pos: Vector2i) -> String:
+	var path: String = get_temp_localmap_placement_path()
+	var data: Dictionary = load_json_file(path)
+	var lm: Dictionary = data.get("local_map", {})
+	var chunks: Dictionary = lm.get("chunk_blueprints", {})
+
+	for chunk_id in chunks.keys():
+		var chunk: Dictionary = chunks[chunk_id]
+		var origin_arr: Array = chunk.get("origin", [0, 0])
+		var size_arr: Array   = chunk.get("size",   [32, 32])
+		if origin_arr.size() >= 2 and size_arr.size() >= 2:
+			var origin: Vector2i = Vector2i(int(origin_arr[0]), int(origin_arr[1]))
+			var size: Vector2i   = Vector2i(int(size_arr[0]),   int(size_arr[1]))
+			var rect: Rect2i = Rect2i(origin, size)
+			if rect.has_point(pos):
+				return String(chunk_id)
+
+	# Fallbacks
+	var current_id: String = String(lm.get("current_chunk_id", ""))
+	if current_id != "":
+		return current_id
+	return "chunk_0_0"
+	
+func _ctx_for_pos(pos: Vector2i) -> Dictionary:
+	var biome_key: String = LoadHandlerSingleton.get_localmap_biome_key()
+	var biome_name: String = biome_key
+	var z_key: String = str(LoadHandlerSingleton.get_localmap_z_key())  # 🔑 always a string
+	var chunk_key: String = LoadHandlerSingleton.get_chunk_key_for_pos(pos)
+
+	return {
+		"biome": biome_name,
+		"biome_key": biome_key,
+		"z": z_key,
+		"chunk": chunk_key
+	}
+
+static func ensure_vendor_entry_with_loot(
+	biome: String,
+	z_key: String,
+	chunk_key: String,
+	biome_key: String,
+	vendor_id: String,
+	vendor_type: String,
+	position: Vector2,
+	current_dt: Dictionary
+) -> void:
+	var register := load_vendor_register(biome)
+
+	if not register.has(z_key):
+		register[z_key] = {}
+	if not register[z_key].has(chunk_key):
+		register[z_key][chunk_key] = {}
+	if not register[z_key][chunk_key].has(biome_key):
+		register[z_key][chunk_key][biome_key] = {}
+
+	if not register[z_key][chunk_key][biome_key].has(vendor_id):
+		var rolled := roll_node_loot(vendor_type, 5)  # ← just like bushes/trees/etc
+		var inv := expand_loot_to_inventory(rolled, current_dt)
+
+		register[z_key][chunk_key][biome_key][vendor_id] = {
+			"position": [int(position.x), int(position.y)],
+			"type": vendor_type,
+			"last_visited": current_dt,
+			"inventory": inv
+		}
+		save_vendor_register(biome, register)
+
+static func clear_vendor_register_for_biome(biome: String) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_vendor_register_path(biome_folder)
+
+	var file := FileAccess.open(path, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify({}, "\t"))  # Overwrite with empty dict
+		file.close()
+	else:
+		print("⚠️ Failed to open vendor register file for clearing:", path)
+
+static func transfer_item(
+	source_inventory: Dictionary,
+	target_inventory: Dictionary,
+	stack_id: String,
+	qty: int = -1
+) -> void:
+	if not source_inventory.has(stack_id):
+		push_warning("❌ Tried to transfer non-existent item: " + stack_id)
+		return
+
+	var item: Dictionary = source_inventory[stack_id].duplicate(true)
+	var amount_to_transfer: int = (qty if qty > 0 else int(item.get("qty", 1)))
+
+	var item_id: String = item.get("item_ID", "")
+	var def: Dictionary = ItemData.ITEM_PROPERTIES.get(item_id, {})
+	var is_stackable: bool = def.get("stackable", true)
+
+	# Decrease or remove from source
+	if amount_to_transfer >= int(item.get("qty", 1)):
+		source_inventory.erase(stack_id)
+	else:
+		source_inventory[stack_id]["qty"] -= amount_to_transfer
+
+	# Stackable: Try to merge into existing stack in target
+	if is_stackable:
+		for k in target_inventory.keys():
+			var t: Dictionary = target_inventory[k]
+			if t.get("item_ID", "") == item_id:
+				t["qty"] += amount_to_transfer
+				LoadHandlerSingleton.normalize_stack_stats(t) # ✅ update merged stack
+				return
+
+	# New stack needed: generate new instance
+	var new_stack: Dictionary = item.duplicate(true)
+	new_stack["qty"] = amount_to_transfer
+	new_stack["unique_ID"] = LoadHandlerSingleton._make_unique_id(RandomNumberGenerator.new())
+
+	LoadHandlerSingleton.normalize_stack_stats(new_stack) # ✅ normalize new stack
+	target_inventory[new_stack["unique_ID"]] = new_stack
+
+static func update_storage_inventory(
+	biome: String,
+	z_key: String,
+	chunk_key: String,
+	biome_key: String,
+	storage_id: String,
+	inventory: Dictionary
+) -> void:
+	var register := LoadHandlerSingleton.load_storage_register(biome)
+
+	print("📝 Updating storage:", biome, z_key, chunk_key, biome_key, storage_id)
+	print("📦 Before update keys:", register.keys())
+
+	if not register.has(z_key):
+		push_warning("⚠️ z_key not found: %s" % z_key)
+		return
+	if not register[z_key].has(chunk_key):
+		push_warning("⚠️ chunk_key not found: %s" % chunk_key)
+		return
+	if not register[z_key][chunk_key].has(biome_key):
+		push_warning("⚠️ biome_key not found: %s" % biome_key)
+		return
+	if not register[z_key][chunk_key][biome_key].has(storage_id):
+		push_warning("⚠️ storage_id not found: %s" % storage_id)
+		return
+
+	# ✅ Normalize inventory stacks
+	for uid in inventory.keys():
+		LoadHandlerSingleton.normalize_stack_stats(inventory[uid])
+
+	# ✅ Only replace inventory field
+	register[z_key][chunk_key][biome_key][storage_id]["inventory"] = inventory
+
+	print("✅ Updated storage entry:", storage_id, "→", inventory.keys())
+
+	LoadHandlerSingleton.save_storage_register(biome, register)
+
+
+static func get_npc_pool_path(biome_folder: String) -> String:
+	return LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/npc_pool.json" % biome_folder
+
+static func load_npc_pool(biome: String) -> Dictionary:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_npc_pool_path(biome_folder)
+	return LoadHandlerSingleton.load_json_file(path)
+
+static func save_npc_pool(biome: String, data: Dictionary) -> void:
+	var biome_key := Constants.get_biome_chunk_key(biome)
+	var biome_folder := Constants.get_chunk_folder_for_key(biome_key)
+	var path := get_npc_pool_path(biome_folder)
+	LoadHandlerSingleton.save_json_file(path, data)
+
+func save_chunked_npc_data(biome: String, chunked_npcs: Dictionary) -> void:
+	for chunk_key in chunked_npcs.keys():
+		save_chunked_npc_chunk(chunk_key, chunked_npcs[chunk_key])
+
+func build_position_lookup_from_grid(grid: Array) -> Dictionary:
+	var lookup := {}
+	for y in range(grid.size()):
+		for x in range(grid[y].size()):
+			lookup[Vector2i(x, y)] = grid[y][x].get("walkable", false)
+	return lookup
+
+func get_npcs_in_chunk(chunk_id: String) -> Dictionary:
+	var placement = load_temp_localmap_placement()
+	if placement == null:
+		return {}
+
+	var lm = placement.get("local_map", {})
+	var stored_biome = str(lm.get("biome_key", ""))
+	if stored_biome == "":
+		return {}
+
+	# normalize: folder → short key if needed
+	var biome_key_for_path = stored_biome
+	if stored_biome.contains("_"):
+		biome_key_for_path = Constants.get_biome_chunk_key(stored_biome)
+
+	var z_level = str(lm.get("z_level", "0"))
+	var path = get_chunked_npc_chunk_path(chunk_id, biome_key_for_path, z_level)
+
+	var data = load_json_file(path)
+	if typeof(data) == TYPE_DICTIONARY and data.has("npcs"):
+		return data["npcs"]
+	return {}
+
+
+func get_walkability_bounds(walkability_grid: Array) -> Dictionary:
+	if walkability_grid.is_empty():
+		return { "width": 0, "height": 0 }
+	
+	var height = walkability_grid.size()
+	var width = walkability_grid[0].size()
+	return { "width": width, "height": height }
+	
+
+func is_tile_walkable(walkability_grid: Array, pos: Vector2i) -> bool:
+	if pos.y < 0 or pos.y >= walkability_grid.size():
+		return false
+	if pos.x < 0 or pos.x >= walkability_grid[pos.y].size():
+		return false
+	
+	var cell = walkability_grid[pos.y][pos.x]
+	return cell.get("walkable", false)
+	
+func get_walkability_grid_for_chunk(chunk_id: String) -> Array:
+	var placement := load_temp_localmap_placement()
+	if placement == null:
+		push_warning("⚠️ No placement found when getting walkability grid.")
+		return []
+
+	var biome_key: String = placement.get("local_map", {}).get("biome_key", "gef")
+	var z_level: String = str(placement.get("local_map", {}).get("z_level", "0"))
+
+	var tile_path = get_chunked_tile_chunk_path(chunk_id, biome_key, z_level)
+	var object_path = get_chunked_object_chunk_path(chunk_id, biome_key, z_level)
+
+	var tile_chunk: Dictionary = load_json_file(tile_path)
+	var object_chunk: Dictionary = load_json_file(object_path)
+
+	if tile_chunk == null or not tile_chunk.has("tile_grid"):
+		print("❌ Missing or invalid tile_chunk for:", chunk_id)
+		return []
+
+	if object_chunk == null:
+		object_chunk = {}
+	elif object_chunk.has("objects"):
+		object_chunk = object_chunk["objects"]
+
+	# ✅ Build and return proper walkability grid
+	return build_walkability_grid(tile_chunk["tile_grid"], object_chunk)
+
+func get_player_weight_path() -> String:
+	return get_save_file_path() + "characterdata/player_weight" + str(get_save_slot()) + ".json"
+
+func load_player_weight() -> Dictionary:
+	var path = get_player_weight_path()
+	return load_json_file(path)
+	
+func save_player_weight(data: Dictionary) -> void:
+	var path = get_player_weight_path()
+	save_json_file(path, data)
+
+func _get_item_stack_weight(item: Dictionary) -> float:
+	if item == null:
+		return 0.0
+	
+	var qty: int = int(item.get("qty", 1))
+	
+	# Prefer per-item weight if present
+	if item.has("weight_per"):
+		return float(item["weight_per"]) * qty
+	
+	# fallback to constants/item_data.gd
+	var item_id: String = item.get("item_ID", "")
+	if item_id != "" and ItemData.ITEM_PROPERTIES.has(item_id):
+		var per: float = float(ItemData.ITEM_PROPERTIES[item_id].get("weight_per", 0.0))
+		return per * qty
+	
+	# fallback: explicit weight field
+	if item.has("weight"):
+		return float(item["weight"])
+	
+	return 0.0
+
+
+# --- Calculate inventory weight ---
+func _calc_inventory_weight(inv: Dictionary) -> float:
+	var total := 0.0
+	for uid in inv.keys():
+		total += _get_item_stack_weight(inv[uid])
+	return total
+	
+func recalc_player_and_mount_weight() -> void:
+	var weight_data: Dictionary = {
+		"weight_stats": {
+			"current_carry_weight": { "value": 0.0 },
+			"current_gear_weight": { "value": 0.0 },
+			"max_base_carry_weight": { "value": 0 },
+			"max_carry_weight": { "value": 0 },
+			"current_mount_carry_weight": { "value": 0.0 },
+			"max_mount_carry_weight": { "value": 0 }
+		}
+	}
+	
+	# --- Player inventory ---
+	var player_inv: Dictionary = load_player_inventory()
+	weight_data["weight_stats"]["current_carry_weight"]["value"] = _calc_inventory_weight(player_inv)
+	
+	# --- Gear weight placeholder ---
+	weight_data["weight_stats"]["current_gear_weight"]["value"] = 0.0
+	
+	# --- Max from attributes ---
+	var base_attr: Dictionary = get_base_attributes()
+	var str_val: int = int(base_attr.get("effective_attributes", {}).get("strength", 0))
+	var max_base: int = str_val * 20
+	weight_data["weight_stats"]["max_base_carry_weight"]["value"] = max_base
+	weight_data["weight_stats"]["max_carry_weight"]["value"] = max_base
+	
+	# --- Mount inventory ---
+	var mount_inv: Dictionary = load_mount_inv()
+	weight_data["weight_stats"]["current_mount_carry_weight"]["value"] = _calc_inventory_weight(mount_inv)
+	
+	# --- Mount type max ---
+	var mount_data: Dictionary = get_current_mount_data()
+	var raw_mount_val = mount_data.get("max_mount_carry_weight", 0)
+	var max_mount: int = 0
+	
+	if typeof(raw_mount_val) == TYPE_DICTIONARY:
+		max_mount = int(raw_mount_val.get("value", 0))
+	else:
+		max_mount = int(raw_mount_val)
+	
+	weight_data["weight_stats"]["max_mount_carry_weight"]["value"] = max_mount
+	
+	# --- Save ---
+	save_player_weight(weight_data)
+	print("✅ Weight recalculated: ", weight_data)
+
+static func get_avg_value_per(item: Dictionary) -> int:
+	if item.has("avg_value_per"):
+		return int(item["avg_value_per"])
+
+	var item_id: String = item.get("item_ID", "")
+	if item_id != "" and ItemData.ITEM_PROPERTIES.has(item_id):
+		return int(ItemData.ITEM_PROPERTIES[item_id].get("avg_value_per", 0))
+
+	return 0
+
+
+static func normalize_stack_stats(item: Dictionary) -> void:
+	if item == null or not item.has("item_ID"):
+		return
+
+	var qty := int(item.get("qty", 1))
+	var item_id: String = item["item_ID"]
+	var def: Dictionary = ItemData.ITEM_PROPERTIES.get(item_id, {})
+
+	var weight_per := float(def.get("weight_per", item.get("weight_per", 0.0)))
+	var avg_value_per := LoadHandlerSingleton.get_avg_value_per(item)
+
+	item["weight_per"] = weight_per
+	item["weight"] = weight_per * qty
+	item["value"] = avg_value_per * qty

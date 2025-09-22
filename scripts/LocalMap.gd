@@ -7,6 +7,8 @@ extends Control
 @onready var bottom_ui = $UIlayer/LocalPlayUI/BottomUI  # ✅ Reference the BottomUI node
 @onready var dark_overlay = $UILayer/DarkOverlay
 @onready var light_overlay := $LightOverlay
+@onready var travel_log = $UILayer/LocalPlayUI/TravelLogControl
+
 
 var light_map: Array = []  # 🌕 Stores per-tile light levels
 var tile_light_levels: Dictionary = {}
@@ -31,7 +33,8 @@ var current_npc_chunk: Dictionary = {}
 var current_chunk_id: String = ""
 var active_area_exit_popup: Node = null
 var current_z_level: int = 0
-
+var last_egress_pos: Vector2i = Vector2i(-999, -999)  # Declare this at the top of your
+var visible_chunks: Array = []
 
 const VISIBILITY_UPDATE_INTERVAL := 0.1  # seconds
 
@@ -40,7 +43,7 @@ const TEXTURES = Constants.TILE_TEXTURES
 const TILE_SIZE = 88  # Each tile is 88x88 pixels
 
 func _ready():
-	print("🔍 DEBUG: LocalMap.gd _ready() is running!")
+	#print("🔍 DEBUG: LocalMap.gd _ready() is running!")
 
 	await get_tree().process_frame  # Let scene tree settle
 
@@ -48,20 +51,20 @@ func _ready():
 	var placement = LoadHandlerSingleton.load_temp_localmap_placement()
 
 	if placement.has("local_map") and placement["local_map"].has("chunk_blueprints"):
-		print("🔧 Populating ChunkTools with blueprint data...")
+		#print("🔧 Populating ChunkTools with blueprint data...")
 		ChunkTools.populate_from_loadhandler()
 	else:
 		print("❌ ERROR: No blueprint data found in placement — chunk transitions may fail!")
 
 	var entry_context = LoadHandlerSingleton.load_entry_context()
 	var entry_type = entry_context.get("entry_type", "explore")
-	print("📘 Entry Type Detected:", entry_type)
+	#print("📘 Entry Type Detected:", entry_type)
 
 	# 🎛️ Hook up UI controls
 	world_map_button.connect("pressed", Callable(self, "_on_WorldMap_pressed"))
 
 	if tile_container == null:
-		print("❌ ERROR: tile_container is NULL in LocalMap.gd!")
+		#print("❌ ERROR: tile_container is NULL in LocalMap.gd!")
 		return
 
 	if not generate_button.pressed.is_connected(_on_GenNewMapDebugButton_pressed):
@@ -70,19 +73,19 @@ func _ready():
 	if not toggle_free_pan_button.pressed.is_connected(_toggle_free_pan):
 		toggle_free_pan_button.pressed.connect(_toggle_free_pan)
 
-	print("✅ SUCCESS: tile_container found in LocalMap.gd!", tile_container)
-	print("📐 TileContainer Pos:", tile_container.global_position)
-	print("🔍 TileContainer Children:", tile_container.get_child_count())
+	#print("✅ SUCCESS: tile_container found in LocalMap.gd!", tile_container)
+	#print("📐 TileContainer Pos:", tile_container.global_position)
+	#print("🔍 TileContainer Children:", tile_container.get_child_count())
 
 	# 🗺️ Render map and objects
 	load_and_render_local_map()
 
 	# 💡 Manually initialize LightOverlay AFTER map is built
 	if light_overlay and light_overlay.has_method("initialize"):
-		print("🔧 Initializing LightOverlay manually...")
+		#print("🔧 Initializing LightOverlay manually...")
 		light_overlay.initialize(walkability_grid, TILE_SIZE)
 		await light_overlay.ready_signal
-		print("✅ LightOverlay fully ready.")
+		#print("✅ LightOverlay fully ready.")
 	else:
 		print("❌ ERROR: LightOverlay missing or doesn't implement initialize().")
 
@@ -101,22 +104,24 @@ func _ready():
 		update_fov_from_player(grid_pos)
 	else:
 		print("⚠️ Player not ready yet — skipping FOV update (will happen on spawn)")
+		
 
 
 func load_and_render_local_map():
 	for child in tile_container.get_children():
 		child.queue_free()
-	print("📂 Loading local map data from saved JSONs...")
+	#print("📂 Loading local map data from saved JSONs...")
 
 	# 🔍 Get entry context and chunk info
 	var entry_context = LoadHandlerSingleton.load_entry_context()
 	var placement = LoadHandlerSingleton.load_temp_localmap_placement()
 	var chunk_id = LoadHandlerSingleton.load_temp_localmap_placement().local_map.current_chunk_id
-	var biome_key = placement["local_map"].get("biome_key", "grassland_explore_fields")
+	var biome_folder = placement["local_map"].get("biome_key", "grassland_explore_fields")
+	var biome_key = Constants.get_biome_chunk_key(biome_folder)  # 👈 Convert long name to short key
 	var z_level = str(placement["local_map"].get("z_level", "0"))
 	current_chunk_id = chunk_id
 
-	print("🧩 Loading chunked local map:", chunk_id, "at Z =", z_level)
+	#print("🧩 Loading chunked local map:", chunk_id, "at Z =", z_level)
 
 	# 🧱 Load tile and object chunks
 	var tile_path = LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_id, biome_key, z_level)
@@ -128,25 +133,25 @@ func load_and_render_local_map():
 	var npc_chunk = LoadHandlerSingleton.load_json_file(npc_path)
 
 	
-	# Wrap tile_chunk like load_chunked_tile_chunk does
-	if tile_chunk.has("tile_grid"):
+		# Only wrap if tile_chunk is valid
+	print("📂 Attempting to load tile chunk from:", tile_path)
+	if tile_chunk != null and tile_chunk.has("tile_grid"):
 		tile_chunk = { "tile_grid": tile_chunk["tile_grid"] }
-
-	# Wrap object_chunk like load_chunked_object_chunk does
-	if object_chunk.has("objects"):
+		
+	if object_chunk != null and object_chunk.has("objects"):
 		object_chunk = object_chunk
 	elif typeof(object_chunk) == TYPE_DICTIONARY:
 		object_chunk = { "objects": object_chunk }
 	else:
 		object_chunk = { "objects": {} }
-	
-	if npc_chunk.has("npcs"):
+
+	if npc_chunk != null and npc_chunk.has("npcs"):
 		npc_chunk = npc_chunk
 	elif typeof(npc_chunk) == TYPE_DICTIONARY:
 		npc_chunk = { "npcs": npc_chunk }
 	else:
 		npc_chunk = { "npcs": {} }
-	
+
 	current_tile_chunk = tile_chunk
 	current_object_chunk = object_chunk
 	current_npc_chunk = npc_chunk
@@ -158,7 +163,7 @@ func load_and_render_local_map():
 
 	# 🎨 Render map using chunks
 	MapRenderer.render_map(tile_chunk, object_chunk, npc_chunk, tile_container, chunk_id)
-	print("✅ Chunked local map rendered.")
+	#print("✅ Chunked local map rendered.")
 	var coords = LoadHandlerSingleton.get_current_chunk_coords()
 	MapRenderer.render_chunk_transitions(coords, tile_container)
 	
@@ -179,18 +184,18 @@ func load_and_render_local_map():
 
 	# 🧍 Spawn player
 	spawn_player_visual()
-	print("✅ Player visual spawned at:", player.position)
+	#print("✅ Player visual spawned at:", player.position)
 
 	# 👁️ Update FOV after frame delay
 	await get_tree().process_frame
 	var grid_pos = Vector2i(player.position.x / TILE_SIZE, player.position.y / TILE_SIZE)
 	update_fov_from_player(grid_pos)
-
+	visible_chunks = [ current_chunk_id ]
 
 func spawn_player_visual():
 	var placement = LoadHandlerSingleton.load_temp_localmap_placement()
 	if placement == null:
-		print("❌ No placement data — cannot spawn player.")
+		#print("❌ No placement data — cannot spawn player.")
 		return
 
 	var entry_context = LoadHandlerSingleton.load_entry_context()
@@ -221,7 +226,10 @@ func spawn_player_visual():
 	var player_scene = preload("res://scenes/actors/PlayerVisual.tscn")
 	var player_instance = player_scene.instantiate()
 	player_instance.position = Vector2(x, y)
-
+	
+	# ✅ Set travel log here
+	player_instance.set_travel_log($UILayer/LocalPlayUI/TravelLogControl)
+	
 	self.player = player_instance
 	player_instance.connect("fov_updated", Callable(self, "_on_player_fov_updated"))
 
@@ -237,24 +245,24 @@ func spawn_player_visual():
 	update_fov_from_player(Vector2i(player_pos["x"], player_pos["y"]))
 	#call_deferred("center_tile_container")
 
-	print("✅ Player visual spawned at (local):", player_pos, "→ World Pos:", Vector2(x, y))
+	#print("✅ Player visual spawned at (local):", player_pos, "→ World Pos:", Vector2(x, y))
 
 
 func _on_WorldMap_pressed():
-	print("🌍 Returning to World Map...")
+	#print("🌍 Returning to World Map...")
 
 	# ✅ Transition to the refresh scene first
 	get_tree().change_scene_to_file("res://scenes/play/LocaltoWorldRefresh.tscn")
 
 
 func _on_GenNewMapDebugButton_pressed():
-	print("🛠 DEBUG: Generate New Map button pressed!")
+	#print("🛠 DEBUG: Generate New Map button pressed!")
 	generate_local_map()
 
 
 func center_tile_container():
 	if player == null:
-		print("⚠️ Player not ready — can't center tile container yet.")
+		#print("⚠️ Player not ready — can't center tile container yet.")
 		return
 
 	var player_pixel_pos: Vector2 = player.position
@@ -267,12 +275,12 @@ func center_tile_container():
 	var new_position = -player_pixel_pos + offset
 	tile_container.position = new_position
 
-	print("🎯 Centering on player:")
-	print("   ↪ Grid Pos:", Vector2i(player_pixel_pos / TILE_SIZE))
-	print("   ↪ Pixel Pos:", player_pixel_pos)
-	print("📐 Viewport Size:", viewport_size)
-	print("🔍 Zoom Level:", zoom)
-	print("📍 New TileContainer Pos:", new_position)
+	#print("🎯 Centering on player:")
+	#print("   ↪ Grid Pos:", Vector2i(player_pixel_pos / TILE_SIZE))
+	#print("   ↪ Pixel Pos:", player_pixel_pos)
+	#print("📐 Viewport Size:", viewport_size)
+	#print("🔍 Zoom Level:", zoom)
+	#print("📍 New TileContainer Pos:", new_position)
 
 func _toggle_free_pan():
 	var previous_position = tile_container.position  # ✅ Store current position before toggling
@@ -296,7 +304,7 @@ func _process(delta):
 		if is_instance_valid(active_area_exit_popup):
 			var trigger_tile = active_area_exit_popup.get_meta("trigger_tile")
 			if player_tile != trigger_tile:
-				print("❌ Player moved away from edge — closing area exit popup.")
+				#print("❌ Player moved away from edge — closing area exit popup.")
 				active_area_exit_popup.queue_free()
 				active_area_exit_popup = null
 		else:
@@ -346,7 +354,7 @@ func update_zoom():
 		clamp(new_center.y, -map_height / 2, map_height / 2)
 	)
 
-	print("Zoom Updated. New TileContainer Position:", tile_container.position)
+	#print("Zoom Updated. New TileContainer Position:", tile_container.position)
 
 
 
@@ -363,40 +371,40 @@ func _on_generate_pressed():
 func generate_local_map():
 	# 🚨 Debugging: Ensure `tile_container` exists
 	if tile_container == null:
-		print("❌ ERROR: `tile_container` is NULL in LocalMap! Aborting.")
+		#print("❌ ERROR: `tile_container` is NULL in LocalMap! Aborting.")
 		return
 
-	print("✅ SUCCESS: `tile_container` found in LocalMap.gd!", tile_container)
+	#print("✅ SUCCESS: `tile_container` found in LocalMap.gd!", tile_container)
 
 	# ✅ Step 1: Clear the old map
 	for child in tile_container.get_children():
 		child.queue_free()
-	print("🧹 Cleared TileContainer.")
+	#print("🧹 Cleared TileContainer.")
 
 	# ✅ Step 2: Generate map with `tile_container`
 	var result = await GeneratorDispatcher.generate_local_map(tile_container)
 
 	# 🚨 Check for NULL result
 	if result == null:
-		print("❌ ERROR: GeneratorDispatcher returned NULL! Debug the generator function.")
+		#print("❌ ERROR: GeneratorDispatcher returned NULL! Debug the generator function.")
 		return
 
 	# ✅ Ensure both grid and object layers are returned
 	if result.size() < 2:
-		print("❌ ERROR: Generator returned an invalid grid and object layer! Got:", result)
+		#print("❌ ERROR: Generator returned an invalid grid and object layer! Got:", result)
 		return
 
-	print("✅ DEBUG: Generator returned valid grid & object layer.")
+	#print("✅ DEBUG: Generator returned valid grid & object layer.")
 
 	var grid = result[0]
 	var object_layer = result[1]
 
 	# ✅ Step 3: Check if grid is empty
 	if grid == null or grid.size() == 0:
-		print("❌ ERROR: No valid grid was returned from generator.")
+		#print("❌ ERROR: No valid grid was returned from generator.")
 		return
 
-	print("🟢 DEBUG: Grid successfully generated with size:", grid.size())
+	#print("🟢 DEBUG: Grid successfully generated with size:", grid.size())
 
 	# ✅ Step 4: Place objects on the grid
 	var placement_data = LoadHandlerSingleton.load_json_file(LoadHandlerSingleton.get_worldmap_placement_path())
@@ -407,7 +415,7 @@ func generate_local_map():
 		var realm = char_pos.get("current_realm", "worldmap")
 		biome_name = char_pos.get(realm, {}).get("biome", "unknown")
 
-	print("🧭 Object placement biome:", biome_name)
+	#print("🧭 Object placement biome:", biome_name)
 	ObjectPlacer.place_objects(grid, object_layer, biome_name)
 
 	# ✅ Step 5: Render the map
@@ -462,7 +470,7 @@ func update_dark_overlay():
 	else:
 		var time_data = LoadHandlerSingleton.get_time_and_date()
 		if time_data == null:
-			print("⚠️ Time data missing — cannot update overlay.")
+			#print("⚠️ Time data missing — cannot update overlay.")
 			return
 
 		var miltime: String = time_data.get("miltime", "1200")
@@ -485,7 +493,7 @@ func update_local_flavor_image():
 		var flavor_texture = LoadHandlerSingleton.get_gametimeflavorlocal_image()
 		if flavor_texture:
 			flavor_image_node.texture = flavor_texture
-			print("🕓 Local flavor image updated.")
+			#print("🕓 Local flavor image updated.")
 		else:
 			print("⚠️ Could not load local flavor texture.")
 	else:
@@ -496,7 +504,7 @@ func update_date_label():
 	if date_label:
 		var date_value = LoadHandlerSingleton.get_date_name()
 		date_label.text = date_value
-		print("📅 Date label updated to:", date_value)
+		#print("📅 Date label updated to:", date_value)
 	else:
 		print("❌ Error: Date label node not found.")
 
@@ -515,14 +523,14 @@ func update_realm_label():
 		else:
 			realm_label.text = "Unknown Realm"
 
-		print("🌍 Updated realm label to:", realm_label.text)
+		#print("🌍 Updated realm label to:", realm_label.text)
 	else:
 		print("❌ Error: RealmLabel node not found.")
 
 func update_play_scene_name():
 	var label_node = get_node_or_null("UILayer/LocalPlayUI/PlaySceneName")
 	if label_node == null:
-		print("❌ Error: PlaySceneName label not found.")
+		#print("❌ Error: PlaySceneName label not found.")
 		return
 
 	var entry_context = LoadHandlerSingleton.load_entry_context()
@@ -554,7 +562,7 @@ func update_play_scene_name():
 		_:
 			label_node.text = "Wandering"
 
-	print("🧭 Play scene name updated to:", label_node.text)
+	#print("🧭 Play scene name updated to:", label_node.text)
 
 
 func _get_chunk_direction_label(chunk_id: String) -> String:
@@ -591,7 +599,7 @@ func _get_chunk_direction_label(chunk_id: String) -> String:
 func update_local_progress_bars():
 	var stats_data = LoadHandlerSingleton.get_combat_stats()
 	if not stats_data.has("combat_stats"):
-		print("⚠️ No combat_stats found!")
+		#print("⚠️ No combat_stats found!")
 		return
 	
 	var stats = stats_data["combat_stats"]
@@ -622,7 +630,7 @@ func is_tile_walkable(pos: Vector2i) -> bool:
 	return cell.get("walkable", true)
 	
 func update_fov_from_player(grid_pos: Vector2i): 
-	print("🔦 FOV update from:", grid_pos)
+	#print("🔦 FOV update from:", grid_pos)
 
 	var previous_visible_tiles := current_visible_tiles.keys()
 	visible_tiles.clear()
@@ -639,7 +647,7 @@ func update_fov_from_player(grid_pos: Vector2i):
 	var vision_multiplier: float = lerp(1.0, max_vision_multiplier, t)
 	var player_radius: int = int(min_vision_radius * vision_multiplier)
 
-	print("🌞 Sunlight:", sunlight_level, "| Player Radius:", player_radius)
+	#print("🌞 Sunlight:", sunlight_level, "| Player Radius:", player_radius)
 
 	for y in range(walkability_grid.size()):
 		for x in range(walkability_grid[y].size()):
@@ -668,13 +676,11 @@ func update_fov_from_player(grid_pos: Vector2i):
 	apply_static_light_to_visible_tiles()
 
 	current_visible_tiles = visible_tiles.duplicate()
-	emit_signal("fov_updated", visible_tiles)
+	#emit_signal("fov_updated", visible_tiles)
 	update_object_visibility(grid_pos)
 
 	if light_overlay.is_ready:
 		update_light_map()
-	else:
-		print("⏳ Skipping update_light_map() — LightOverlay not ready yet.")
 
 	# 🕒 Optional redraw (now uses is_ready flag)
 	var time_now: float = Time.get_ticks_msec() / 1000.0
@@ -689,14 +695,12 @@ func update_fov_from_player(grid_pos: Vector2i):
 					sunlight_level,
 					has_nv
 				)
-		else:
-			print("⏳ LightOverlay not ready yet — skipping draw.")
 
 		_last_visibility_update_time = time_now
 
 func update_light_map() -> void:
 	if not light_overlay or not light_overlay.is_ready:
-		print("⏳ Skipping update_light_map() — LightOverlay not ready yet.")
+		#print("⏳ Skipping update_light_map() — LightOverlay not ready yet.")
 		return
 
 	# 🌌 1. Ambient fill (sunlight)
@@ -764,7 +768,7 @@ func update_light_map() -> void:
 					if not visible_tiles.has(pos):
 						visible_tiles[pos] = -2  # -2 means: visible because of static light
 						light_overlay.dirty_tiles[pos] = true
-						print("👁️ Lamp-illuminated tile visible to player:", pos)
+						#print("👁️ Lamp-illuminated tile visible to player:", pos)
 
 
 func _on_player_fov_updated(tiles):
@@ -776,7 +780,7 @@ func _on_player_fov_updated(tiles):
 		sunlight_level,
 		has_nightvision
 	)
-	print("🛰️ FOV signal received. Visible tiles:", visible_tiles.size())
+	#print("🛰️ FOV signal received. Visible tiles:", visible_tiles.size())
 
 
 func is_tile_transparent(pos: Vector2i) -> bool:
@@ -796,7 +800,7 @@ func calculate_sunlight_levels() -> void:
 		var new_sun_intensity := 0.8
 
 		if !is_equal_approx(new_sun_intensity, sunlight_level):
-			print("🕳️ Underground mode: Forcing darkness")
+			#print("🕳️ Underground mode: Forcing darkness")
 			sunlight_level = new_sun_intensity
 			for pos in current_visible_tiles.keys():
 				light_overlay.dirty_tiles[pos] = true
@@ -854,7 +858,7 @@ func calculate_sunlight_levels() -> void:
 		new_sun_intensity = 0.8
 
 	if !is_equal_approx(new_sun_intensity, sunlight_level):
-		print("☀️ Sunlight level changed! Forcing redraw on changed tiles.")
+		#print("☀️ Sunlight level changed! Forcing redraw on changed tiles.")
 		sunlight_level = new_sun_intensity
 		for pos in current_visible_tiles.keys():
 			light_overlay.dirty_tiles[pos] = true
@@ -972,10 +976,10 @@ func update_object_visibility(player_grid_pos: Vector2i) -> void:
 			obj_node.modulate.a = 0.0
 
 func rebuild_walkability():
-	print("🔁 Rebuilding walkability grid...")
+	#print("🔁 Rebuilding walkability grid...")
 
 	if current_tile_chunk == null or current_object_chunk == null:
-		print("❌ Cannot rebuild walkability — chunk data is null.")
+		#print("❌ Cannot rebuild walkability — chunk data is null.")
 		return
 
 	var tile_dict: Dictionary = current_tile_chunk.get("tile_grid", {})
@@ -983,18 +987,18 @@ func rebuild_walkability():
 		print("⚠️ Tile dictionary is empty!")
 	
 	var object_dict: Dictionary = current_object_chunk  # Already flat format ✅
-	print("🧱 Processing %d object(s) into walk grid..." % object_dict.size())
+	#print("🧱 Processing %d object(s) into walk grid..." % object_dict.size())
 	
 	if object_dict.has("objects"):
 		object_dict = object_dict["objects"]
 	walkability_grid = LoadHandlerSingleton.build_walkability_grid(tile_dict, object_dict)
 
-	print("✅ Walkability grid rebuilt!")
+	#print("✅ Walkability grid rebuilt!")
 
 
 func update_tile_at(pos: Vector2i):
 	if not has_node("TileContainer"):
-		print("❌ No TileContainer found for tile update.")
+		#print("❌ No TileContainer found for tile update.")
 		return
 
 	var tile_container = $TileContainer
@@ -1006,7 +1010,7 @@ func update_tile_at(pos: Vector2i):
 	var object_node_name = "obj_%s" % key
 
 	if not tile_dict.has(key):
-		print("❌ Tile update failed — no tile data at:", key)
+		#print("❌ Tile update failed — no tile data at:", key)
 		return
 
 	# 🧱 Update tile sprite
@@ -1051,7 +1055,7 @@ func update_tile_at(pos: Vector2i):
 
 func update_object_at(pos: Vector2i):
 	if not has_node("TileContainer"):
-		print("❌ No TileContainer found for object update.")
+		#print("❌ No TileContainer found for object update.")
 		return
 
 	var tile_container = $TileContainer
@@ -1064,7 +1068,7 @@ func update_object_at(pos: Vector2i):
 	# 🔥 Clear old object sprite at position
 	for node in tile_container.get_children():
 		if node.is_in_group("object_sprites") and node.position == Vector2(pos.x * TILE_SIZE, pos.y * TILE_SIZE):
-			print("🧹 Removing old object sprite at", pos)
+			#print("🧹 Removing old object sprite at", pos)
 			node.queue_free()
 
 	# 🔍 Find object at this position
@@ -1087,8 +1091,8 @@ func update_object_at(pos: Vector2i):
 			new_obj.add_to_group("object_sprites")
 			tile_container.add_child(new_obj)
 
-			print("👁️ Added object node named:", new_obj.name)
-			print("✨ Object at", pos, "updated visually to:", obj_type, "| Lit:", obj_state.get("is_lit", false))
+			#print("👁️ Added object node named:", new_obj.name)
+			#print("✨ Object at", pos, "updated visually to:", obj_type, "| Lit:", obj_state.get("is_lit", false))
 
 func get_static_light_sources() -> Array:
 	var lit_sources := []
@@ -1115,7 +1119,7 @@ func get_static_light_sources() -> Array:
 				"boost": boost
 			})
 
-	print("✨ Static light sources (from loaded chunk):", lit_sources.size())
+	#print("✨ Static light sources (from loaded chunk):", lit_sources.size())
 	return lit_sources
 
 	
@@ -1189,7 +1193,7 @@ func get_current_chunk_size() -> Vector2i:
 	return Vector2i(max_x + 1, max_y + 1)
 	
 func check_for_chunk_transition(target_tile: Vector2i) -> bool:
-	print("🧭 Checking for chunk transition to:", target_tile)
+	#print("🧭 Checking for chunk transition to:", target_tile)
 
 	var current_chunk_id = LoadHandlerSingleton.get_current_chunk_id()
 	var current_chunk_size = LoadHandlerSingleton.get_chunk_size_for_chunk_id(current_chunk_id)
@@ -1200,18 +1204,18 @@ func check_for_chunk_transition(target_tile: Vector2i) -> bool:
 
 	# 🔍 If we're still inside bounds, no transition needed
 	if target_tile.x >= 0 and target_tile.x < width and target_tile.y >= 0 and target_tile.y < height:
-		print("✅ Target tile is within current chunk — no transition.")
+		#print("✅ Target tile is within current chunk — no transition.")
 		return false
 
 	# 🌍 Convert target to global tile space
 	var current_origin = LoadHandlerSingleton.get_chunk_origin(current_chunk_id)
 	var global_tile = current_origin + target_tile
-	print("🌐 Global tile stepping into:", global_tile)
+	#print("🌐 Global tile stepping into:", global_tile)
 
 	# 📦 Use blueprint logic to resolve destination chunk
 	var dest_info = ChunkTools.get_chunk_for_global_tile(global_tile)
 	if dest_info == {}:
-		print("🚪 No valid chunk exists at that global tile — treat as area exit.")
+		#print("🚪 No valid chunk exists at that global tile — treat as area exit.")
 		spawn_area_exit_popup()
 		return true
 
@@ -1219,7 +1223,7 @@ func check_for_chunk_transition(target_tile: Vector2i) -> bool:
 	var new_tile = dest_info["local"]
 
 	if new_chunk_id == current_chunk_id:
-		print("✅ Still within current chunk after conversion — no transition.")
+		#print("✅ Still within current chunk after conversion — no transition.")
 		return false
 
 	# ⛔ Check if destination tile is walkable
@@ -1235,13 +1239,13 @@ func check_for_chunk_transition(target_tile: Vector2i) -> bool:
 	var target_origin := LoadHandlerSingleton.get_chunk_origin(new_chunk_id)
 	var tile_global: Vector2i = target_origin + new_tile
 	if not LoadHandlerSingleton.is_tile_walkable_in_chunk(new_chunk_coords, tile_global):
-		print("🚫 Destination tile in", new_chunk_id, "is not walkable:", new_tile)
+		#print("🚫 Destination tile in", new_chunk_id, "is not walkable:", new_tile)
 		return true
 
 	# 🧭 Explore tracking
 	LoadHandlerSingleton.mark_chunk_as_explored(new_chunk_coords)
 
-	print("📦 Transitioning to:", new_chunk_id, "→ Tile:", new_tile)
+	#print("📦 Transitioning to:", new_chunk_id, "→ Tile:", new_tile)
 	SceneManager.transition_to_chunk(new_chunk_id, new_tile)
 	return true
 
@@ -1249,10 +1253,10 @@ func check_for_chunk_transition(target_tile: Vector2i) -> bool:
 func spawn_area_exit_popup():
 	# ✅ Prevent duplicate popups from stacking
 	if active_area_exit_popup != null and active_area_exit_popup.is_inside_tree():
-		print("⚠️ Area exit popup already visible — skipping spawn.")
+		#print("⚠️ Area exit popup already visible — skipping spawn.")
 		return
 
-	print("📦 Spawning area exit popup...")
+	#print("📦 Spawning area exit popup...")
 
 	var popup_scene = preload("res://ui/scenes/LocalAreaExitPopup.tscn")
 	var popup = popup_scene.instantiate()
@@ -1270,7 +1274,7 @@ func spawn_area_exit_popup():
 	popup.set_meta("trigger_tile", player_tile)
 
 func load_z_level(z: int):
-	print("📡 load_z_level called with Z:", z)
+	#print("📡 load_z_level called with Z:", z)
 	current_z_level = z
 	load_and_render_local_map()
 
@@ -1289,7 +1293,7 @@ func _deferred_spawn_player(spawn_tile: Vector2i) -> void:
 	await get_tree().process_frame
 	var player = get_node_or_null("LocalMap/PlayerVisual")
 	if player == null:
-		print("❌ Could not find PlayerVisual node.")
+		#print("❌ Could not find PlayerVisual node.")
 		return
 	player.position = Vector2(spawn_tile * TILE_SIZE)
 	player.last_grid_position = spawn_tile
@@ -1298,7 +1302,7 @@ func _deferred_spawn_player(spawn_tile: Vector2i) -> void:
 	calculate_sunlight_levels()
 	update_object_visibility(spawn_tile)
 
-	print("🧭 Player spawned at:", spawn_tile)
+	#print("🧭 Player spawned at:", spawn_tile)
 
 func get_egress_for_current_position(player_pos: Vector2i) -> Dictionary:
 	var placement = LoadHandlerSingleton.load_temp_placement()
@@ -1314,38 +1318,42 @@ func get_egress_for_current_position(player_pos: Vector2i) -> Dictionary:
 	}
 
 	var key = "%s|z%d" % [chunk_id, z_level]
-	print("📦 Checking egress register for key:", key)
-	print("🧭 Player current tile:", local_pos, "Biome:", biome)
+	print("📦 Checking egress for key:", key)
+	print("🧭 Player global pos & z:", local_pos, "biome:", biome)
 
 	LoadHandlerSingleton.clear_cached_egress_register()
 	var egress_data = LoadHandlerSingleton.load_global_egress_data(true)
 	if not egress_data.has(key):
-		print("❌ No egress data found for key:", key)
+		print("❌ No egress data found under key:", key, "available keys:", egress_data.keys())
 		return {}
 
-	# Determine chunk origin from chunk_id
-	var parts = chunk_id.replace("chunk_", "").split("_")
-	var chunk_coords = Vector2i(int(parts[0]), int(parts[1]))
-	var chunk_origin = chunk_coords * Constants.get_biome_config(Constants.get_biome_chunk_key(biome_key))["chunk_size"]
+	var chunk_origin = LoadHandlerSingleton.get_chunk_origin(chunk_id)
+	print("💡 chunk_origin for chunk:", chunk_origin)
 
 	for egress in egress_data[key]:
 		var pos = egress["position"]
-		print("🔍 Checking egress entry:", egress)
+		var biome_match = egress["biome"] == biome
+		if not biome_match:
+			continue
 
-		# Standard check (as before)
-		if egress["biome"] == biome and pos["x"] == local_pos["x"] and pos["y"] == local_pos["y"] and pos["z"] == local_pos["z"]:
-			print("✅ Egress match found!")
-			return egress
-
-		# Fallback: Global-to-local translation
 		var local_x = pos["x"] - chunk_origin.x
 		var local_y = pos["y"] - chunk_origin.y
-		if egress["biome"] == biome and local_x == player_pos.x and local_y == player_pos.y and pos["z"] == z_level:
-			print("✅ Egress match via local translation!")
+
+		# exact global match?
+		if pos["x"] == local_pos["x"] and pos["y"] == local_pos["y"] and pos["z"] == z_level:
+			print("✅ Exact global match egress found:", egress)
 			return egress
 
-		elif local_x == player_pos.x and local_y == player_pos.y and pos["z"] == z_level:
-			print("⚠️ Local pos matched, biome mismatch. Expected:", biome, "Found:", egress["biome"])
+		# fallback: local match
+		if local_x == player_pos.x and local_y == player_pos.y and pos["z"] == z_level:
+			print("✅ Fallback local match egress found:", egress)
+			return egress
 
-	print("🚫 No matching egress found.")
+	print("🚫 No matching egress found in key:", key)
 	return {}
+
+
+func get_visible_chunks() -> Array:
+	# For now, we make visible_chunks be just the current chunk
+	# Could be expanded later (neighboring chunks, etc.)
+	return visible_chunks
