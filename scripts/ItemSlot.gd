@@ -12,7 +12,7 @@ var normal_style := StyleBoxFlat.new()
 var selected_style := StyleBoxFlat.new()
 var item_data: Dictionary = {}  # 🆕 Optional: store stack info if needed later
 var stack_id: String = ""
-
+var _drag_start_position := Vector2.ZERO
 
 
 func _ready() -> void:
@@ -39,14 +39,25 @@ func _ready() -> void:
 	_apply_count_layout()
 	_update_visual_state()
 
+
 func _gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-		print("🖱️ ItemSlot click detected on:", name)
-		var shift_pressed := Input.is_action_pressed("ui_shift")
-		is_selected = true
-		_update_visual_state()
-		emit_signal("item_clicked", self, shift_pressed)  # 🆕 Shift-aware click
-		accept_event()
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT:
+			if event.pressed:
+				_drag_start_position = event.position
+			else:
+				var shift_pressed := Input.is_action_pressed("ui_shift")
+				is_selected = true
+				_update_visual_state()
+				emit_signal("item_clicked", self, shift_pressed)
+				accept_event()
+
+	elif event is InputEventMouseMotion:
+		if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+			if _drag_start_position.distance_to(event.position) > 10:
+				# do nothing here, just let Godot call _get_drag_data()
+				pass
+
 
 func _update_visual_state() -> void:
 	if is_selected:
@@ -72,12 +83,15 @@ func _apply_icon_layout() -> void:
 
 func _apply_count_layout() -> void:
 	count.set_anchors_preset(Control.PRESET_BOTTOM_RIGHT)
+	count.anchor_right = 1.0
+	count.anchor_bottom = 1.0
+	count.offset_right = -6
+	count.offset_bottom = -6
+	count.custom_minimum_size = Vector2(24, 16)
 	count.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	count.vertical_alignment = VERTICAL_ALIGNMENT_BOTTOM
-	count.offset_right = -7 #itemslot offset
-	count.offset_bottom = -7 #itemslot offset
-	count.custom_minimum_size = Vector2(24, 16) #itemslot count font size
-
+	count.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	count.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 
 func set_data(stack: Dictionary, tex: Texture2D) -> void:
 	if icon == null or count == null:
@@ -90,3 +104,57 @@ func set_data(stack: Dictionary, tex: Texture2D) -> void:
 
 	stack_id = str(stack.get("unique_ID", ""))  # ✅ Save ID for transfer
 	name = stack_id  # Optional but helpful for debugging
+	
+	set_meta("data", stack)  # 🆕 Required for drag-and-drop!
+
+func _get_drag_data(at_position: Vector2) -> Variant:
+	print("📦 _get_drag_data called on", name)
+
+	if stack_id != "":
+		var drag_data := {
+			"type": "action",
+			"action_type": "item",
+			"unique_ID": stack_id,
+			"display_name": tooltip_text,
+			"icon": icon.texture
+		}
+
+		var preview := TextureRect.new()
+		preview.texture = icon.texture
+		preview.expand = true
+		preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		preview.custom_minimum_size = Vector2(72, 72)
+
+		# ✅ Add to global DragLayer
+		var drag_root = DragLayer.get_node("DragPreviewRoot")
+		for child in drag_root.get_children():
+			child.queue_free()
+		drag_root.add_child(preview)
+		DragLayer.visible = true
+
+		set_drag_preview(preview)
+		return drag_data
+
+	return null
+
+
+
+func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
+	return data is Dictionary and data.get("type") == "action"
+
+func _drop_data(at_position: Vector2, data: Variant) -> void:
+	var parent = get_parent()
+	while parent and not parent.has_method("handle_gear_slot_drop"):
+		parent = parent.get_parent()
+
+	if parent:
+		parent.handle_gear_slot_drop(self, data)
+
+	DragLayer._clear_drag_preview()
+
+func _make_preview() -> Control:
+	var drag_preview := TextureRect.new()
+	drag_preview.texture = icon.texture
+	drag_preview.expand = true
+	drag_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	return drag_preview

@@ -1,23 +1,23 @@
 {
-    "prefixes": [
-      "Chilling", "Blood", "Iron", "Storm", "Shadow",
-      "Ashen", "Silver", "Dark", "Golden", "Frost",
-      "Burning", "Moss", "Thorn", "Witch", "Crimson",
-      "Brine", "Rime", "Grave", "Hollow", "Mist",
-      "Black", "Eagle", "Wolf", "Raven", "Night"
-    ],
-    "suffixes": [
-      "worth", "willing", "stone", "keep", "haven",
-      "watch", "reach", "field", "mere", "den",
-      "hold", "fall", "gate", "barrow", "moor",
-      "stead", "cross", "helm", "run", "grove",
-      "ridge", "brook", "shade", "peak", "glade"
-    ],
-    "regions": [
-      "Principality", "Kingdom", "Region", "Territory", "Empire",
-      "Dominion", "Province", "Barony", "Commonwealth", "Confederacy",
-      "March", "Theocracy", "Wardenry", "Shogunate", "Dynasty",
-      "Fiefdom", "Domain", "Legion", "Sovereignty", "Reaches"
-    ]
+	"prefixes": [
+	  "Chilling", "Blood", "Iron", "Storm", "Shadow",
+	  "Ashen", "Silver", "Dark", "Golden", "Frost",
+	  "Burning", "Moss", "Thorn", "Witch", "Crimson",
+	  "Brine", "Rime", "Grave", "Hollow", "Mist",
+	  "Black", "Eagle", "Wolf", "Raven", "Night"
+	],
+	"suffixes": [
+	  "worth", "willing", "stone", "keep", "haven",
+	  "watch", "reach", "field", "mere", "den",
+	  "hold", "fall", "gate", "barrow", "moor",
+	  "stead", "cross", "helm", "run", "grove",
+	  "ridge", "brook", "shade", "peak", "glade"
+	],
+	"regions": [
+	  "Principality", "Kingdom", "Region", "Territory", "Empire",
+	  "Dominion", "Province", "Barony", "Commonwealth", "Confederacy",
+	  "March", "Theocracy", "Wardenry", "Shogunate", "Dynasty",
+	  "Fiefdom", "Domain", "Legion", "Sovereignty", "Reaches"
+	]
   }
   

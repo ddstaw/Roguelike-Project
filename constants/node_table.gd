@@ -32,7 +32,7 @@ const NODE_TABLE := {
 	},
 
 	"woodchest": {
-		"max_rare": 2, # cap rare entries per chest
+		"max_rare": 6, # cap rare entries per chest
 		"possible_items": {
 			# Common
 			"MAT0004": { "max_qty": 6, "weight": 10, "rarity": "common" }, # Metal Scrap

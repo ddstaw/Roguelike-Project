@@ -1,5 +1,5 @@
 extends Control
-#parent script in res://scenes/play/Inventory_LocalPlay.tscn
+#parent script in res://scenes/play/Inventory_LocalPlay.tscn // attachecd to parent contrl node
 
 @onready var player_weight_label := $PlayerInvWeightLabel
 @onready var appraisal_panel := $AppraisalPanel
@@ -9,20 +9,100 @@ extends Control
 @onready var appraisal_value := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/ValueLabel")
 @onready var appraisal_bonus := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/BonusLabel")
 @onready var appraisal_description := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/DesLabel")
-@onready var appraisal_compare := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/CompareLabel")
+@onready var appraisal_comparetitle := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/CompareTitle")
+@onready var appraisal_compare: RichTextLabel = appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/CompareLabel")
+@onready var appraisal_dismantletitle := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/DismantleTitle")
 @onready var appraisal_dismantle := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/DismantleLabel")
+@onready var appraisal_special: RichTextLabel = appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/SpecialLabel")
+#new labels
+@onready var appraisal_divine: RichTextLabel = appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/DivineLabel")
+@onready var appraisal_attspacer := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/AttachmentsSpacer")
+@onready var appraisal_atttile := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/AttachmentsTitle")
+@onready var appraisal_attlabel: RichTextLabel = appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/AttachmentsLabel")
+@onready var appraisal_ammolabel := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/AmmoLabel")
+@onready var appraisal_ammocount := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/AmmoCount")
+@onready var appraisal_ammospacer := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/AmmoSpacer")
+@onready var appraisal_divinespacer := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/DivineSpacer")
+@onready var appraisal_duraspacer := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/DurabilitySpace")
 
+@onready var drag_preview_root := $DragPreviewCanvas/DragPreviewRoot 
+
+@onready var paperdoll_root: Node2D = $PaperdollRoot
+
+
+@onready var gear_slots := {
+	"back": $GearSlotsControl/GearSlot_Back,
+	"belt": $GearSlotsControl/GearSlot_Belt,
+	"belt_aux": $GearSlotsControl/GearSlot_BeltAux,
+	"cloak": $GearSlotsControl/GearSlot_Cloak,
+	"cross_chest": $GearSlotsControl/GearSlot_CrossChest,
+	"face": $GearSlotsControl/GearSlot_Face,
+	"gloves": $GearSlotsControl/GearSlot_Gloves,
+	"head": $GearSlotsControl/GearSlot_Head,
+	"left_hand": $GearSlotsControl/GearSlot_LeftHand,
+	"left_hand_ammo": $GearSlotsControl/GearSlot_LeftHandAmmo,
+	"overcoat": $GearSlotsControl/GearSlot_Overcoat,
+	"pack": $GearSlotsControl/GearSlot_Pack,
+	"pack_mod_slot": $GearSlotsControl/GearSlot_PackModSlot,
+	"pants": $GearSlotsControl/GearSlot_Pants,
+	"right_hand": $GearSlotsControl/GearSlot_RightHand,
+	"right_hand_ammo": $GearSlotsControl/GearSlot_RightHandAmmo,
+	"ring_1": $GearSlotsControl/GearSlot_Ring1,
+	"ring_2": $GearSlotsControl/GearSlot_Ring2,
+	"shoes": $GearSlotsControl/GearSlot_Shoes,
+	"shoulders": $GearSlotsControl/GearSlot_Shoulders,
+	"undershirt": $GearSlotsControl/GearSlot_Undershirt,
+}
+
+
+const EMPTY_GEAR_ICONS := {
+	"back": preload("res://assets/ui/back_slot.png"),
+	"belt": preload("res://assets/ui/belt_slot.png"),
+	"belt_aux": preload("res://assets/ui/beltaux_slot.png"),
+	"cloak": preload("res://assets/ui/cloak_slot.png"),
+	"cross_chest": preload("res://assets/ui/cross_chest_slot.png"),
+	"face": preload("res://assets/ui/face_slot.png"),
+	"gloves": preload("res://assets/ui/gloves_slot.png"),
+	"head": preload("res://assets/ui/head_slot.png"),
+	"left_hand": preload("res://assets/ui/left_hand_slot.png"),
+	"left_hand_ammo": preload("res://assets/ui/ammo_slot.png"),
+	"overcoat": preload("res://assets/ui/overcoat_slot.png"),
+	"pack": preload("res://assets/ui/backpack_slot.png"),
+	"pack_mod_slot": preload("res://assets/ui/backpackaux_slot.png"),
+	"pants": preload("res://assets/ui/pants_slot.png"),
+	"right_hand": preload("res://assets/ui/right_hand_slot.png"),
+	"right_hand_ammo": preload("res://assets/ui/ammo_slot.png"),
+	"ring_1": preload("res://assets/ui/ring_slot.png"),
+	"ring_2": preload("res://assets/ui/ring_slot.png"),
+	"shoes": preload("res://assets/ui/shoes_slot.png"),
+	"shoulders": preload("res://assets/ui/shoulders_slot.png"),
+	"undershirt": preload("res://assets/ui/undershirt_slot.png"),
+}
+
+
+
+const TAG_INFO = preload("res://constants/tag_info.gd")
 const ITEM_DATA := preload("res://constants/item_data.gd")
 const WORLD_SCENE := "res://scenes/play/WorldMapTravel.tscn"
 const LOCAL_SCENE := "res://scenes/play/LocalMap.tscn"
 
+var _currently_appraised_id: String = ""
+
 var _closing := false  # simple debounce so we don't double-trigger
+
+var equipped_data: Dictionary = {}  # Holds UID per gear slot
+
+var player_inventory: Dictionary = {}
 
 
 func _ready() -> void:
-	print("📦 Inventory scene loaded.")
 	appraisal_panel.visible = false  # 👈 hide initially
 	_update_weight_label()  # 👈 add this
+	player_inventory = LoadHandlerSingleton.load_player_inventory()
+	equipped_data = LoadHandlerSingleton.load_player_gear()
+	_update_gear_slots()
+	_spawn_player_paperdoll()
+
 	
 func _unhandled_input(event: InputEvent) -> void:
 	if _closing:
@@ -66,38 +146,350 @@ func _update_weight_label() -> void:
 func show_appraisal(s: Dictionary) -> void:
 	if s.is_empty():
 		appraisal_panel.visible = false
+		_currently_appraised_id = ""
 		return
 
+	var new_id := str(s.get("unique_ID", ""))
+
+	# 👇 Check if we're clicking the same item again
+	if appraisal_panel.visible and new_id == _currently_appraised_id:
+		appraisal_panel.visible = false
+		_currently_appraised_id = ""
+		return  # cancel out — hide instead
+
+	# 👇 Continue showing new appraisal
+	_currently_appraised_id = new_id
 	appraisal_panel.visible = true
 
-	# ✅ Extract item_ID and definition
-	var item_id: String = str(s.get("item_ID", ""))
-	var item_def: Dictionary = ITEM_DATA.ITEM_PROPERTIES.get(item_id, {})
+	# ✅ Declare tex once outside conditionals
+	var tex: Texture2D = null  
 
-	# ✅ Set icon
-	var tex: Texture2D = null
-	if item_def.has("img_path") and ResourceLoader.exists(item_def["img_path"]):
-		tex = ResourceLoader.load(item_def["img_path"]) as Texture2D
+	if s.has("img_layers") and s["img_layers"] is Array:
+		var layers_raw = s["img_layers"]
+		var layer_paths: Array[String] = []
+		for path in layers_raw:
+			layer_paths.append(str(path))
+		layer_paths.reverse()
+		tex = _generate_layered_icon(layer_paths)
+
+	elif s.has("img_path") and ResourceLoader.exists(s["img_path"]):
+		tex = ResourceLoader.load(s["img_path"]) as Texture2D
+
+	# ✅ Always safe to assign now
 	appraisal_icon.texture = tex
 
 	# ✅ Basic stats
-	appraisal_name.text = str(s.get("display_name", "")).capitalize()
-	appraisal_dura.text = "Good Condition %s/%s" % [s.get("durability", 0), s.get("max_durability", 100)]
-	appraisal_value.text = "Value: %s" % str(s.get("value", 0))
+	appraisal_name.text = s.get("display_name", s.get("base_display_name", "Unknown Item"))
+	var item_type = str(s.get("type", "")).to_upper()
 
-	# ✅ Bonuses (explicitly typed)
-	var def: int = int(s.get("def_bonus", 0))
-	var dex: int = int(s.get("dex_bonus", 0))
-	appraisal_bonus.text = "+%s Def, %+s Dex" % [def, dex]
+	# ✅ Durability
+	var has_durability = item_type in ["GEAR", "TOOL", "ARM"]
+	
+	if has_durability and s.has("current_dura") and s.has("max_dura"):
+		var cur_dur: int = int(s["current_dura"])
+		var max_dur: int = int(s["max_dura"])
+		var ratio: float = float(cur_dur) / float(max_dur)
 
+		var condition_text := ""
+		if ratio < 0.01:
+			condition_text = "Broken"
+		elif ratio < 0.30:
+			condition_text = "Miserable Condition"
+		elif ratio < 0.50:
+			condition_text = "Poor Condition"
+		elif ratio < 0.70:
+			condition_text = "Fair Condition"
+		else:
+			condition_text = "Good Condition"
+
+		appraisal_dura.text = "%s %d/%d" % [condition_text, cur_dur, max_dur]
+		appraisal_dura.visible = true
+		appraisal_duraspacer.visible = true
+	else:
+		appraisal_dura.visible = false
+		appraisal_duraspacer.visible = false
+
+
+	# ✅ Value
+	var value = s.get("value", s.get("avg_value_per", 0))
+	appraisal_value.text = "Value: %d" % value
+	appraisal_value.visible = value > 0
+
+	# ✅ Bonuses
+	var bonuses := []
+
+	match item_type:
+		"GEAR":
+			var tags: Array = s.get("tags", [])
+			if "firearm" in tags:
+				if s.has("rng_dmg"):
+					var dmg_arr: Array = s.get("rng_dmg", [0, 0])
+					var dmg: Vector2i = Vector2i(dmg_arr[0], dmg_arr[1])
+					bonuses.append("Ranged Dmg: %d–%d" % [dmg.x, dmg.y])
+				if s.has("rng_acc"):
+					bonuses.append("Accuracy: %d" % s["rng_acc"])
+				if s.has("eff_rg"):
+					bonuses.append("Effective Range: %d" % s["eff_rg"])
+				if s.has("floor_noise_per_shot"):
+					bonuses.append("Sound Profile: %d Noise" % s["floor_noise_per_shot"])
+			else:
+				if s.has("melee_dmg"):
+					bonuses.append("+%s Melee Dmg" % s["melee_dmg"])
+				if s.has("ranged_dmg"):
+					bonuses.append("+%s Ranged Dmg" % s["ranged_dmg"])
+				if s.has("accuracy"):
+					bonuses.append("+%s Accuracy" % s["accuracy"])
+
+		"ARM":
+			if s.has("def_bonus"):
+				bonuses.append("+%s Def" % s["def_bonus"])
+			if s.has("dex_bonus"):
+				bonuses.append("%+s Dex" % s["dex_bonus"])
+
+		"CON":
+			if s.get("can_eat", false):
+				bonuses.append("+%s Nutrition" % s.get("food_qty", 0))
+			if s.get("med_bleeding", false):
+				bonuses.append("Stops Bleeding")
+			if s.get("med_general", false):
+				bonuses.append("Heals %s Wounds" % s.get("med_general_qty", 0))
+
+		"LOOT", "UTIL":
+			if s.get("readable", false):
+				bonuses.append("Readable")
+
+	appraisal_bonus.text = String("\n").join(bonuses) if bonuses.size() > 0 else "No special bonuses"
+	appraisal_bonus.visible = bonuses.size() > 0
+	appraisal_duraspacer.visible = true
+	
+	# ✅ Ammo Info – loaded / capacity format
+	if item_type == "GEAR" and "firearm" in s.get("tags", []):
+		var ammo_type: String = s.get("ammo_type", "Unknown")
+		var ammo_load: int = s.get("ammo_load", 0)
+		var ammo_cap: int = s.get("ammo_cap", 0)
+
+		var ammo_text := "Ammo: %s (%d/%d)" % [ammo_type, ammo_load, ammo_cap]
+		appraisal_ammolabel.text = ammo_text
+		appraisal_ammolabel.visible = true
+		appraisal_ammocount.visible = false  # Hide separate count field
+	else:
+		appraisal_ammolabel.visible = false
+		appraisal_ammocount.visible = false
+		appraisal_ammospacer.visible = false
+
+
+	# ✅ Attachments from item data
+	var mods := []
+	if s.has("attachments") and s["attachments"] is Array:
+		for mod in s["attachments"]:
+			mods.append(str(mod)) 
+
+	appraisal_atttile.visible = mods.size() > 0
+	appraisal_attlabel.visible = mods.size() > 0
+	appraisal_attspacer.visible = mods.size() > 0
+	if mods.size() > 0:
+		appraisal_attlabel.text = "%s" % ", ".join(mods)
+
+	# ✅ Faith Status (Consecrated / Defiled)
+	if s.has("faith_status"):
+		var status: String = s["faith_status"]
+		match status:
+			"Consecrated":
+				appraisal_divine.bbcode_enabled = true
+				appraisal_divine.text = "[color=blue]Consecrated[/color]"
+				appraisal_divine.visible = true
+			"Defiled":
+				appraisal_divine.bbcode_enabled = true
+				appraisal_divine.text = "[color=red]Defiled[/color]"
+				appraisal_divine.visible = true
+			_:
+				appraisal_divine.visible = false
+				appraisal_divinespacer.visible = false
+	else:
+		appraisal_divine.visible = false
+	
 	# ✅ Description
 	appraisal_description.text = str(s.get("des", ""))
 
-	# 🔄 Dummy compare logic
-	appraisal_compare.text = "DEF << 5\nDEX >> 5"
+	if item_type in ["GEAR", "ARM"]:
+		var compare_parts := [
+			"[color=green]Ranged Damage +[/color]",
+			"[color=green]Effective Range +[/color]",
+			"[color=red]Noise Production -[/color]"
+		]
 
-	# 🔧 Placeholder dismantle list
-	appraisal_dismantle.text = "Metal Scraps, Leather"
+		appraisal_compare.bbcode_enabled = true
+		appraisal_compare.text = ", ".join(compare_parts)
+		appraisal_compare.visible = true
+		appraisal_comparetitle.visible = true
+	else:
+		appraisal_compare.visible = false
+		appraisal_comparetitle.visible = false
 
+
+	# ✅ Dismantle
+	if s.has("materials") and s["materials"] is Array and s["materials"].size() > 0:
+		var mat_list: Array = s["materials"]
+		var dismantle_text := "%s" % ", ".join(mat_list)
+
+		appraisal_dismantle.text = dismantle_text
+		appraisal_dismantle.visible = true
+		appraisal_dismantletitle.visible = true
+	else:
+		appraisal_dismantle.visible = false
+		appraisal_dismantletitle.visible = false
+
+
+	# ✅ Tags
+	var tag_lines := []
+	var tags: Array = s.get("tags", [])
+	for tag in tags:
+		if TAG_INFO.SPECIAL_TAG_INFO.has(tag):
+			var info = TAG_INFO.SPECIAL_TAG_INFO[tag]
+			tag_lines.append("[color=%s]%s[/color]" % [info["color"].to_html(), info["text"]])
+
+	appraisal_special.bbcode_enabled = true
+	appraisal_special.text = "\n".join(tag_lines)
+	appraisal_special.visible = tag_lines.size() > 0
+
+
+			
 func hide_appraisal() -> void:
 	appraisal_panel.visible = false
+
+func _generate_layered_icon(layer_paths: Array) -> Texture2D:
+	if layer_paths.is_empty():
+		return null
+
+	# Sort overlays last
+	layer_paths.sort_custom(func(a, b):
+		var is_overlay_a := String(a).to_lower().find("overlay") != -1
+		var is_overlay_b := String(b).to_lower().find("overlay") != -1
+		return is_overlay_a < is_overlay_b
+	)
+
+	var base_image: Image = null
+
+	for path in layer_paths:
+		if !ResourceLoader.exists(path):
+			continue
+
+		var tex := ResourceLoader.load(path) as Texture2D
+		if tex == null:
+			continue
+
+		var img := tex.get_image()
+
+		if base_image == null:
+			base_image = img.duplicate()
+			continue
+
+		var is_overlay: bool = path.to_lower().find("overlay") != -1
+
+		for y in range(img.get_height()):
+			for x in range(img.get_width()):
+				var base_col := base_image.get_pixel(x, y)
+				var layer_col := img.get_pixel(x, y)
+				var final_col := base_col
+				final_col = layer_col.blend(base_col)
+				base_image.set_pixel(x, y, final_col)
+
+	var final_tex := ImageTexture.create_from_image(base_image)
+	return final_tex
+
+func _update_gear_slots():
+	for slot_name in gear_slots.keys():
+		var slot: ItemSlot = gear_slots[slot_name]
+		var uid: String = equipped_data.get(slot_name, "empty")
+
+		if uid != "empty" and player_inventory.has(uid):
+			var item_data: Dictionary = player_inventory[uid]
+			var icon: Texture2D = _get_icon_for(item_data)
+			slot.set_data(item_data, icon)
+		else:
+			var empty_icon = EMPTY_GEAR_ICONS.get(slot_name, null)
+			slot.set_data({}, empty_icon)
+
+
+func handle_gear_slot_drop(target_slot: ItemSlot, data: Dictionary) -> void:
+	var uid = str(data.get("unique_ID", ""))
+	if !player_inventory.has(uid):
+		return
+
+	# Determine gear slot name from target
+	var slot_name = gear_slots.find_key(target_slot)
+	if slot_name == null:
+		return
+
+	# TODO: Validate item can be equipped in this slot (optional)
+
+	equipped_data[slot_name] = uid
+	_update_gear_slots()
+
+func _get_icon_for(item_data: Dictionary) -> Texture2D:
+	var path = item_data.get("img_path", "")
+	if path != "" and ResourceLoader.exists(path):
+		return ResourceLoader.load(path) as Texture2D
+	elif item_data.has("img_layers") and item_data["img_layers"] is Array:
+		var layers = item_data["img_layers"]
+		var paths: Array[String] = []
+		for p in layers:
+			paths.append(str(p))
+		paths.reverse()
+		return _generate_layered_icon(paths)
+	else:
+		print("❌ No valid icon path found in item_data")
+	return null
+
+func handle_gear_slot_right_click(target_slot: GearSlot) -> void:
+	var slot_name = gear_slots.find_key(target_slot)
+	if slot_name == null:
+		return
+
+	var uid = equipped_data.get(slot_name, "empty")
+	if uid == "empty":
+		return
+
+	equipped_data[slot_name] = "empty"
+	LoadHandlerSingleton.save_player_gear(equipped_data)  # 👈 persist the change
+	_update_gear_slots()
+
+func handle_gear_slot_equip(target_slot: GearSlot, uid: String) -> void:
+	var slot_name = gear_slots.find_key(target_slot)
+	if slot_name == null:
+		return
+
+	# Make sure the item exists in the inventory
+	if not player_inventory.has(uid):
+		print("❌ UID not found in player inventory:", uid)
+		return
+
+	equipped_data[slot_name] = uid
+	LoadHandlerSingleton.save_player_gear(equipped_data)  # ✅ Save change
+	_update_gear_slots()
+	print("✅ Equipped", uid, "to slot", slot_name)
+
+func _spawn_player_paperdoll():
+	var player_scene = preload("res://scenes/actors/PlayerPaperdoll.tscn")
+	var paperdoll_instance = player_scene.instantiate()
+	
+	var camera := paperdoll_instance.get_node_or_null("Camera2D")
+	if camera:
+		camera.enabled = false
+	
+	# Optionally scale up
+	paperdoll_instance.scale = Vector2(3, 3)
+
+	# Position it centered in the paperdoll area
+	paperdoll_instance.position = Vector2(100, 100)  # tweak for visual centering
+
+	# Strip off unnecessary functionality if needed (movement, input, FOV, etc.)
+	paperdoll_instance.set_process(false)
+	paperdoll_instance.set_physics_process(false)
+
+	# Apply current looks
+	var looks = LoadHandlerSingleton.load_player_looks()
+	if looks:
+		paperdoll_instance.apply_appearance(looks)
+
+	paperdoll_root.add_child(paperdoll_instance)

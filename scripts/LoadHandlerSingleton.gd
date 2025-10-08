@@ -6,6 +6,7 @@ var loaded_tile_chunks := {}
 var loaded_object_chunks := {}
 var loaded_npc_chunks := {}
 var chunked_npc_data: Dictionary = {}
+
 static var _chunk_structure_map: Dictionary = {}
 static var _cached_egress_data := {}
 
@@ -991,19 +992,18 @@ func get_current_right_hand_data() -> Dictionary:
 	var item_id = gear_data.get("right_hand", "empty")
 	return get_hand_item_data_by_id(item_id)
 
-func get_hand_item_data_by_id(id: String) -> Dictionary:
-	var path = "res://data/inhand_items.json"  # or hand_items.json if you want
-	var item_data = load_json_file(path)
-
-	if item_data == null:
-		print("❌ ERROR: Failed to load inhand_items.json")
+func get_hand_item_data_by_id(item_id: String) -> Dictionary:
+	var inventory = load_json_file(get_player_inventory_path())
+	if inventory == null:
+		print("❌ ERROR: Could not load player inventory!")
 		return {}
 
-	if not item_data.has(id):
-		print("⚠️ Warning: Hand item ID '%s' not found. Using 'empty'." % id)
-		return item_data.get("empty", {})
+	if not inventory.has(item_id):
+		print("⚠️ Warning: Item ID '%s' not found in inventory." % item_id)
+		return {}
 
-	return item_data[id]
+	return inventory[item_id]
+
 	
 func get_current_belt_data() -> Dictionary:
 	var gear_data = load_json_file(get_player_gear_path())
@@ -1154,33 +1154,37 @@ func load_temp_localmap_tile_dict() -> Dictionary:
 func get_best_equipped_light_item_with_id() -> Dictionary:
 	var gear_data: Dictionary = load_json_file(get_player_gear_path())
 	var inventory: Dictionary = load_json_file(get_player_inventory_path())
-	var archetypes: Dictionary = load_json_file("res://data/inhand_items.json")
-
-	if gear_data == null or inventory == null or archetypes == null:
-		print("⚠️ Missing gear, inventory, or item definitions.")
+	if gear_data == null or inventory == null:
+		print("⚠️ Missing gear or inventory.")
 		return {}
 
-	var slot_keys = ["left_hand", "right_hand", "belt", "pack_mod_slot"]
 	var best_item: Dictionary = {}
 	var best_radius: int = -1
+	var slot_keys: Array[String] = ["left_hand", "right_hand", "belt_aux", "pack_mod_slot"]
 
 	for slot in slot_keys:
-		var instance_id: String = gear_data.get(slot, "empty")
-		if instance_id == "empty" or not inventory.has(instance_id):
+		var uid: String = gear_data.get(slot, "empty")
+		if uid == "empty" or not inventory.has(uid):
 			continue
 
-		var instance: Dictionary = inventory[instance_id]
-		var type_id: String = instance.get("type", "empty")
-		var base: Dictionary = archetypes.get(type_id, {})
+		var item: Dictionary = inventory[uid]
+		var item_id: String = item.get("item_ID", "")
+		
+		if not ItemData.ITEM_PROPERTIES.has(item_id):
+			continue
 
-		var merged := base.duplicate(true)  # ✅ deep copy just in case
-		for k in instance.keys():
-			merged[k] = instance[k]
+		var base = ItemData.ITEM_PROPERTIES[item_id]
+		var merged: Dictionary = base.duplicate(true)
+		for k in item.keys():
+			merged[k] = item[k]
 
-		if merged.has("light_radius") and int(merged["light_radius"]) > best_radius:
-			best_radius = int(merged["light_radius"])
-			best_item = merged
-			best_item["instance_id"] = instance_id  # 💡 include ID of equipped item
+		var tags: Array = merged.get("tags", [])
+		if "light-tool" in tags:
+			var radius: int = int(merged.get("light_radius", 0))
+			if radius > best_radius:
+				best_radius = radius
+				best_item = merged
+				best_item["instance_id"] = uid  # Include for reference
 
 	return best_item
 
@@ -3228,3 +3232,39 @@ static func normalize_stack_stats(item: Dictionary) -> void:
 	item["weight_per"] = weight_per
 	item["weight"] = weight_per * qty
 	item["value"] = avg_value_per * qty
+
+func get_player_hotbar_path() -> String:
+	return get_save_file_path() + "characterdata/hotbar_register.json"
+
+func load_player_hotbar() -> Dictionary:
+	var path = get_player_hotbar_path()
+	return load_json_file(path)
+	
+func save_player_hotbar(data: Dictionary) -> void:
+	var path = get_player_hotbar_path()
+	save_json_file(path, data)
+
+func get_player_buildreg_path() -> String:
+	return get_save_file_path() + "characterdata/building_register.json"
+
+func load_player_buildreg() -> Dictionary:
+	var path = get_player_buildreg_path()
+	return load_json_file(path)
+	
+func save_player_buildreg(data: Dictionary) -> void:
+	var path = get_player_buildreg_path()
+	save_json_file(path, data)
+
+func is_holding_hammer_tool() -> bool:
+	var left_hand = get_current_left_hand_data()
+	var right_hand = get_current_right_hand_data()
+
+	var left_tags = left_hand.get("crafting_tags", [])
+	var right_tags = right_hand.get("crafting_tags", [])
+
+	return "hammer-tool" in left_tags or "hammer-tool" in right_tags
+
+func set_current_build(id: String) -> void:
+	var reg = load_player_buildreg()
+	reg["current_build"] = id
+	save_player_buildreg(reg)

@@ -1,4 +1,4 @@
-[gd_scene load_steps=41 format=3 uid="uid://44m1uuvplkvu"]
+[gd_scene load_steps=39 format=3 uid="uid://44m1uuvplkvu"]
 
 [ext_resource type="Script" path="res://scripts/LocalMap.gd" id="1_u3bsn"]
 [ext_resource type="Theme" uid="uid://ds5x2cgvx5ioq" path="res://ui/TravelLogTheme.tres" id="2_nsfpq"]
@@ -6,6 +6,7 @@
 [ext_resource type="Shader" path="res://shaders/shader1.gdshader" id="3_p6j8g"]
 [ext_resource type="Texture2D" uid="uid://ct2ivaekujxpb" path="res://assets/localmap-graphics/ui-buttons/gearw.png" id="3_whjrw"]
 [ext_resource type="Texture2D" uid="uid://3btal5umemi" path="res://assets/localmap-graphics/ui-buttons/geary.png" id="4_fhjbo"]
+[ext_resource type="PackedScene" uid="uid://bp1jigvct3sol" path="res://ui/scenes/HotBarPanel.tscn" id="4_r5wdy"]
 [ext_resource type="Texture2D" uid="uid://bo24ucgc4yuhg" path="res://assets/localmap-graphics/ui-buttons/playw.png" id="5_6vs8n"]
 [ext_resource type="Texture2D" uid="uid://djxkvk6jr7al8" path="res://assets/localmap-graphics/ui-buttons/questw.png" id="6_g06gl"]
 [ext_resource type="Texture2D" uid="uid://b1hot7p4jchyn" path="res://assets/localmap-graphics/ui-buttons/bookw.png" id="7_8srhi"]
@@ -23,12 +24,8 @@
 [ext_resource type="Texture2D" uid="uid://b2ud5d2dgta3d" path="res://assets/worldmap-graphics/meters/44x44-hunger.png" id="15_8hcox"]
 [ext_resource type="Texture2D" uid="uid://bqkmpsu8jh8yv" path="res://assets/worldmap-graphics/meters/44x44-faitgue.png" id="16_ne38p"]
 [ext_resource type="Texture2D" uid="uid://c5bcw6g5hdkq3" path="res://assets/worldmap-graphics/meters/44x44--sanity.png" id="17_a044d"]
-[ext_resource type="Texture2D" uid="uid://dxe8oyw4ycp04" path="res://assets/localmap-graphics/ui-buttons/emptyhotbarslot.png" id="21_buqbm"]
-[ext_resource type="Texture2D" uid="uid://cgbg8ykj64dmt" path="res://assets/localmap-graphics/ui-buttons/328x100-wea2.png" id="21_mcdcu"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="17_eqlyi"]
 [ext_resource type="Texture2D" uid="uid://c6yisb4revwe2" path="res://assets/localmap-graphics/ui-buttons/100x100-ammo-type.png" id="21_vpla5"]
-[ext_resource type="Texture2D" uid="uid://bxquj0swscny3" path="res://assets/localmap-graphics/ui-buttons/328x100-wea1.png" id="22_nbrqp"]
-[ext_resource type="Texture2D" uid="uid://clvv5ria214wy" path="res://assets/localmap-graphics/ui-buttons/hotbar-up.png" id="25_5wehe"]
-[ext_resource type="Texture2D" uid="uid://bs6bqodcaxdd1" path="res://assets/localmap-graphics/ui-buttons/hotbar-down.png" id="26_xy5mw"]
 [ext_resource type="Script" path="res://ui/scripts/LocalTravelLogControl.gd" id="30_gi8sa"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_wq2a5"]
@@ -70,6 +67,12 @@ border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4im3o"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_color = Color(1, 1, 1, 1)
+
 [node name="LocalMap" type="Control"]
 layout_mode = 3
 anchors_preset = 15
@@ -94,6 +97,11 @@ material = SubResource("ShaderMaterial_wq2a5")
 z_index = 2
 
 [node name="UILayer" type="CanvasLayer" parent="."]
+
+[node name="HotBarPanel" parent="UILayer" instance=ExtResource("4_r5wdy")]
+z_index = 10
+offset_left = 9.0
+offset_right = -548.0
 
 [node name="DebugUI" type="VBoxContainer" parent="UILayer"]
 visible = false
@@ -168,117 +176,136 @@ offset_bottom = 40.0
 [node name="MainMenuButton" type="TextureButton" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 14.0
-offset_top = 11.0
-offset_right = 98.0
-offset_bottom = 95.0
+offset_left = 10.0
+offset_top = 13.0
+offset_right = 44.0
+offset_bottom = 47.0
 texture_normal = ExtResource("3_whjrw")
 texture_hover = ExtResource("4_fhjbo")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="CharButton" type="TextureButton" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 101.0
-offset_top = 12.0
-offset_right = 185.0
-offset_bottom = 96.0
+offset_left = 48.0
+offset_top = 15.0
+offset_right = 82.0
+offset_bottom = 49.0
 texture_normal = ExtResource("5_6vs8n")
 texture_hover = ExtResource("4_fhjbo")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="JournalButton" type="TextureButton" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 183.0
-offset_top = 10.0
-offset_right = 267.0
-offset_bottom = 94.0
+offset_left = 86.0
+offset_top = 12.0
+offset_right = 120.0
+offset_bottom = 46.0
 texture_normal = ExtResource("6_g06gl")
 texture_hover = ExtResource("4_fhjbo")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="SkillsButton" type="TextureButton" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 275.0
-offset_top = 11.0
-offset_right = 359.0
-offset_bottom = 95.0
+offset_left = 126.0
+offset_top = 13.0
+offset_right = 160.0
+offset_bottom = 47.0
 texture_normal = ExtResource("7_8srhi")
 texture_hover = ExtResource("4_fhjbo")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="FaithButton" type="TextureButton" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 365.0
-offset_top = 11.0
-offset_right = 449.0
-offset_bottom = 95.0
+offset_left = 171.0
+offset_top = 14.0
+offset_right = 205.0
+offset_bottom = 48.0
 texture_normal = ExtResource("8_tc48r")
 texture_hover = ExtResource("4_fhjbo")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="GearButton" type="TextureButton" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 454.0
-offset_top = 12.0
-offset_right = 538.0
-offset_bottom = 96.0
+offset_left = 212.0
+offset_top = 14.0
+offset_right = 246.0
+offset_bottom = 48.0
 texture_normal = ExtResource("8_u1ilb")
 texture_hover = ExtResource("4_fhjbo")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="InvButton" type="TextureButton" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 540.0
-offset_top = 10.0
-offset_right = 624.0
-offset_bottom = 94.0
+offset_left = 252.0
+offset_top = 13.0
+offset_right = 286.0
+offset_bottom = 47.0
 texture_normal = ExtResource("9_diclb")
 texture_hover = ExtResource("4_fhjbo")
+ignore_texture_size = true
+stretch_mode = 0
 script = ExtResource("13_tl2ti")
 
 [node name="CraftButton" type="TextureButton" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 629.0
+offset_left = 297.0
 offset_top = 12.0
-offset_right = 713.0
-offset_bottom = 96.0
+offset_right = 331.0
+offset_bottom = 46.0
 texture_normal = ExtResource("11_x44cc")
 texture_hover = ExtResource("4_fhjbo")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="BuildButton" type="TextureButton" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 714.0
-offset_top = 12.0
-offset_right = 798.0
-offset_bottom = 96.0
+offset_left = 337.0
+offset_top = 11.0
+offset_right = 371.0
+offset_bottom = 45.0
 texture_normal = ExtResource("10_pc3jf")
 texture_hover = ExtResource("4_fhjbo")
+ignore_texture_size = true
+stretch_mode = 0
 
 [node name="TopUI" type="Panel" parent="UILayer/LocalPlayUI"]
 z_index = 2
 layout_mode = 0
 offset_right = 1923.0
-offset_bottom = 52.0
+offset_bottom = 60.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_fxgxr")
 
 [node name="BottomUI" type="Panel" parent="UILayer/LocalPlayUI"]
 z_index = 2
 layout_mode = 0
 offset_left = -1.0
-offset_top = 943.0
-offset_right = 1923.0
+offset_top = 919.0
+offset_right = 1514.0
 offset_bottom = 1081.0
+mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_gy5xd")
 
 [node name="PlaySceneName" type="Label" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 830.0
-offset_top = 15.0
-offset_right = 1511.0
-offset_bottom = 48.0
+offset_left = 404.0
+offset_top = 20.0
+offset_right = 1338.0
+offset_bottom = 53.0
 theme = ExtResource("2_nsfpq")
 theme_override_font_sizes/font_size = 20
 text = "Exploring Grasslands"
@@ -287,10 +314,10 @@ horizontal_alignment = 1
 [node name="Realm" type="Label" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 1497.0
-offset_top = 4.0
-offset_right = 1816.0
-offset_bottom = 35.0
+offset_left = 1337.0
+offset_top = 7.0
+offset_right = 1656.0
+offset_bottom = 38.0
 theme = ExtResource("2_nsfpq")
 theme_override_font_sizes/font_size = 19
 text = "Stormwilling Region"
@@ -299,10 +326,10 @@ horizontal_alignment = 2
 [node name="Time" type="Label" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 1491.0
-offset_top = 58.0
-offset_right = 1814.0
-offset_bottom = 91.0
+offset_left = 1485.0
+offset_top = 15.0
+offset_right = 1808.0
+offset_bottom = 48.0
 theme = ExtResource("2_nsfpq")
 theme_override_font_sizes/font_size = 29
 text = "11:00PM"
@@ -311,71 +338,39 @@ horizontal_alignment = 2
 [node name="Date" type="Label" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 1503.0
-offset_top = 26.0
-offset_right = 1816.0
-offset_bottom = 59.0
+offset_left = 1343.0
+offset_top = 29.0
+offset_right = 1656.0
+offset_bottom = 62.0
 theme = ExtResource("2_nsfpq")
 theme_override_font_sizes/font_size = 19
 text = "September 1, 1822"
 horizontal_alignment = 2
 
-[node name="HotbarNumber" type="Label" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 283.0
-offset_top = 987.0
-offset_right = 337.0
-offset_bottom = 1047.0
-theme = ExtResource("2_nsfpq")
-theme_override_font_sizes/font_size = 59
-text = "1"
-horizontal_alignment = 2
-
-[node name="AmmoTotal" type="Label" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 508.0
-offset_top = 919.0
-offset_right = 607.0
-offset_bottom = 964.0
-theme = ExtResource("2_nsfpq")
-theme_override_font_sizes/font_size = 30
-text = "x999"
-
 [node name="AmmoType" type="Label" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 507.0
-offset_top = 891.0
-offset_right = 556.0
-offset_bottom = 918.0
+offset_left = 1423.0
+offset_top = 933.0
+offset_right = 1516.0
+offset_bottom = 970.0
 theme = ExtResource("2_nsfpq")
-theme_override_font_sizes/font_size = 26
-text = "9mm"
+theme_override_constants/line_spacing = -2
+theme_override_fonts/font = ExtResource("17_eqlyi")
+theme_override_font_sizes/font_size = 16
+text = "9mm 
+Standard"
 
 [node name="AmmoClip" type="Label" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 507.0
-offset_top = 864.0
-offset_right = 556.0
-offset_bottom = 891.0
+offset_left = 1423.0
+offset_top = 966.0
+offset_right = 1535.0
+offset_bottom = 993.0
 theme = ExtResource("2_nsfpq")
-theme_override_font_sizes/font_size = 26
-text = "6/6"
-
-[node name="TravelLog" type="Label" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 16.0
-offset_top = 847.0
-offset_right = 186.0
-offset_bottom = 907.0
-theme = ExtResource("2_nsfpq")
-theme_override_font_sizes/font_size = 29
-text = "Travel Log"
-horizontal_alignment = 2
+theme_override_font_sizes/font_size = 18
+text = "999/999"
 
 [node name="TimeOfDayType" type="TextureRect" parent="UILayer/LocalPlayUI"]
 z_index = 3
@@ -389,27 +384,29 @@ texture = ExtResource("12_mhbxv")
 [node name="RestButton" type="TextureRect" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 1405.0
-offset_top = 962.0
-offset_right = 1512.0
-offset_bottom = 1069.0
+offset_left = 1444.0
+offset_top = 997.0
+offset_right = 1506.0
+offset_bottom = 1061.0
 texture = ExtResource("14_287vf")
+expand_mode = 1
 
 [node name="PrayButton" type="TextureRect" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 1405.0
-offset_top = 853.0
-offset_right = 1512.0
-offset_bottom = 960.0
+offset_left = 1375.0
+offset_top = 997.0
+offset_right = 1435.0
+offset_bottom = 1061.0
 texture = ExtResource("15_3ibga")
+expand_mode = 1
 
 [node name="LocalMetersContainer" type="VBoxContainer" parent="UILayer/LocalPlayUI"]
 layout_mode = 0
 offset_left = 1535.0
-offset_top = 855.0
+offset_top = 860.0
 offset_right = 1906.0
-offset_bottom = 1071.0
+offset_bottom = 1076.0
 theme_override_constants/separation = -1
 
 [node name="HBoxLocalHealth" type="HBoxContainer" parent="UILayer/LocalPlayUI/LocalMetersContainer"]
@@ -498,146 +495,43 @@ theme_override_styles/background = SubResource("StyleBoxFlat_a1sgt")
 theme_override_styles/fill = SubResource("StyleBoxFlat_sf58m")
 value = 50.0
 
-[node name="HotbarSlot9" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 1293.0
-offset_top = 966.0
-offset_right = 1393.0
-offset_bottom = 1066.0
-texture_normal = ExtResource("21_buqbm")
-
-[node name="HotbarSlot8" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 1181.0
-offset_top = 966.0
-offset_right = 1281.0
-offset_bottom = 1066.0
-texture_normal = ExtResource("21_buqbm")
-
-[node name="HotbarSlot7" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 1068.0
-offset_top = 966.0
-offset_right = 1168.0
-offset_bottom = 1066.0
-texture_normal = ExtResource("21_buqbm")
-
-[node name="HotbarSlot6" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 956.0
-offset_top = 966.0
-offset_right = 1056.0
-offset_bottom = 1066.0
-texture_normal = ExtResource("21_buqbm")
-
-[node name="HotbarSlot5" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 844.0
-offset_top = 966.0
-offset_right = 944.0
-offset_bottom = 1066.0
-texture_normal = ExtResource("21_buqbm")
-
-[node name="HotbarSlot4" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 732.0
-offset_top = 966.0
-offset_right = 832.0
-offset_bottom = 1066.0
-texture_normal = ExtResource("21_buqbm")
-
-[node name="HotbarSlot3" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 619.0
-offset_top = 966.0
-offset_right = 719.0
-offset_bottom = 1066.0
-texture_normal = ExtResource("21_buqbm")
-
-[node name="HotbarSlot2" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 507.0
-offset_top = 966.0
-offset_right = 607.0
-offset_bottom = 1066.0
-texture_normal = ExtResource("21_buqbm")
-
-[node name="HotbarSlot1" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 396.0
-offset_top = 966.0
-offset_right = 496.0
-offset_bottom = 1066.0
-texture_normal = ExtResource("21_buqbm")
-
 [node name="AmmoImage" type="TextureRect" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 397.0
-offset_top = 857.0
-offset_right = 497.0
-offset_bottom = 957.0
+offset_left = 1364.0
+offset_top = 933.0
+offset_right = 1420.0
+offset_bottom = 987.0
 texture = ExtResource("21_vpla5")
+expand_mode = 1
 
-[node name="WeapRight" type="TextureButton" parent="UILayer/LocalPlayUI"]
+[node name="TravelLog" type="Label" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 0
-offset_left = 955.0
-offset_top = 855.0
-offset_right = 1283.0
-offset_bottom = 955.0
-texture_normal = ExtResource("21_mcdcu")
-
-[node name="WeapLeft" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 617.0
-offset_top = 855.0
-offset_right = 945.0
-offset_bottom = 955.0
-texture_normal = ExtResource("22_nbrqp")
-
-[node name="HotbarUp" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 343.0
-offset_top = 966.0
-offset_right = 386.0
-offset_bottom = 1011.0
-texture_normal = ExtResource("25_5wehe")
-
-[node name="HotbarDown" type="TextureButton" parent="UILayer/LocalPlayUI"]
-z_index = 3
-layout_mode = 0
-offset_left = 343.0
-offset_top = 1020.0
-offset_right = 386.0
-offset_bottom = 1065.0
-texture_normal = ExtResource("26_xy5mw")
+offset_left = 16.0
+offset_top = 687.0
+offset_right = 186.0
+offset_bottom = 747.0
+theme = ExtResource("2_nsfpq")
+theme_override_font_sizes/font_size = 29
+text = "Travel Log"
+horizontal_alignment = 2
 
 [node name="TravelLogControl" type="Control" parent="UILayer/LocalPlayUI"]
 z_index = 3
 layout_mode = 3
 anchors_preset = 0
 offset_left = 15.0
-offset_top = 885.0
+offset_top = 707.0
 offset_right = 294.0
-offset_bottom = 1066.0
+offset_bottom = 888.0
 script = ExtResource("30_gi8sa")
 
 [node name="TravelLogPanel" type="Panel" parent="UILayer/LocalPlayUI/TravelLogControl"]
 layout_mode = 0
+offset_top = 18.0
 offset_right = 279.0
-offset_bottom = 181.0
+offset_bottom = 199.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_rh3e2")
 
 [node name="TravelLogScrollContainer" type="ScrollContainer" parent="UILayer/LocalPlayUI/TravelLogControl/TravelLogPanel"]
@@ -657,6 +551,15 @@ fit_content = true
 scroll_following = true
 autowrap_mode = 2
 
+[node name="Panel" type="Panel" parent="UILayer"]
+custom_minimum_size = Vector2(160, 150)
+offset_left = 1512.0
+offset_top = 843.0
+offset_right = 1929.0
+offset_bottom = 1089.0
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_4im3o")
+
 [node name="DarkOverlay" type="ColorRect" parent="UILayer"]
 offset_left = -19.0
 offset_top = -27.0
@@ -673,4 +576,4 @@ z_index = 10
 layout_mode = 3
 anchors_preset = 0
 offset_right = 1920.0
-offset_bottom = 1080.0
+offset_bottom = 921.0

@@ -3,163 +3,233 @@ extends Node
 
 const ITEM_PROPERTIES := {
 	"MAT0001": {
-		"base_display_name": "Wood Log",
+		"base_display_name": "Common Wood Log",
+		"dismantle": false,
+		"dura": true,
 		"fire_fuel": true,
 		"stackable": true,
 		"weight_per": 10,
 		"avg_value_per": 2,
 		"type": "Mat",
 		"img_path": "res://assets/inv/wood-logs.png",
-		"des": "A log chopped from a tree, can be fashioned into many things"
+		"des": "Wood from a common tree, can be fashioned into many things",
+		"tags": ["crafting", "firefuel"],
+		"crafting_tags": ["wood"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0002": {
 		"base_display_name": "Bones",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 1,
 		"avg_value_per": 0,
 		"type": "Mat",
 		"img_path": "res://assets/inv/bones.png",
-		"des": "Bones from a dead creature."
+		"des": "Bones from a dead creature.",
+		"tags": ["crafting", "ritual", "necro", "junk"],
+		"crafting_tags": ["bone"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0003": {
 		"base_display_name": "Leaf",
+		"dismantle": false,
 		"stackable": true,
 		"fire_fuel": true,
 		"weight_per": 1,
 		"avg_value_per": 0,
 		"type": "Mat",
 		"img_path": "res://assets/inv/leaf.png",
-		"des": "Simple plant cuttings."
+		"des": "Simple plant cuttings.",
+		"tags": ["crafting", "ingredient", "firefuel", "junk",],
+		"crafting_tags": ["leaf", "organic"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0004": {
 		"base_display_name": "Metal Scrap",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 3,
 		"avg_value_per": 0,
 		"type": "Mat",
 		"img_path": "res://assets/inv/metal_scrap.png",
-		"des": "Various metal bits and ends."
+		"des": "Various metal bits and ends.",
+		"tags": ["crafting", "metaljunk", "smelt", "junk"],
+		"crafting_tags": ["metaljunk", "rawore", "rawscrap"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0005": {
 		"base_display_name": "Old Glasses",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 1,
 		"avg_value_per": 0,
 		"type": "Mat",
 		"img_path": "res://assets/inv/old_glasses.png",
-		"des": "Discarded pair of spectacles."
+		"des": "Discarded pair of spectacles.",
+		"tags": ["crafting", "junk"],
+		"crafting_tags": ["glassjunk"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0006": {
 		"base_display_name": "Plant Fiber",
+		"dismantle": false,
 		"stackable": true,
 		"fire_fuel": true,
 		"weight_per": 1,
 		"avg_value_per": 0,
 		"type": "Mat",
 		"img_path": "res://assets/inv/plant_fiber.png",
-		"des": "Plant fiber pulled from a bush."
+		"des": "Plant fiber pulled from a bush.",
+		"tags": ["crafting", "ingredient", "firefuel", "junk",],
+		"crafting_tags": ["plantfiber", "organic"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0007": {
 		"base_display_name": "Rock",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 3,
 		"avg_value_per": 0,
 		"type": "Mat",
 		"img_path": "res://assets/inv/rock.png",
-		"des": "A rock from the ground."
+		"des": "A rock from the ground.",
+		"tags": ["crafting", "junk"],
+		"crafting_tags": ["stonejunk", "stone"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0008": {
 		"base_display_name": "White Flower",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 0.1,
 		"avg_value_per": 1,
 		"type": "Mat",
 		"img_path": "res://assets/inv/white_flower.png",
-		"des": "A delicate white blossom used in simple remedies and dyes."
+		"des": "A delicate white blossom used in simple remedies and dyes.",	
+		"tags": ["ingredient", "firefuel", "charming",],
+		"crafting_tags": ["flower", "white", "organic"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0009": {
 		"base_display_name": "Twine",
+		"dismantle": true,
 		"stackable": true,
 		"weight_per": 0.1,
 		"avg_value_per": 1,
 		"type": "Mat",
 		"img_path": "res://assets/inv/twine.png",
-		"des": "Plant fiber cord, useful for crafting."
+		"des": "Plant fiber cord, useful for crafting.",
+		"tags": ["crafting", "firefuel",],
+		"crafting_tags": ["binding"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0010": {
 		"base_display_name": "Sulphur",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 1,
 		"avg_value_per": 2,
 		"type": "Mat",
 		"img_path": "res://assets/inv/sulphur.png",
-		"des": "A yellow mineral with many alchemical uses."
+		"des": "A yellow mineral with many alchemical uses.",
+		"tags": ["ingredient", "foulsmell"],
+		"crafting_tags": ["chem"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0011": {
 		"base_display_name": "Steel Ingot",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 5,
 		"avg_value_per": 20,
 		"type": "Mat",
 		"img_path": "res://assets/inv/steel_ingot.png",
-		"des": "A refined bar of steel, ready for smithing."
+		"des": "A refined bar of steel, ready for smithing.",
+		"tags": ["crafting"],
+		"crafting_tags": ["ingot"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0012": {
 		"base_display_name": "Resin",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 0.5,
 		"avg_value_per": 1,
 		"type": "Mat",
 		"img_path": "res://assets/inv/resin.png",
-		"des": "Sticky tree resin used in crafting and sealing."
+		"des": "Sticky tree resin used in crafting and sealing.",
+		"tags": ["crafting", "ingredient", "firefuel",],
+		"crafting_tags": ["adhesive"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0013": {
 		"base_display_name": "Red Flower",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 0.1,
 		"avg_value_per": 1,
 		"type": "Mat",
 		"img_path": "res://assets/inv/red_flower.png",
-		"des": "A bright blossom often used as a dye."
+		"des": "A bright blossom often used as a dye.",	
+		"tags": ["ingredient", "firefuel", "charming",],
+		"crafting_tags": ["flower", "red", "organic"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0014": {
 		"base_display_name": "Raw Cotton",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 0.5,
 		"avg_value_per": 2,
 		"type": "Mat",
 		"img_path": "res://assets/inv/raw_cotton.png",
-		"des": "Fluffy cotton bolls, can be spun into cloth."
+		"des": "Fluffy cotton bolls, can be spun into cloth.",
+		"tags": ["crafting", "firefuel"],
+		"crafting_tags": ["rawcotton", "textile", "organic", "fiber"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0015": {
 		"base_display_name": "Raw Corn",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 1,
 		"avg_value_per": 1,
 		"type": "Mat",
 		"img_path": "res://assets/inv/raw_corn.png",
-		"des": "A cob of uncooked corn."
+		"des": "A cob of uncooked corn.",
+		"tags": ["raw", "edible"],
+		"crafting_tags": ["rawveg", "corn"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0016": {
 		"base_display_name": "Rare Flower",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 0.1,
 		"avg_value_per": 8,
 		"type": "Mat",
 		"img_path": "res://assets/inv/rare_flower.png",
-		"des": "A scarce bloom prized by alchemists and collectors."
+		"des": "A scarce bloom prized by alchemists and collectors.",	
+		"tags": ["ingredient", "firefuel", "gorg",],
+		"crafting_tags": ["flower", "rareflower", "organic"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0017": {
 		"base_display_name": "Purple Flower",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 0.1,
 		"avg_value_per": 1,
 		"type": "Mat",
 		"img_path": "res://assets/inv/purple_flower.png",
-		"des": "A fragrant blossom used in tonics."
+		"des": "A fragrant blossom used in tonics.",	
+		"tags": ["ingredient", "firefuel", "charming",],
+		"crafting_tags": ["flower", "purple", "organic"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0018": {
 		"base_display_name": "Placeholder Item",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 1,
 		"avg_value_per": 0,
@@ -169,70 +239,150 @@ const ITEM_PROPERTIES := {
 	},
 	"MAT0019": {
 		"base_display_name": "Metal Components",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 2,
 		"avg_value_per": 4,
 		"type": "Mat",
 		"img_path": "res://assets/inv/metal_comp.png",
-		"des": "Assorted standardized fittings and fasteners."
+		"des": "Assorted standardized fittings and fasteners.",
+		"tags": ["crafting", "junk"],
+		"crafting_tags": ["metaljunk", "components"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0020": {
 		"base_display_name": "Iron Ore",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 4,
 		"avg_value_per": 3,
 		"type": "Mat",
 		"img_path": "res://assets/inv/iron_ore.png",
-		"des": "Unrefined iron-bearing rock."
+		"des": "Unrefined iron-bearing rock.",
+		"tags": ["smelt"],
+		"crafting_tags": ["rawore", "rawiron"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0021": {
 		"base_display_name": "Iron Ingot",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 5,
 		"avg_value_per": 10,
 		"type": "Mat",
 		"img_path": "res://assets/inv/iron_ingot.png",
-		"des": "A forged bar of iron."
+		"des": "A forged bar of iron.",
+		"tags": ["crafting"],
+		"crafting_tags": ["ingot"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0022": {
 		"base_display_name": "Hide",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 2,
 		"avg_value_per": 3,
 		"type": "Mat",
 		"img_path": "res://assets/inv/hide.png",
-		"des": "Tanned animal hide for crafting."
+		"des": "Skinned animal hide for leather and crafting.",
+		"tags": ["crafting"],
+		"crafting_tags": ["rawleather", "textile", "organic", "fiber"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0023": {
 		"base_display_name": "Feather",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 0.05,
 		"avg_value_per": 0,
 		"type": "Mat",
 		"img_path": "res://assets/inv/feather.png",
-		"des": "Light plume often used in fletching or quills."
+		"des": "Light plume often used in fletching or quills.",
+		"tags": ["crafting", "junk"],
+		"crafting_tags": ["feather"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0024": {
 		"base_display_name": "Copper Ore",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 4,
 		"avg_value_per": 3,
 		"type": "Mat",
 		"img_path": "res://assets/inv/copper_ore.png",
-		"des": "Ore bearing traces of copper."
+		"des": "Ore bearing traces of copper.",
+		"tags": ["smelt"],
+		"crafting_tags": ["rawore", "rawcopper"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"MAT0025": {
 		"base_display_name": "Copper Ingot",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 5,
 		"avg_value_per": 8,
 		"type": "Mat",
 		"img_path": "res://assets/inv/copper_ingot.png",
-		"des": "A forged bar of copper."
+		"des": "A forged bar of copper.",
+		"tags": ["crafting"],
+		"crafting_tags": ["ingot"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
-
+	"MAT0026": {
+		"base_display_name": "Lead Ingot",
+		"dismantle": false,
+		"stackable": true,
+		"weight_per": 5,
+		"avg_value_per": 8,
+		"type": "Mat",
+		"img_path": "res://assets/inv/lead_ingot.png",
+		"des": "A forged bar of lead.",
+		"tags": ["crafting"],
+		"crafting_tags": ["ingot", "leadingot"],
+		"magic_tags": ["ritual_component", "reagent"]
+	},
+	"MAT0027": {
+		"base_display_name": "Lead Ball",
+		"dismantle": false,
+		"stackable": true,
+		"weight_per": 0.05,
+		"avg_value_per": 8,
+		"type": "Mat",
+		"img_path": "res://assets/inv/weap/ammo_lead_ball.png",
+		"des": "Primitive ammo for muzzleloader firearms.",
+		"tags": ["ammo"],
+		"crafting_tags": ["leadball"],
+		"magic_tags": ["ritual_component", "reagent"]
+	},
+	"MAT0028": {
+		"base_display_name": "Lead Ore",
+		"dismantle": false,
+		"stackable": true,
+		"weight_per": 5,
+		"avg_value_per": 8,
+		"type": "Mat",
+		"img_path": "res://assets/inv/lead_ore.png",
+		"des": "Ore bearing traces of lead.",
+		"tags": ["crafting"],
+		"crafting_tags": ["rawore", "rawlead"],
+		"magic_tags": ["ritual_component", "reagent"]
+	},
+	"MAT0029": {
+		"base_display_name": "Leather",
+		"dismantle": false,
+		"stackable": true,
+		"weight_per": 2,
+		"avg_value_per": 8,
+		"type": "Mat",
+		"img_path": "res://assets/inv/lead_ingot.png",
+		"des": "Raw leather processed for crafting.",
+		"tags": ["crafting"],
+		"crafting_tags": ["leather"],
+		"magic_tags": ["ritual_component", "reagent"]
+	},
 	"CON0001": {
 		"base_display_name": "Red Berries",
+		"dismantle": false,
 		"stackable": true,
 		"can_eat": true,
 		"food_qty": 2,
@@ -240,10 +390,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 0,
 		"type": "Con",
 		"img_path": "res://assets/inv/berries.png",
-		"des": "Red Berries from a bush."
+		"des": "Common berries from a bush.",
+		"tags": ["ingredient", "raw", "edible"],
+		"crafting_tags": ["rawberry"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0002": {
 		"base_display_name": "Worms",
+		"dismantle": false,
 		"stackable": true,
 		"fishing_bait": true,
 		"can_eat": true,
@@ -252,10 +406,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 0,
 		"type": "Con",
 		"img_path": "res://assets/inv/worm.png",
-		"des": "Squirming insect. Can be used for fishing bait."
+		"des": "Squirming pink insect.",
+		"tags": ["fishingbait", "raw", "edible"],
+		"crafting_tags": ["rawbug"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0003": {
 		"base_display_name": "Simple Bandage",
+		"dismantle": false,
 		"stackable": true,
 		"med_bleeding": true,
 		"med_general": true,
@@ -264,10 +422,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 1,
 		"type": "Con",
 		"img_path": "res://assets/inv/simple_bandage.png",
-		"des": "Cloth rag cleaned and treated with healing herbs. Treats bleeding and minor wounds."
+		"des": "Cloth rag cleaned and treated with healing herbs. Treats bleeding and minor wounds.",
+		"tags": ["stopbleed", "healing", "firefuel"],
+		"crafting_tags": ["med"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0004": {
 		"base_display_name": "Small Jug",
+		"dismantle": false,
 		"stackable": false,
 		"fillable": true,
 		"drinkable": true,
@@ -277,10 +439,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 5,
 		"type": "Con",
 		"img_path": "res://assets/inv/water_jug.png",
-		"des": "A small ceramic container for liquids."
+		"des": "A small ceramic container for liquids.",
+		"tags": ["liquidcontainer"],
+		"crafting_tags": ["liquidcontainer"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0005": {
 		"base_display_name": "Apple",
+		"dismantle": false,
 		"stackable": true,
 		"can_eat": true,
 		"food_qty": 3,
@@ -288,10 +454,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 2,
 		"type": "Con",
 		"img_path": "res://assets/inv/apple.png",
-		"des": "A ripe red fruit."
+		"des": "A ripe red fruit.",
+		"tags": ["raw", "edible"],
+		"crafting_tags": ["rawfruit"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0006": {
 		"base_display_name": "Large Portion of Cooked Fish",
+		"dismantle": false,
 		"stackable": true,
 		"can_eat": true,
 		"food_qty": 6,
@@ -300,10 +470,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 2,
 		"type": "Con",
 		"img_path": "res://assets/inv/big_fish_cooked.png",
-		"des": "A large cooked fish."
+		"des": "A large cooked fish.",
+		"tags": ["cooked"],
+		"crafting_tags": ["cookedfish"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0007": {
 		"base_display_name": "Large Fresh Fish",
+		"dismantle": false,
 		"stackable": true,
 		"can_eat": true,
 		"raw_food": true,
@@ -313,10 +487,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 2,
 		"type": "Con",
 		"img_path": "res://assets/inv/big_fish_raw.png",
-		"des": "A large cooked fish."
+		"des": "A large cooked fish.",
+		"tags": ["raw", "edible"],
+		"crafting_tags": ["rawfish"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0008": {
 		"base_display_name": "Small Fresh Fish",
+		"dismantle": false,
 		"stackable": true,
 		"can_eat": true,
 		"raw_food": true,
@@ -325,10 +503,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 1,
 		"type": "Con",
 		"img_path": "res://assets/inv/small_fish_raw.png",
-		"des": "A small raw fish."
+		"des": "A small raw fish.",
+		"tags": ["raw", "edible"],
+		"crafting_tags": ["rawfish"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0009": {
 		"base_display_name": "Small Portion of Cooked Fish",
+		"dismantle": false,
 		"stackable": true,
 		"can_eat": true,
 		"food_qty": 4,
@@ -336,10 +518,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 2,
 		"type": "Con",
 		"img_path": "res://assets/inv/small_fish_cooked.png",
-		"des": "A small cooked fish."
+		"des": "A small cooked fish.",
+		"tags": ["cooked"],
+		"crafting_tags": ["cookedfish"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0010": {
 		"base_display_name": "Raw Meat",
+		"dismantle": false,
 		"stackable": true,
 		"can_eat": true,
 		"raw_food": true,
@@ -348,10 +534,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 1,
 		"type": "Con",
 		"img_path": "res://assets/inv/raw_meat.png",
-		"des": "Fresh uncooked meat."
+		"des": "Fresh uncooked meat.",
+		"tags": ["raw", "edible"],
+		"crafting_tags": ["rawmeat"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0011": {
 		"base_display_name": "Cooked Meat",
+		"dismantle": false,
 		"stackable": true,
 		"can_eat": true,
 		"food_qty": 5,
@@ -359,10 +549,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 3,
 		"type": "Con",
 		"img_path": "res://assets/inv/cooked_meat.png",
-		"des": "A hearty cooked meal."
+		"des": "A hearty cooked meal.",
+		"tags": ["cooked"],
+		"crafting_tags": ["cookedmeat"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0012": {
 		"base_display_name": "Egg",
+		"dismantle": false,
 		"stackable": true,
 		"can_eat": true,
 		"food_qty": 1,
@@ -370,10 +564,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 1,
 		"type": "Con",
 		"img_path": "res://assets/inv/egg.png",
-		"des": "A simple egg."
+		"des": "A simple egg.",
+		"tags": ["raw", "edible"],
+		"crafting_tags": ["rawegg"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0013": {
 		"base_display_name": "Cooked Egg",
+		"dismantle": false,
 		"stackable": true,
 		"can_eat": true,
 		"food_qty": 2,
@@ -381,10 +579,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 1,
 		"type": "Con",
 		"img_path": "res://assets/inv/cooked_egg.png",
-		"des": "A cooked egg."
+		"des": "A cooked egg.",
+		"tags": ["cooked"],
+		"crafting_tags": ["cookedegg"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0014": {
 		"base_display_name": "Cooked Corn",
+		"dismantle": false,
 		"stackable": true,
 		"can_eat": true,
 		"food_qty": 3,
@@ -392,10 +594,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 2,
 		"type": "Con",
 		"img_path": "res://assets/inv/cooked_corn.png",
-		"des": "A hot roasted cob."
+		"des": "A hot roasted cob.",
+		"tags": ["cooked"],
+		"crafting_tags": ["cookedcorn"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0015": {
 		"base_display_name": "Large Bottle",
+		"dismantle": false,
 		"stackable": false,
 		"fillable": true,
 		"drinkable": true,
@@ -405,10 +611,14 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 8,
 		"type": "Con",
 		"img_path": "res://assets/inv/large_bottle.png",
-		"des": "A sizable container for liquids."
+		"des": "A sizable container for liquids.",
+		"tags": ["liquidcontainer"],
+		"crafting_tags": ["liquidcontainer"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"CON0016": {
 		"base_display_name": "Draft Bottle",
+		"dismantle": false,
 		"stackable": false,
 		"fillable": true,
 		"drinkable": true,
@@ -418,295 +628,515 @@ const ITEM_PROPERTIES := {
 		"avg_value_per": 3,
 		"type": "Con",
 		"img_path": "res://assets/inv/draft_bottle.png",
-		"des": "A small bottle suited for tonics."
+		"des": "A small bottle suited for tonics.",
+		"tags": ["liquidcontainer"],
+		"crafting_tags": ["liquidcontainer"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"ARM0001": {
 		"base_display_name": "Pigface Knight Helm",
+		"dismantle": true,
 		"stackable": false,
 		"weight_per": 5,
 		"avg_value_per": 35,
 		"type": "Arm",
+		"subtype": "head",
 		"img_path": "res://assets/inv/iron_knight_helm.png",
 		"def_bonus": 5,
 		"dex_bonus": -2,
 		"max_durability": 100,
 		"dismantle_yield": ["Metal Scraps"],
-		"des": "A knightly helm crafted with great skill. Provides ample protection with a price to nimbleness."
+		"des": "A knightly helm crafted with great skill. Provides ample protection with a price to nimbleness.",
+		"tags": ["wearable", "platearm"],
+		"crafting_tags": ["platearmor"],
+		"magic_tags": ["ritual_component", "ritgarb"]
 	},
 	"ARM0002": {
-		"base_display_name": "Cloth Boots",
+		"base_display_name": "Simple Boots",
+		"dismantle": true,
 		"stackable": false,
 		"weight_per": 1,
 		"avg_value_per": 6,
 		"type": "Arm",
+		"subtype": "shoes",
 		"img_path": "res://assets/inv/cloth_boots.png",
-		"des": "Simple soft boots offering minimal protection."
+		"des": "Simple soft boots offering minimal protection.",
+		"tags": ["wearable", "lightboots"],
+		"crafting_tags": ["simpleboots"],
+		"magic_tags": ["ritual_component", "ritgarb"]
 	},
 	"ARM0003": {
 		"base_display_name": "Top Hat",
+		"dismantle": true,
 		"stackable": false,
 		"weight_per": 1,
 		"avg_value_per": 10,
 		"type": "Arm",
+		"subtype": "head",
 		"img_path": "res://assets/inv/tophat.png",
-		"des": "A stylish hat that adds height and presence."
+		"des": "A stylish hat that adds height and presence.",
+		"tags": ["wearable", "charming", "proper"],
+		"crafting_tags": ["lighthat"],
+		"magic_tags": ["ritual_component", "ritgarb"]
 	},
 	"ARM0004": {
 		"base_display_name": "Cloth Backpack",
+		"dismantle": true,
 		"stackable": false,
 		"weight_per": 2,
 		"avg_value_per": 15,
 		"type": "Arm",
+		"subtype": "pack",
 		"img_path": "res://assets/inv/cloth_backpack.png",
-		"des": "A simple pack for carrying goods."
+		"des": "A simple pack for carrying goods.",
+		"tags": ["wearable", "simplebag"],
+		"crafting_tags": ["lightbag"],
+		"magic_tags": ["ritual_component", "ritgarb"]
 	},
 	"WEAP0001": {
 		"base_display_name": "Iron Knife",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": false,
 		"weight_per": 2,
 		"avg_value_per": 15,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Knife",
 		"img_path": "res://assets/inv/iron_knife.png",
-		"des": "A small knife with an iron blade."
+		"des": "A small knife with an iron blade.",
+		"tags": ["skinning", "cutting", "concealable", "swift", "piercing"],
+		"crafting_tags": ["cutting-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0002": {
 		"base_display_name": "Bone Club",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": false,
 		"weight_per": 3,
 		"avg_value_per": 6,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Blunt",
 		"img_path": "res://assets/inv/bone_club.png",
-		"des": "A heavy club fashioned from bone."
+		"des": "A heavy club fashioned from bone.",
+		"tags": ["hammer", "blunt"],
+		"crafting_tags": ["hammer-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0003": {
 		"base_display_name": "Bone Knife",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": false,
 		"weight_per": 2,
 		"avg_value_per": 8,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Knife",
 		"img_path": "res://assets/inv/bone_knife.png",
-		"des": "A crude blade carved from bone."
+		"des": "A crude blade carved from bone.",
+		"tags": ["skinning", "cutting", "concealable", "swift", "piercing"],
+		"crafting_tags": ["cutting-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0004": {
 		"base_display_name": "Stone Spear",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": true,
 		"weight_per": 4,
 		"avg_value_per": 8,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Polearm",
 		"img_path": "res://assets/inv/stone_spear.png",
-		"des": "A spear tipped with knapped stone."
+		"des": "A spear tipped with knapped stone.",
+		"tags": ["fishingtool", "piercing", "impaling"],
+		"crafting_tags": ["fishing-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0005": {
 		"base_display_name": "Stone Sickle",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": false,
 		"weight_per": 3,
 		"avg_value_per": 6,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Sickle",
 		"img_path": "res://assets/inv/stone_sickle.png",
-		"des": "A primitive sickle used for harvesting."
+		"des": "A primitive sickle used for harvesting.",
+		"tags": ["harvest", "piercing", "slashing"],
+		"crafting_tags": ["harvest-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0006": {
 		"base_display_name": "Stone Shovel",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": true,
 		"weight_per": 5,
 		"avg_value_per": 6,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Blunt",
 		"img_path": "res://assets/inv/stone_shovel.png",
-		"des": "A sturdy shovel made from stone."
+		"des": "A sturdy shovel made from stone.",
+		"tags": ["digging", "blunt"],
+		"crafting_tags": ["dig-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0007": {
 		"base_display_name": "Stone Pickaxe",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": true,
 		"weight_per": 5,
 		"avg_value_per": 7,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Pickaxe",
 		"img_path": "res://assets/inv/stone_pickaxe.png",
-		"des": "A basic pick for mining."
+		"des": "A basic pick for mining.",
+		"tags": ["mining", "blunt", "piercing"],
+		"crafting_tags": ["dig-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0008": {
 		"base_display_name": "Stone Knife",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": false,
 		"weight_per": 2,
 		"avg_value_per": 5,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Knife",
 		"img_path": "res://assets/inv/stone_knife.png",
-		"des": "A chipped stone blade."
+		"des": "A chipped stone blade.",
+		"tags": ["skinning", "cutting", "concealable", "swift", "piercing"],
+		"crafting_tags": ["cutting-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0009": {
 		"base_display_name": "Stone Hoe",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": true,
 		"weight_per": 4,
 		"avg_value_per": 6,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Blunt",
 		"img_path": "res://assets/inv/stone_hoe.png",
-		"des": "A primitive hoe for tilling soil."
+		"des": "A primitive hoe for tilling soil.",
+		"tags": ["tilling", "blunt", "piercing"],
+		"crafting_tags": ["till-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0010": {
 		"base_display_name": "Stone Hammer",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": false,
 		"weight_per": 4,
 		"avg_value_per": 6,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Blunt",
 		"img_path": "res://assets/inv/stone_hammer.png",
-		"des": "A hefty hammer with a stone head."
+		"des": "A hefty hammer with a stone head.",
+		"tags": ["hammer", "blunt"],
+		"crafting_tags": ["hammer-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0011": {
 		"base_display_name": "Stone Axe",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": true,
 		"weight_per": 5,
 		"avg_value_per": 8,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Axe",
 		"img_path": "res://assets/inv/stone_axe.png",
-		"des": "An axe head of knapped stone."
+		"des": "An simple axe of knapped stone and wood.",
+		"tags": ["chopping", "slashing", "piercing"],
+		"crafting_tags": ["chop-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0012": {
 		"base_display_name": "Nobleman Pistol",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": false,
 		"weight_per": 3,
 		"avg_value_per": 120,
-		"type": "Weap",
-		"img_path": "res://assets/inv/nobleman_pistol.png",
-		"des": "A finely crafted sidearm favored by the wealthy."
+		"rg_dmg_floor": Vector2i(30, 100),
+		"floor_noise_per_shot_floor": 50,
+		"eff_rg_floor": 8,
+		"ammo_type": "Lead Ball",
+		"ammo_cap_floor": 1,
+		"type": "Gear",
+		"dmgtype": "PowderPistol",
+		"subtype": "hand",
+		"img_base": "res://assets/inv/weap/nobleman_pistol_base.png",
+		"img_variants": {
+			"evil": "res://assets/inv/weap/nobleman_pistol_base_evil.png",
+			"holy": "res://assets/inv/weap/nobleman_pistol_base_holy.png",
+			"weird": "res://assets/inv/weap/nobleman_pistol_base_weird.png"
+		},
+		"attachment_slots": ["silencer", "scope", "extension_mag"],
+		"allowed_enhancements": ["divine", "defiled", "technological"],
+		"tags": ["firearm", "concealable", "luxury", "coveted"],
+		"crafting_tags": ["powderpistol"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"WEAP0013": {
 		"base_display_name": "Evil Knife",
+		"dismantle": true,
 		"stackable": false,
+		"dual_handed": false,
 		"weight_per": 2,
 		"avg_value_per": 25,
-		"type": "Weap",
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Knife",
+		"tags": ["ritualsac", "evil", "skinning", "cutting", "concealable", "swift", "piercing"],
 		"img_path": "res://assets/inv/evilknife.png",
-		"des": "A strange blade that seems to glow with malevolent intent."
+		"des": "A strange blade that seems to glow with malevolent intent.", 
+		"crafting_tags": ["cutting-tool"],
+		"magic_tags": ["ritual_component", "ritweap"]
 	},
 	"UTIL0001": {
 		"base_display_name": "Bedroll",
+		"dismantle": true,
 		"stackable": false,
 		"weight_per": 5,
 		"avg_value_per": 15,
 		"type": "Loot",
 		"img_path": "res://assets/inv/bedroll.png",
-		"des": "A rolled up sleeping bag for rough sleeping."
+		"des": "A rolled up sleeping bag for rough sleeping.",
+		"tags": ["sleepingsource", "placeable"],
+		"crafting_tags": ["wax"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"UTIL0002": {
 		"base_display_name": "Candle",
+		"dismantle": true,
 		"stackable": true,
+		"dual_handed": false,
+		"subtype": "hand",
+		"dmgtype": "Candle",
 		"weight_per": 0.2,
 		"avg_value_per": 2,
 		"type": "Loot", # If you prefer UTIL, change to "Util" (no special flags in schema)
 		"img_path": "res://assets/inv/candle.png",
-		"des": "A small wax light source."
+		"des": "A small wax light source.",
+		"tags": ["lightsource"],
+		"crafting_tags": ["wax"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"UTIL0003": {
 		"base_display_name": "Lockpicks",
+		"dismantle": true,
 		"stackable": true,
 		"weight_per": 0.2,
 		"avg_value_per": 8,
 		"type": "Loot",
 		"img_path": "res://assets/inv/lockpicks.png",
-		"des": "A bundle of picks and tension tools."
+		"des": "A bundle of picks and tension tools.",
+		"tags": ["lockpick"],
+		"crafting_tags": ["metaljunk"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"UTIL0004": {
 		"base_display_name": "Lock",
+		"dismantle": true,
 		"stackable": true,
 		"weight_per": 1,
 		"avg_value_per": 6,
 		"type": "Loot",
 		"img_path": "res://assets/inv/lock.png",
-		"des": "A sturdy mechanism to keep things closed."
+		"des": "A sturdy mechanism to keep things closed.",
+		"tags": ["lock"],
+		"crafting_tags": ["metaljunk"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"UTIL0005": {
 		"base_display_name": "Key",
+		"dismantle": true,
 		"stackable": false,
 		"weight_per": 0.1,
 		"avg_value_per": 3,
 		"type": "Loot",
 		"img_path": "res://assets/inv/key.png",
-		"des": "Opens something, somewhere."
+		"des": "Opens something, somewhere.",
+		"tags": ["key"],
+		"crafting_tags": ["metaljunk"],
+		"magic_tags": ["ritual_component", "reagent"]
+	},
+	"UTIL0006": {
+		"base_display_name": "Oil Lantern",
+		"dismantle": true,
+		"stackable": false,
+		"dual_handed": false,
+		"light_radius": 10,
+		"light_tint": [1.0, 1.0, 0.8],
+		"weight_per": 2,
+		"avg_value_per": 3,
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Lantern",
+		"img_path": "res://assets/inv/lantern_lit.png",
+		"des": "A simple Oil Lantern.",
+		"tags": ["light-tool"],
+		"crafting_tags": ["metaljunk"],
+		"magic_tags": ["ritual_component", "reagent"]
+	},
+	"UTIL0007": {
+		"base_display_name": "Torch",
+		"dismantle": true,
+		"stackable": false,
+		"dual_handed": false,
+		"light_radius": 6,
+		"light_tint": [1.0, 1.0, 0.8],
+		"weight_per": 1,
+		"avg_value_per": 1,
+		"type": "Gear",
+		"subtype": "hand",
+		"dmgtype": "Torch",
+		"img_path": "res://assets/inv/torch.png",
+		"des": "A simple torch.",
+		"tags": ["light-tool"],
+		"crafting_tags": ["torch"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"LOOT0001": {
 		"base_display_name": "Blueprint",
+		"dismantle": false,
 		"stackable": false,
 		"readable": true,
 		"weight_per": 0.1,
 		"avg_value_per": 105,
 		"type": "Loot",
 		"img_path": "res://assets/inv/blueprint.png",
-		"des": "A photographic reproduction of a technical drawing for an enginnering design."
+		"des": "A photographic reproduction of a technical drawing for an enginnering design.",
+		"tags": ["blueprint", "readingmaterial"],
+		"crafting_tags": ["metaljunk"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"LOOT0002": {
 		"base_display_name": "Coins",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 0.1,
 		"avg_value_per": 1,
 		"type": "Loot",
 		"img_path": "res://assets/inv/gold_coins.png",
-		"des": "A pile of currency."
+		"des": "A pile of currency.",
+		"tags": ["legaltender", "coveted"],
+		"crafting_tags": ["metaljunk"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"LOOT0003": {
 		"base_display_name": "Cut Ruby",
+		"dismantle": false,
 		"stackable": true,
 		"weight_per": 0.1,
 		"avg_value_per": 405,
 		"type": "Loot",
 		"img_path": "res://assets/inv/cut_ruby.png",
-		"des": "A precious red gemstone."
+		"des": "A precious red gemstone.",
+		"tags": ["tradegood", "precious", "coveted"],
+		"crafting_tags": ["cutgem"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"LOOT00004": {
 		"base_display_name": "Weird Book",
+		"dismantle": false,
 		"stackable": false,
 		"readable": true,
 		"weight_per": 1,
 		"avg_value_per": 25,
 		"type": "Loot",
 		"img_path": "res://assets/inv/weirdbook.png",
-		"des": "The margins crawl with strange diagrams."
+		"des": "The margins crawl with strange diagrams.",
+		"tags": ["firefuel", "weirdfaithbook", "readingmaterial"],
+		"crafting_tags": ["bookjunk"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"LOOT00005": {
 		"base_display_name": "Skill Book: Training",
+		"dismantle": false,
 		"stackable": false,
 		"readable": true,
 		"weight_per": 1,
 		"avg_value_per": 40,
 		"type": "Loot",
 		"img_path": "res://assets/inv/skill_book_training.png",
-		"des": "A worn manual filled with practical exercises."
+		"des": "A worn manual filled with practical exercises.",
+		"tags": ["firefuel", "trainingbook", "readingmaterial"],
+		"crafting_tags": ["bookjunk"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"LOOT00006": {
 		"base_display_name": "Holy Book",
+		"dismantle": false,
 		"stackable": false,
 		"readable": true,
 		"weight_per": 1,
 		"avg_value_per": 35,
 		"type": "Loot",
 		"img_path": "res://assets/inv/holybook.png",
-		"des": "Scripture revered by the faithful."
+		"des": "Scripture revered by the faithful.",
+		"tags": ["firefuel", "holyfaithbook", "readingmaterial"],
+		"crafting_tags": ["bookjunk"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"LOOT00007": {
 		"base_display_name": "Grimoire",
+		"dismantle": false,
 		"stackable": false,
 		"readable": true,
 		"weight_per": 1,
 		"avg_value_per": 60,
 		"type": "Loot",
 		"img_path": "res://assets/inv/grimoire.png",
-		"des": "An ominous tome of spells and rituals."
+		"des": "An ominous tome of spells and rituals.",
+		"tags": ["firefuel", "spellbook", "readingmaterial"],
+		"crafting_tags": ["bookjunk"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"LOOT00008": {
-		"base_display_name": "Gold Ring",
+		"base_display_name": "Ring",
+		"dismantle": true,
 		"stackable": false,
 		"weight_per": 0.1,
 		"avg_value_per": 150,
 		"type": "Loot",
 		"img_path": "res://assets/inv/gold_ring.png",
-		"des": "A simple band of precious metal."
+		"des": "A simple band of precious metal.",
+		"tags": ["wearable", "jewelery", "luxury", "coveted"],
+		"crafting_tags": ["jewelryjunk"],
+		"magic_tags": ["ritual_component", "reagent"]
 	},
 	"LOOT00009": {
 		"base_display_name": "Evil Book",
+		"dismantle": false,
 		"stackable": false,
 		"readable": true,
 		"weight_per": 1,
 		"avg_value_per": 45,
 		"type": "Loot",
 		"img_path": "res://assets/inv/evilbook.png",
-		"des": "A malevolent tome bound in questionable leather."
+		"des": "A malevolent tome bound in questionable leather.",
+		"tags": ["firefuel", "unholyfaithbook", "readingmaterial", "evil"],
+		"crafting_tags": ["bookjunk"],
+		"magic_tags": ["ritual_component", "reagent"]
 	}
 }

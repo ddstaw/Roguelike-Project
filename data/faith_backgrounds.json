@@ -1,130 +1,130 @@
 [
-    {
-        "title": "Inquisitor",
-        "description": "You have dedicated your life to rooting out heresy and punishing those who stray from the true path. Your methods are ruthless but effective.",
-        "bonus": "Bonus: +2 to Skullduggery, +1 to Deftstriking.",
-        "allowed_races": [],
-        "allowed_faiths": ["Orthodox Dogmatist"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Pious Scribe",
-        "description": "A devout follower, you have spent years copying sacred texts and preserving the teachings of your faith.",
-        "bonus": "Bonus: +2 to Erudition, +1 to Acumen.",
-        "allowed_races": [],
-        "allowed_faiths": ["Orthodox Dogmatist"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Puritan Enforcer",
-        "description": "A staunch protector of the faith, you enforce strict moral codes with an iron will and unflinching resolve.",
-        "bonus": "Bonus: +2 to Bruteforce, +1 to Athletics.",
-        "allowed_races": [],
-        "allowed_faiths": ["Pious Reformationist"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Covenant Scholar",
-        "description": "You have devoted your life to studying and interpreting the doctrines of your reformist faith.",
-        "bonus": "Bonus: +2 to Erudition, +1 to Alchemy.",
-        "allowed_races": [],
-        "allowed_faiths": ["Pious Reformationist"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Fanatical Crusader",
-        "description": "A relentless warrior of your faith, you live to spread your beliefs through combat and zealotry.",
-        "bonus": "Bonus: +2 to Combat Skills, +1 to Athletics.",
-        "allowed_races": [],
-        "allowed_faiths": ["Fundamentalist Zealot"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Prophet of the End Times",
-        "description": "You are a fiery preacher, proclaiming the imminent downfall of all who do not repent and follow the true path.",
-        "bonus": "Bonus: +2 to Charisma, +1 to Acumen.",
-        "allowed_races": [],
-        "allowed_faiths": ["Fundamentalist Zealot"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Dark Ritualist",
-        "description": "You conduct forbidden rituals in the shadows, channeling dark energies to achieve your nefarious goals.",
-        "bonus": "Bonus: +2 to Necromancy, +1 to Glamour.",
-        "allowed_races": [],
-        "allowed_faiths": ["Sinister Cultist"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Occult Broker",
-        "description": "A secretive figure, you deal in arcane artifacts and forbidden knowledge, trading in the shadows.",
-        "bonus": "Bonus: +2 to Skullduggery, +1 to Erudition.",
-        "allowed_races": [],
-        "allowed_faiths": ["Sinister Cultist"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Void Seer",
-        "description": "Guided by the whispers of the Void, you see beyond the veil of reality and commune with ancient powers.",
-        "bonus": "Bonus: +2 to Erudition, +1 to Cyromancy.",
-        "allowed_races": [],
-        "allowed_faiths": ["Guided By The Void"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Eldritch Acolyte",
-        "description": "You serve the unseen masters, carrying out their will in secret and preparing the world for their return.",
-        "bonus": "Bonus: +2 to Enchantment, +1 to Deftstriking.",
-        "allowed_races": [],
-        "allowed_faiths": ["Guided By The Void"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Warden of the Wilds",
-        "description": "A protector of ancient traditions, you guard the sacred places and rituals of the old ways.",
-        "bonus": "Bonus: +2 to Frontiersmanship, +1 to Bowmanship.",
-        "allowed_races": [],
-        "allowed_faiths": ["Follower of The Old Ways"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Herbalist Healer",
-        "description": "Trained in the arts of herbalism and natural magic, you use your skills to heal and protect your kin.",
-        "bonus": "Bonus: +2 to Vitomancy, +1 to Alchemy.",
-        "allowed_races": [],
-        "allowed_faiths": ["Follower of The Old Ways"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Master Artificer",
-        "description": "As a follower of Rex Mundi, you are a renowned inventor and craftsman, dedicated to perfecting your mechanical creations.",
-        "bonus": "Bonus: +2 to Tinkering, +1 to Metallurgy.",
-        "allowed_races": [],
-        "allowed_faiths": ["Disciple of Rex Mundi"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Guild Merchant",
-        "description": "A shrewd trader, you have risen through the ranks of the guilds, mastering the art of commerce and negotiation.",
-        "bonus": "Bonus: +2 to Acumen, +1 to Charisma.",
-        "allowed_races": [],
-        "allowed_faiths": ["Disciple of Rex Mundi"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Rationalist Philosopher",
-        "description": "A thinker and skeptic, you question everything and seek to understand the world through reason and logic.",
-        "bonus": "Bonus: +2 to Erudition, +1 to Acumen.",
-        "allowed_races": [],
-        "allowed_faiths": ["Godless"],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Industrial Engineer",
-        "description": "Rejecting superstition, you have dedicated yourself to mastering technology and advancing human industry.",
-        "bonus": "Bonus: +2 to Tinkering, +1 to Construction.",
-        "allowed_races": [],
-        "allowed_faiths": ["Godless"],
-        "allowed_sexes": []
-    }
+	{
+		"title": "Inquisitor",
+		"description": "You have dedicated your life to rooting out heresy and punishing those who stray from the true path. Your methods are ruthless but effective.",
+		"bonus": "Bonus: +2 to Skullduggery, +1 to Deftstriking.",
+		"allowed_races": [],
+		"allowed_faiths": ["Orthodox Dogmatist"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Pious Scribe",
+		"description": "A devout follower, you have spent years copying sacred texts and preserving the teachings of your faith.",
+		"bonus": "Bonus: +2 to Erudition, +1 to Acumen.",
+		"allowed_races": [],
+		"allowed_faiths": ["Orthodox Dogmatist"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Puritan Enforcer",
+		"description": "A staunch protector of the faith, you enforce strict moral codes with an iron will and unflinching resolve.",
+		"bonus": "Bonus: +2 to Bruteforce, +1 to Athletics.",
+		"allowed_races": [],
+		"allowed_faiths": ["Pious Reformationist"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Covenant Scholar",
+		"description": "You have devoted your life to studying and interpreting the doctrines of your reformist faith.",
+		"bonus": "Bonus: +2 to Erudition, +1 to Alchemy.",
+		"allowed_races": [],
+		"allowed_faiths": ["Pious Reformationist"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Fanatical Crusader",
+		"description": "A relentless warrior of your faith, you live to spread your beliefs through combat and zealotry.",
+		"bonus": "Bonus: +2 to Combat Skills, +1 to Athletics.",
+		"allowed_races": [],
+		"allowed_faiths": ["Fundamentalist Zealot"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Prophet of the End Times",
+		"description": "You are a fiery preacher, proclaiming the imminent downfall of all who do not repent and follow the true path.",
+		"bonus": "Bonus: +2 to Charisma, +1 to Acumen.",
+		"allowed_races": [],
+		"allowed_faiths": ["Fundamentalist Zealot"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Dark Ritualist",
+		"description": "You conduct forbidden rituals in the shadows, channeling dark energies to achieve your nefarious goals.",
+		"bonus": "Bonus: +2 to Necromancy, +1 to Glamour.",
+		"allowed_races": [],
+		"allowed_faiths": ["Sinister Cultist"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Occult Broker",
+		"description": "A secretive figure, you deal in arcane artifacts and forbidden knowledge, trading in the shadows.",
+		"bonus": "Bonus: +2 to Skullduggery, +1 to Erudition.",
+		"allowed_races": [],
+		"allowed_faiths": ["Sinister Cultist"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Void Seer",
+		"description": "Guided by the whispers of the Void, you see beyond the veil of reality and commune with ancient powers.",
+		"bonus": "Bonus: +2 to Erudition, +1 to Cyromancy.",
+		"allowed_races": [],
+		"allowed_faiths": ["Guided By The Void"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Eldritch Acolyte",
+		"description": "You serve the unseen masters, carrying out their will in secret and preparing the world for their return.",
+		"bonus": "Bonus: +2 to Enchantment, +1 to Deftstriking.",
+		"allowed_races": [],
+		"allowed_faiths": ["Guided By The Void"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Warden of the Wilds",
+		"description": "A protector of ancient traditions, you guard the sacred places and rituals of the old ways.",
+		"bonus": "Bonus: +2 to Frontiersmanship, +1 to Bowmanship.",
+		"allowed_races": [],
+		"allowed_faiths": ["Follower of The Old Ways"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Herbalist Healer",
+		"description": "Trained in the arts of herbalism and natural magic, you use your skills to heal and protect your kin.",
+		"bonus": "Bonus: +2 to Vitomancy, +1 to Alchemy.",
+		"allowed_races": [],
+		"allowed_faiths": ["Follower of The Old Ways"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Master Artificer",
+		"description": "As a follower of Rex Mundi, you are a renowned inventor and craftsman, dedicated to perfecting your mechanical creations.",
+		"bonus": "Bonus: +2 to Tinkering, +1 to Metallurgy.",
+		"allowed_races": [],
+		"allowed_faiths": ["Disciple of Rex Mundi"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Guild Merchant",
+		"description": "A shrewd trader, you have risen through the ranks of the guilds, mastering the art of commerce and negotiation.",
+		"bonus": "Bonus: +2 to Acumen, +1 to Charisma.",
+		"allowed_races": [],
+		"allowed_faiths": ["Disciple of Rex Mundi"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Rationalist Philosopher",
+		"description": "A thinker and skeptic, you question everything and seek to understand the world through reason and logic.",
+		"bonus": "Bonus: +2 to Erudition, +1 to Acumen.",
+		"allowed_races": [],
+		"allowed_faiths": ["Godless"],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Industrial Engineer",
+		"description": "Rejecting superstition, you have dedicated yourself to mastering technology and advancing human industry.",
+		"bonus": "Bonus: +2 to Tinkering, +1 to Construction.",
+		"allowed_races": [],
+		"allowed_faiths": ["Godless"],
+		"allowed_sexes": []
+	}
 ]

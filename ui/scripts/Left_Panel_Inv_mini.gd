@@ -385,11 +385,11 @@ func _pass_filter(s: Dictionary) -> bool:
 		return true
 
 	var id: String = str(s.get("item_ID", ""))
-	var t: String  = str(s.get("type", "")).to_upper()  # e.g., "CON", "MAT", "WEAP", "ARM", "LOOT"
+	var t: String  = str(s.get("type", "")).to_upper()  # e.g., "CON", "MAT", "GEAR", "ARM", "LOOT"
 
 	match _filter:
-		"WEAP":
-			return id.begins_with("WEA") or t == "WEAP"
+		"GEAR":
+			return id.begins_with("GEA") or t == "GEAR"
 		"ARM":
 			return id.begins_with("ARM") or t == "ARM"
 		"CON":
@@ -523,7 +523,7 @@ func _canonical_filter(label: String) -> String:
 	match u:
 		"ALL": return "ALL"
 		"CON", "CONSUMABLES": return "CON"
-		"WEAP", "WEAPONS": return "WEAP"
+		"GEAR", "GEAR": return "GEAR"
 		"ARM", "ARMOR", "ARMOUR": return "ARM"
 		"MAT", "MATS", "MATERIALS": return "MATS"
 		"LOOT": return "LOOT"

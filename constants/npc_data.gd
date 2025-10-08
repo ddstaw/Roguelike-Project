@@ -7,6 +7,7 @@ const ITEM_PROPERTIES := {
 		"max_hp": 50,
 		"type": "animal",
 		"faction": "feline",
+		"tags": ["simplefeline"],
 		"img_path": "res://assets/localmap-graphics/npcs/orange_cat.png",
 		"des": "A lazy looking orange cat"
 	},
@@ -15,6 +16,7 @@ const ITEM_PROPERTIES := {
 		"max_hp": 50,
 		"type": "animal",
 		"faction": "snake",
+		"tags": ["simplesnake"],
 		"img_path": "res://assets/localmap-graphics/npcs/green_snake.png",
 		"des": "A creepy green snake."
 	},
@@ -22,6 +24,7 @@ const ITEM_PROPERTIES := {
 		"base_display_name": "Blue Wizard",
 		"max_hp": 100,
 		"type": "humanoid",
+		"tags": ["magicuser", "musician", "barter", "traveller", "regularfolk"],
 		"faction": "regularfolk",
 		"img_path": "res://assets/localmap-graphics/npcs/blue_wizard.png",
 		"des": "A foolish looking old man in wizard robes and hat."

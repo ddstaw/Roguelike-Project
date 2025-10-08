@@ -1,42 +1,42 @@
 [
-    {
-        "title": "Wanderer",
-        "description": "A soul without a home, always moving and never settling.",
-        "bonus": "Bonus: +1 to Agility, +1 to Stealth.",
-        "allowed_races": ["human", "elf"],
-        "allowed_faiths": [],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Noble",
-        "description": "Born of privilege, with wealth and influence at your fingertips.",
-        "bonus": "Bonus: +2 to Charisma, Access to Noble Estates.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Outlaw",
-        "description": "A life on the edge, living by your own rules and outside the law.",
-        "bonus": "Bonus: +1 to Combat Skills, Discounts on Black Market Goods.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Bandit",
-        "description": "Living on the fringes of society, taking what you need by force.",
-        "bonus": "Bonus: +1 to Combat Skills, +1 to Stealth.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": []
-    },
-    {
-        "title": "Raised by Snake Handlers",
-        "description": "Hardened by a childhood among snake handlers, you have an unnatural resilience to poisons.",
-        "bonus": "Bonus: +1 to Poison Resistance.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": []
-    }
+	{
+		"title": "Wanderer",
+		"description": "A soul without a home, always moving and never settling.",
+		"bonus": "Bonus: +1 to Agility, +1 to Stealth.",
+		"allowed_races": ["human", "elf"],
+		"allowed_faiths": [],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Noble",
+		"description": "Born of privilege, with wealth and influence at your fingertips.",
+		"bonus": "Bonus: +2 to Charisma, Access to Noble Estates.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Outlaw",
+		"description": "A life on the edge, living by your own rules and outside the law.",
+		"bonus": "Bonus: +1 to Combat Skills, Discounts on Black Market Goods.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Bandit",
+		"description": "Living on the fringes of society, taking what you need by force.",
+		"bonus": "Bonus: +1 to Combat Skills, +1 to Stealth.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": []
+	},
+	{
+		"title": "Raised by Snake Handlers",
+		"description": "Hardened by a childhood among snake handlers, you have an unnatural resilience to poisons.",
+		"bonus": "Bonus: +1 to Poison Resistance.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": []
+	}
 ]

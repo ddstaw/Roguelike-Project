@@ -58,6 +58,8 @@ const TILE_TEXTURES := {
 	"caverock": preload("res://assets/localmap-graphics/caverock.png"),
 	"cavewallbottom": preload("res://assets/localmap-graphics/cavewallbottom.png"),
 	"cavewallside": preload("res://assets/localmap-graphics/cavewallside.png"),
+	"campfire": preload("res://assets/localmap-graphics/objects/campfire.png"),
+	"workbench": preload("res://assets/localmap-graphics/objects/workbench.png"),
 	"orangecat": preload("res://assets/localmap-graphics/npcs/orange_cat.png"),
 	"greensnake": preload("res://assets/localmap-graphics/npcs/green_snake.png"),
 	"bluewizard": preload("res://assets/localmap-graphics/npcs/blue_wizard.png")
@@ -124,6 +126,8 @@ const TEXTURE_TO_NAME := {
 	TILE_TEXTURES["caverock"]: "caverock",
 	TILE_TEXTURES["cavewallbottom"]: "cavewallbottom",
 	TILE_TEXTURES["cavewallside"]: "cavewallside",
+	TILE_TEXTURES["campfire"]: "campfire",
+	TILE_TEXTURES["workbench"]: "workbench",
 	TILE_TEXTURES["orangecat"]: "orangecat",
 	TILE_TEXTURES["greensnake"]: "greensnake",
 	TILE_TEXTURES["bluewizard"]: "bluewizard"
@@ -192,6 +196,8 @@ const OBJECT_TEXTURE_KEYS := {
 	"sewer_door": "sewer_door",
 	"slum_streetlamp": "slum_streetlamp",
 	"slum_trash": "slum_trash",
+	"campfire": "campfire",
+	"workbench": "workbench",
 	"hole": "hole",
 	"mount": null
 	# Add more here over time
@@ -203,6 +209,12 @@ const NPC_TEXTURE_KEYS := {
 	"greensnake": "greensnake",
 	"bluewizard": "bluewizard"
 	# Add more here over time
+}
+
+const SPECIAL_TAG_INFO := {
+	"ritual": { "text": "Used in Ritual Sacrifice", "color": Color.RED },
+	"rare": { "text": "Part of a Rare Set", "color": Color.YELLOW },
+	"evil": { "text": "Emits a Sinister Aura", "color": Color(0.8, 0, 0.8) }
 }
 
 # Helper to get texture for an object type

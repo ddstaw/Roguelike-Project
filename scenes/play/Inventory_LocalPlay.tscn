@@ -1,10 +1,12 @@
-[gd_scene load_steps=12 format=3 uid="uid://dx0u4u7xebjtq"]
+[gd_scene load_steps=16 format=3 uid="uid://dx0u4u7xebjtq"]
 
 [ext_resource type="Script" path="res://scripts/localmapscripts/Inventory_LocalPlay.gd" id="1_u761t"]
 [ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="2_bnac2"]
 [ext_resource type="Script" path="res://scripts/Left_Panel.gd" id="2_lok6c"]
 [ext_resource type="ButtonGroup" uid="uid://b4bu3vkwq0vxa" path="res://ui/inv_sort_buttons.tres" id="4_vogvc"]
 [ext_resource type="Texture2D" uid="uid://b8stnbuqfi6go" path="res://assets/inv/iron_knight_helm.png" id="5_xxuut"]
+[ext_resource type="PackedScene" uid="uid://bp1jigvct3sol" path="res://ui/scenes/HotBarPanel.tscn" id="6_mppu2"]
+[ext_resource type="Script" path="res://scripts/GearSlot.gd" id="7_xaao4"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mmpnv"]
 bg_color = Color(0, 0, 0, 1)
@@ -39,10 +41,21 @@ border_width_bottom = 2
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oeydw"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
-border_width_left = 3
-border_width_top = 3
-border_width_right = 3
-border_width_bottom = 3
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05cbx"]
+bg_color = Color(0.0475577, 0.0475577, 0.0475576, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5ekvk"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
 
 [node name="Inventory_LocalPlay" type="Control"]
 layout_mode = 3
@@ -98,7 +111,7 @@ theme_override_constants/outline_size = 0
 theme_override_constants/h_separation = 0
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
-text = " WEAPONS "
+text = " GEAR "
 
 [node name="Arm" type="Button" parent="Left_Panel/LeftVBox/FilterBar"]
 layout_mode = 2
@@ -308,16 +321,58 @@ theme_override_font_sizes/font_size = 23
 text = "Pigface Knight Helm"
 autowrap_mode = 3
 
+[node name="DesLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+theme_override_font_sizes/font_size = 19
+text = "A knightly helm crafted with great skill. Provides ample protection with a price to nimbleness"
+autowrap_mode = 3
+
+[node name="AttachmentsSpacer" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+autowrap_mode = 3
+
+[node name="AttachmentsTitle" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "Current Attachments:"
+autowrap_mode = 3
+
+[node name="AttachmentsLabel" type="RichTextLabel" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+z_index = 4
+layout_mode = 2
+size_flags_vertical = 5
+bbcode_enabled = true
+text = "Silencer, Looking Glass Scope, Magazine Extension"
+fit_content = true
+
+[node name="AmmoSpacer" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+autowrap_mode = 3
+
+[node name="AmmoLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "Ammo Type: 9mm"
+autowrap_mode = 3
+
+[node name="AmmoCount" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "Magazine Capacity: 0/1"
+autowrap_mode = 3
+
 [node name="DurabilityLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 5
 text = "Good Condition 92/100"
 autowrap_mode = 3
 
-[node name="ValueLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="DurabilitySpace" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 5
-text = "Value: 20"
 autowrap_mode = 3
 
 [node name="BonusLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
@@ -327,19 +382,51 @@ text = "+5 Def, -5 Dex
 "
 autowrap_mode = 3
 
-[node name="Spacer3" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="DivineSpacer" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 5
 autowrap_mode = 3
 
-[node name="DesLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="DivineLabel" type="RichTextLabel" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 5
-theme_override_font_sizes/font_size = 19
-text = "A knightly helm crafted with great skill. Provides ample protection with a price to nimbleness"
+bbcode_enabled = true
+text = "Defiled"
+fit_content = true
+
+[node name="SpecialLabel" type="RichTextLabel" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+z_index = 4
+layout_mode = 2
+size_flags_vertical = 5
+bbcode_enabled = true
+text = "Special Stuff Here"
+fit_content = true
+
+[node name="Spacer2" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
 autowrap_mode = 3
 
-[node name="Spacer" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="ValueLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "Value: 20"
+autowrap_mode = 3
+
+[node name="DismantleTitle" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "DISMANTLES TO:"
+autowrap_mode = 3
+
+[node name="DismantleLabel" type="RichTextLabel" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+bbcode_enabled = true
+text = "Metal Scraps, Leather"
+fit_content = true
+
+[node name="Spacer4" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 5
 autowrap_mode = 3
@@ -350,26 +437,356 @@ size_flags_vertical = 5
 text = "COMPARED TO CURRENT"
 autowrap_mode = 3
 
-[node name="CompareLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="CompareLabel" type="RichTextLabel" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 5
-text = "DEF << 5
-DEX >> 5"
+bbcode_enabled = true
+text = "DEF << 5, DEX >> 5"
+fit_content = true
+
+[node name="Spacer6" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
 autowrap_mode = 3
 
-[node name="Spacer2" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 5
-autowrap_mode = 3
+[node name="HotBarPanel" parent="." instance=ExtResource("6_mppu2")]
+layout_mode = 1
+offset_left = 528.0
+offset_top = 922.0
+offset_right = -29.0
+offset_bottom = -17.0
 
-[node name="DismantleTitle" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 5
-text = "DISMANTLES TO:"
-autowrap_mode = 3
+[node name="GearSlotsControl" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 8.0
+offset_top = 11.0
+offset_right = 747.0
+offset_bottom = 904.0
+mouse_filter = 2
 
-[node name="DismantleLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 5
-text = "Metal Scraps, Leather"
-autowrap_mode = 3
+[node name="GearSlot_Head" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 377.0
+offset_top = 50.0
+offset_right = 505.0
+offset_bottom = 178.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel4" type="Panel" parent="GearSlotsControl/GearSlot_Head"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Face" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 516.0
+offset_top = 50.0
+offset_right = 644.0
+offset_bottom = 178.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel4" type="Panel" parent="GearSlotsControl/GearSlot_Face"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Shoulders" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 28.0
+offset_top = 50.0
+offset_right = 156.0
+offset_bottom = 178.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel4" type="Panel" parent="GearSlotsControl/GearSlot_Shoulders"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Cloak" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 167.0
+offset_top = 50.0
+offset_right = 295.0
+offset_bottom = 178.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel4" type="Panel" parent="GearSlotsControl/GearSlot_Cloak"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Shoes" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 166.0
+offset_top = 672.0
+offset_right = 294.0
+offset_bottom = 800.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel3" type="Panel" parent="GearSlotsControl/GearSlot_Shoes"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Pants" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 28.0
+offset_top = 672.0
+offset_right = 156.0
+offset_bottom = 800.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel3" type="Panel" parent="GearSlotsControl/GearSlot_Pants"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Back" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 372.0
+offset_top = 843.0
+offset_right = 500.0
+offset_bottom = 971.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel3" type="Panel" parent="GearSlotsControl/GearSlot_Back"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_PackModSlot" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 166.0
+offset_top = 843.0
+offset_right = 294.0
+offset_bottom = 971.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel3" type="Panel" parent="GearSlotsControl/GearSlot_PackModSlot"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Pack" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 28.0
+offset_top = 843.0
+offset_right = 156.0
+offset_bottom = 971.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel3" type="Panel" parent="GearSlotsControl/GearSlot_Pack"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_LeftHand" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 450.0
+offset_top = 536.0
+offset_right = 578.0
+offset_bottom = 664.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel2" type="Panel" parent="GearSlotsControl/GearSlot_LeftHand"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_RightHand" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 450.0
+offset_top = 672.0
+offset_right = 578.0
+offset_bottom = 800.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel" type="Panel" parent="GearSlotsControl/GearSlot_RightHand"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_LeftHandAmmo" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 588.0
+offset_top = 536.0
+offset_right = 716.0
+offset_bottom = 664.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel2" type="Panel" parent="GearSlotsControl/GearSlot_LeftHandAmmo"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_RightHandAmmo" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 588.0
+offset_top = 672.0
+offset_right = 716.0
+offset_bottom = 800.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel" type="Panel" parent="GearSlotsControl/GearSlot_RightHandAmmo"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Overcoat" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 28.0
+offset_top = 235.0
+offset_right = 156.0
+offset_bottom = 363.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel4" type="Panel" parent="GearSlotsControl/GearSlot_Overcoat"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Undershirt" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 28.0
+offset_top = 372.0
+offset_right = 156.0
+offset_bottom = 500.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel3" type="Panel" parent="GearSlotsControl/GearSlot_Undershirt"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Gloves" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 450.0
+offset_top = 368.0
+offset_right = 578.0
+offset_bottom = 496.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel2" type="Panel" parent="GearSlotsControl/GearSlot_Gloves"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Ring2" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 588.0
+offset_top = 368.0
+offset_right = 716.0
+offset_bottom = 496.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel" type="Panel" parent="GearSlotsControl/GearSlot_Ring2"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Belt" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 28.0
+offset_top = 534.0
+offset_right = 156.0
+offset_bottom = 662.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel2" type="Panel" parent="GearSlotsControl/GearSlot_Belt"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_BeltAux" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 166.0
+offset_top = 534.0
+offset_right = 294.0
+offset_bottom = 662.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel" type="Panel" parent="GearSlotsControl/GearSlot_BeltAux"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_CrossChest" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 450.0
+offset_top = 230.0
+offset_right = 578.0
+offset_bottom = 358.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel2" type="Panel" parent="GearSlotsControl/GearSlot_CrossChest"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="GearSlot_Ring1" type="Control" parent="GearSlotsControl"]
+anchors_preset = 0
+offset_left = 588.0
+offset_top = 230.0
+offset_right = 716.0
+offset_bottom = 358.0
+script = ExtResource("7_xaao4")
+icon_padding = 1
+
+[node name="Panel2" type="Panel" parent="GearSlotsControl/GearSlot_Ring1"]
+layout_mode = 0
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_05cbx")
+
+[node name="PaperdollRoot" type="Node2D" parent="."]
+top_level = true
+z_index = 10
+position = Vector2(199, 285)
+
+[node name="Panel" type="Panel" parent="PaperdollRoot"]
+offset_left = 6.0
+offset_top = -28.0
+offset_right = 230.0
+offset_bottom = 226.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_5ekvk")

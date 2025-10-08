@@ -47,6 +47,34 @@ func set_sprite_texture(sprite: Sprite2D, path: String) -> void:
 const TILE_SIZE = 88  # Change this if needed to match your tiles
 
 func _unhandled_input(event):
+	# 🧭 Generic Targeting Movement Hijack
+	var local_map = get_tree().root.get_node_or_null("LocalMap")
+	if local_map != null and local_map.has_method("is_in_targeting_mode") and local_map.is_in_targeting_mode():
+		if event.is_pressed():
+			var move_dir := Vector2i.ZERO
+
+			if event.is_action("up_move"):
+				move_dir = Vector2i(0, -1)
+			elif event.is_action("down_move"):
+				move_dir = Vector2i(0, 1)
+			elif event.is_action("left_move"):
+				move_dir = Vector2i(-1, 0)
+			elif event.is_action("right_move"):
+				move_dir = Vector2i(1, 0)
+			elif event.is_action("upleft_move"):
+				move_dir = Vector2i(-1, -1)
+			elif event.is_action("upright_move"):
+				move_dir = Vector2i(1, -1)
+			elif event.is_action("downleft_move"):
+				move_dir = Vector2i(-1, 1)
+			elif event.is_action("downright_move"):
+				move_dir = Vector2i(1, 1)
+
+			if move_dir != Vector2i.ZERO:
+				local_map.move_target_cursor(move_dir)
+				get_viewport().set_input_as_handled()
+				return
+				
 	# 🔒 Interception while in interaction targeting mode
 	if interaction_mode and event.is_pressed():
 		var dir := _dir_from_event(event)
@@ -72,7 +100,6 @@ func _unhandled_input(event):
 			handle_egress_check()
 
 		elif event.is_action("toggle_inventory"):
-			#print("fishbowl: Opening Inventory_LocalPlay.tscn")
 			handle_inventory_toggle()
 
 		# Movement & rest
@@ -94,7 +121,37 @@ func _unhandled_input(event):
 			start_held_move(Vector2i(1, 1))
 		elif event.is_action("rest_select"):
 			rest_player()
+		elif event.is_action("toggle_build_mode"):
+			get_viewport().set_input_as_handled()
+			if LoadHandlerSingleton.is_holding_hammer_tool():
+				travel_log_control.add_message_to_log("You are ready to build.")
+				if local_map != null:
+					local_map.enter_targeting(local_map.TargetingMode.BUILD)
+			else:
+				travel_log_control.add_message_to_log("You need a hammer to build.")
+			return
+		elif event.is_action("toggle_aim_mode"):
+			travel_log_control.add_message_to_log("You size up a shot.")
+			get_viewport().set_input_as_handled()
+			if local_map != null:
+				local_map.enter_targeting(local_map.TargetingMode.AIM)
+			return
 
+		elif event.is_action("toggle_inspect_mode"):
+			travel_log_control.add_message_to_log("You strain your eyes to review what's around.")
+			get_viewport().set_input_as_handled()
+			if local_map != null:
+				local_map.enter_targeting(local_map.TargetingMode.INSPECT)
+			return
+		
+		elif event.is_action("confirm_action"):
+			if local_map != null and local_map.is_in_targeting_mode():
+				travel_log_control.add_message_to_log("🎯 Confirmed target at: " + str(local_map.target_cursor_grid_pos))
+				local_map.exit_targeting()
+				get_viewport().set_input_as_handled()
+				return
+
+		
 	elif event.is_released():
 		is_moving = false
 		held_direction = Vector2.ZERO

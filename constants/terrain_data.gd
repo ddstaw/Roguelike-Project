@@ -3,6 +3,9 @@ extends Node
 
 const TERRAIN_PROPERTIES := {
 	"tree": {
+		"name": "Common Tree",
+		"desc": "A common tree found in the wilderness.",
+		"tags": ["tree"],
 		"blocks_vision": false,
 		"tree_chop": true,
 		"burnable": true,
@@ -11,6 +14,9 @@ const TERRAIN_PROPERTIES := {
 		"chop_to": "dirt"
 	},
 	"tree2": {
+		"name": "Common Tree",
+		"desc": "A common tree found in the wilderness.",
+		"tags": ["tree"],
 		"blocks_vision": false,
 		"tree_chop": true,
 		"burnable": true,
@@ -19,6 +25,9 @@ const TERRAIN_PROPERTIES := {
 		"chop_to": "dirt"
 	},
 	"tree3": {
+		"name": "Common Tree",
+		"desc": "A common tree found in the wilderness.",
+		"tags": ["tree"],
 		"blocks_vision": false,
 		"tree_chop": true,
 		"burnable": true,
@@ -27,6 +36,9 @@ const TERRAIN_PROPERTIES := {
 		"chop_to": "dirt"
 	},
 	"grass": {
+		"name": "Patch of grass",
+		"desc": "a typical patch of grassland",
+		"tags": ["grass"],
 		"blocks_vision": false,
 		"grass_cut": true,
 		"grass_search": true,
@@ -36,6 +48,9 @@ const TERRAIN_PROPERTIES := {
 		"dig_to": "dirt"
 	},
 	"dirt": {
+		"name": "Patch of dirt",
+		"desc": "a typical patch of dirt",
+		"tags": ["dirt"],
 		"blocks_vision": false,
 		"diggable": true,
 		"hoeable": true,
@@ -43,6 +58,9 @@ const TERRAIN_PROPERTIES := {
 		"dig_to": "hole"
 	},
 	"water": {
+		"name": "Water",
+		"desc": "A bit of natural water, I could fish or collect dirty water here",
+		"tags": ["dirtywater"],
 		"blocks_vision": false,
 		"fishable": true,
 		"drinkable": true,
@@ -52,10 +70,16 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": false
 	},
 	"path": {
+		"name": "Dirt Path",
+		"desc": "Someone has beaten a path here",
+		"tags": ["dirtpath"],
 		"blocks_vision": false,
 		"blocks_movement": false
 	},
 	"bush": {
+		"name": "Bush",
+		"desc": "An overgrown patch of weeds grows here",
+		"tags": ["bush"],
 		"blocks_vision": false,
 		"bush_cut": true,
 		"bush_search": true,
@@ -64,6 +88,9 @@ const TERRAIN_PROPERTIES := {
 		"destroy_to": "dirt"
 	},
 	"flowers": {
+		"name": "Flowers",
+		"desc": "A patch of lovely flowers grows here",
+		"tags": ["flowers"],
 		"blocks_vision": false,
 		"flowers_cut": true,
 		"flowers_search": true,
@@ -72,6 +99,9 @@ const TERRAIN_PROPERTIES := {
 		"destroy_to": "dirt"
 	},
 	"bridge": {
+		"name": "Wood Bridge",
+		"desc": "Someone has built a wooden bridge here",
+		"tags": ["bridge"],
 		"blocks_vision": false,
 		"wood_destroy": true,
 		"burnable": true,
@@ -79,12 +109,18 @@ const TERRAIN_PROPERTIES := {
 		"destroy_to": "water"
 	},
 	"hole": {
+		"name": "Cave Entrance",
+		"desc": "A hole leading into the earth, what awaits me down there?",
+		"tags": ["hole"],
 		"blocks_vision": false,
 		"hole_enter": true,
 		"hole_spawn": true,
 		"blocks_movement": false
 	},
 	"stonefloor": {
+		"name": "Stone Floor",
+		"desc": "Rustic Cobblestone Flooring",
+		"tags": ["floor", "fireproof"],
 		"blocks_vision": false,
 		"stone_destroy": true,
 		"destroy_to": "dirt",
@@ -93,12 +129,18 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": false
 	},
 	"stairs": {
+		"name": "Stairs",
+		"desc": "Stairs leading where?",
+		"tags": ["stairs"],
 		"blocks_vision": false,
 		"stairs_enter_down": true,
 		"buildable": true,
 		"blocks_movement": false
 	},
 	"stonewallside": {
+		"name": "Stone Wall",
+		"desc": "Rustic Cobblestone Wall",
+		"tags": ["wall", "fireproof"],
 		"blocks_vision": true,
 		"stone_destroy": true,
 		"destroy_to": "dirt",
@@ -107,6 +149,9 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"stonewallbottom": {
+		"name": "Stone Wall",
+		"desc": "Rustic Cobblestone Wall",
+		"tags": ["wall", "fireproof"],
 		"blocks_vision": true,
 		"stone_destroy": true,
 		"destroy_to": "dirt",
@@ -115,6 +160,9 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"stonewallbottomwindow": {
+		"name": "Stone Wall Window",
+		"desc": "Rustic Cobblestone Wall with a Window",
+		"tags": ["windowwall", "fireproof"],
 		"blocks_vision": false,
 		"window": true,
 		"openable_window": true,
@@ -128,6 +176,9 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"stonewallsidewindow": {
+		"name": "Stone Wall Window",
+		"desc": "Rustic Cobblestone Wall with a Window",
+		"tags": ["windowwall", "fireproof"],
 		"blocks_vision": false,
 		"window": true,
 		"openable_window": true,
@@ -141,18 +192,27 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"short_ladder": {
+		"name": "Ladder",
+		"desc": "Rustic Ladder, leading where?",
+		"tags": ["ladder"],
 		"blocks_vision": false,
 		"stairs_enter_up": true,
 		"buildable": true,
 		"blocks_movement": false
 	},
 	"long_ladder": {
+		"name": "Ladder",
+		"desc": "Rustic Ladder, leading where?",
+		"tags": ["ladder"],
 		"blocks_vision": false,
 		"stairs_enter_up": true,
 		"buildable": true,
 		"blocks_movement": false
 	},
 	"stonedoor": {
+		"name": "Stone Door",
+		"desc": "Simple stone door made from primitive materials.",
+		"tags": ["lockable", "fireproof"],
 		"blocks_vision": true,
 		"door": true,
 		"openable_door": true,
@@ -164,14 +224,23 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"slum_road_floor": {
+		"name": "Dirty Street",
+		"desc": "Poorly maintained paved street for vehicle traffic",
+		"tags": ["floor", "fireproof"],
 		"blocks_vision": false,
 		"blocks_movement": false
 	},
 	"slum_sidewalk_floor": {
+		"name": "Dirty Sidewalk",
+		"desc": "Poorly maintained sidewalk for foot traffic",
+		"tags": ["floor", "fireproof"],
 		"blocks_vision": false,
 		"blocks_movement": false
 	},
 	"slum_brick_floor": {
+		"name": "Brick Floor",
+		"desc": "Old tenament flooring",
+		"tags": ["floor", "fireproof"],
 		"blocks_vision": false,
 		"stone_destroy": true,
 		"destroy_to": "dirt",
@@ -180,6 +249,9 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": false
 	},
 	"slum_stone_floor": {
+		"name": "Stone Floor",
+		"desc": "Unremarkable flooring",
+		"tags": ["floor", "fireproof"],
 		"blocks_vision": false,
 		"stone_destroy": true,
 		"destroy_to": "dirt",
@@ -188,6 +260,9 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": false
 	},
 	"slum_brick_wallside": {
+		"name": "Brick Wall",
+		"desc": "Old tenament wall",
+		"tags": ["wall", "fireproof"],
 		"blocks_vision": true,
 		"stone_destroy": true,
 		"destroy_to": "dirt",
@@ -196,6 +271,9 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"slum_brick_wallbottom": {
+		"name": "Brick Wall",
+		"desc": "Old tenament wall",
+		"tags": ["wall", "fireproof"],
 		"blocks_vision": true,
 		"stone_destroy": true,
 		"destroy_to": "dirt",
@@ -204,6 +282,9 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"slum_brick_wallbottom_window": {
+		"name": "Brick Wall with Window",
+		"desc": "Old tenament wall with window",
+		"tags": ["windowwall", "fireproof"],
 		"blocks_vision": false,
 		"window": true,
 		"openable_window": true,
@@ -217,6 +298,9 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"slum_brick_wallside_window": {
+		"name": "Brick Wall with Window",
+		"desc": "Old tenament wall with window",
+		"tags": ["windowwall", "fireproof"],
 		"blocks_vision": false,
 		"window": true,
 		"openable_window": true,
@@ -230,6 +314,9 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"slum_brick_door": {
+		"name": "Old wood door in Brick Wall",
+		"desc": "Old tenament door with scrapped corners",
+		"tags": ["lockable", "fireproof"],
 		"blocks_vision": true,
 		"door": true,
 		"openable_door": true,
@@ -241,24 +328,36 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"slum_brick_floor_stairs_down": {
+		"name": "Old tenament stairs",
+		"desc": "Simple stairs in an old building",
+		"tags": ["stairs", "fireproof"],
 		"blocks_vision": false,
 		"stairs_enter_down": true,
 		"buildable": true,
 		"blocks_movement": false
 	},
 	"slum_brick_floor_stairs_up": {
+		"name": "Old tenament stairs",
+		"desc": "Simple stairs in an old building",
+		"tags": ["stairs", "fireproof"],
 		"blocks_vision": false,
 		"stairs_enter_up": true,
 		"buildable": true,
 		"blocks_movement": false
 	},	
 	"stonefloor_hole": {
+		"name": "Crumbling Hole in Stone Flooring",
+		"desc": "It appears the floor collapsed here, leading somewhere.",
+		"tags": ["hole"],
 		"blocks_vision": false,
 		"stairs_enter_down": true,
 		"buildable": true,
 		"blocks_movement": false
 	},	
 	"slum_wood_fence": {
+		"name": "Old slum fencing",
+		"desc": "Blocks your vision but ugly and flimsy",
+		"tags": ["wall"],
 		"blocks_vision": true,
 		"wood_destroy": true,
 		"destroy_to": "dirt",
@@ -267,6 +366,9 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"cavewallbottom": {
+		"name": "Cave Wall",
+		"desc": "Natural cavern walls",
+		"tags": ["cavewall"],
 		"blocks_vision": true,
 		"stone_destroy": true,
 		"destroy_to": "dirt",
@@ -275,6 +377,9 @@ const TERRAIN_PROPERTIES := {
 		"blocks_movement": true
 	},
 	"cavewallside": {
+		"name": "Cave Wall",
+		"desc": "Natural cavern walls",
+		"tags": ["cavewall"],
 		"blocks_vision": true,
 		"stone_destroy": true,
 		"destroy_to": "dirt",

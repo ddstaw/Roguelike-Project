@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://bcoauqnpsrcm"]
+
+[ext_resource type="Script" path="res://scripts/PlayerPaperdoll.gd" id="1_nvuh3"]
+
+[node name="Player" type="Node2D"]
+z_index = 1
+script = ExtResource("1_nvuh3")
+
+[node name="BaseSprite" type="Sprite2D" parent="."]
+
+[node name="ArmorSprite" type="Sprite2D" parent="."]
+
+[node name="CapeSprite" type="Sprite2D" parent="."]
+
+[node name="HatSprite" type="Sprite2D" parent="."]
+
+[node name="MainWeaponSprite" type="Sprite2D" parent="."]
+
+[node name="OffhandSprite" type="Sprite2D" parent="."]
+
+[node name="GlowOverlay" type="Sprite2D" parent="."]

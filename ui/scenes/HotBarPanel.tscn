@@ -1,0 +1,187 @@
+[gd_scene load_steps=9 format=3 uid="uid://bp1jigvct3sol"]
+
+[ext_resource type="Script" path="res://scripts/HotBarPanel.gd" id="1_mj4i0"]
+[ext_resource type="Texture2D" uid="uid://c4poxga1pb5ld" path="res://assets/ui/hotbar_up.png" id="2_18voa"]
+[ext_resource type="Texture2D" uid="uid://csqtrtwusty37" path="res://assets/ui/hotbar_up_hover.png" id="3_52ah3"]
+[ext_resource type="Texture2D" uid="uid://yn7i52j2j4ol" path="res://assets/ui/hotbar_down.png" id="4_jhfk8"]
+[ext_resource type="Texture2D" uid="uid://yulbj34djxfl" path="res://assets/ui/hotbar_down_hover.png" id="5_rmcif"]
+[ext_resource type="Script" path="res://scripts/ItemSlot.gd" id="6_s1lbi"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vurbd"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1w3yr"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[node name="HotBarPanel" type="Panel"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 531.0
+offset_top = 929.0
+offset_right = -26.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vurbd")
+script = ExtResource("1_mj4i0")
+
+[node name="HotbarLabel" type="Label" parent="."]
+layout_mode = 0
+offset_left = 29.0
+offset_top = 31.0
+offset_right = 78.0
+offset_bottom = 113.0
+theme_override_font_sizes/font_size = 81
+text = "1"
+vertical_alignment = 1
+
+[node name="HotbarUpBtn" type="TextureButton" parent="."]
+z_index = 3
+layout_mode = 0
+offset_left = 81.0
+offset_top = 5.0
+offset_right = 144.0
+offset_bottom = 68.0
+texture_normal = ExtResource("2_18voa")
+texture_hover = ExtResource("3_52ah3")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="HotbarDownBtn" type="TextureButton" parent="."]
+z_index = 3
+layout_mode = 0
+offset_left = 81.0
+offset_top = 73.0
+offset_right = 144.0
+offset_bottom = 136.0
+texture_normal = ExtResource("4_jhfk8")
+texture_hover = ExtResource("5_rmcif")
+ignore_texture_size = true
+stretch_mode = 0
+
+[node name="HotbarSlots" type="HBoxContainer" parent="."]
+clip_contents = true
+custom_minimum_size = Vector2(600, 72)
+layout_mode = 0
+offset_left = 149.0
+offset_top = 5.0
+offset_right = 1357.0
+offset_bottom = 133.0
+theme_override_constants/separation = 6
+
+[node name="HotbarSlot1" type="Control" parent="HotbarSlots"]
+clip_contents = true
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+script = ExtResource("6_s1lbi")
+icon_padding = 1
+
+[node name="Panel2" type="Panel" parent="HotbarSlots/HotbarSlot1"]
+layout_mode = 2
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1w3yr")
+
+[node name="HotbarSlot2" type="Control" parent="HotbarSlots"]
+clip_contents = true
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+script = ExtResource("6_s1lbi")
+icon_padding = 1
+
+[node name="Panel3" type="Panel" parent="HotbarSlots/HotbarSlot2"]
+layout_mode = 2
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1w3yr")
+
+[node name="HotbarSlot3" type="Control" parent="HotbarSlots"]
+clip_contents = true
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+script = ExtResource("6_s1lbi")
+icon_padding = 1
+
+[node name="Panel4" type="Panel" parent="HotbarSlots/HotbarSlot3"]
+layout_mode = 2
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1w3yr")
+
+[node name="HotbarSlot4" type="Control" parent="HotbarSlots"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+script = ExtResource("6_s1lbi")
+icon_padding = 1
+
+[node name="Panel5" type="Panel" parent="HotbarSlots/HotbarSlot4"]
+layout_mode = 2
+offset_left = -1.0
+offset_right = 127.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1w3yr")
+
+[node name="HotbarSlot5" type="Control" parent="HotbarSlots"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+script = ExtResource("6_s1lbi")
+icon_padding = 1
+
+[node name="Panel6" type="Panel" parent="HotbarSlots/HotbarSlot5"]
+layout_mode = 2
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1w3yr")
+
+[node name="HotbarSlot6" type="Control" parent="HotbarSlots"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+script = ExtResource("6_s1lbi")
+icon_padding = 1
+
+[node name="Panel7" type="Panel" parent="HotbarSlots/HotbarSlot6"]
+layout_mode = 2
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1w3yr")
+
+[node name="HotbarSlot7" type="Control" parent="HotbarSlots"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+script = ExtResource("6_s1lbi")
+icon_padding = 1
+
+[node name="Panel8" type="Panel" parent="HotbarSlots/HotbarSlot7"]
+layout_mode = 2
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1w3yr")
+
+[node name="HotbarSlot8" type="Control" parent="HotbarSlots"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+script = ExtResource("6_s1lbi")
+icon_padding = 1
+
+[node name="Panel9" type="Panel" parent="HotbarSlots/HotbarSlot8"]
+layout_mode = 2
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1w3yr")
+
+[node name="HotbarSlot9" type="Control" parent="HotbarSlots"]
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+script = ExtResource("6_s1lbi")
+icon_padding = 1
+
+[node name="Panel10" type="Panel" parent="HotbarSlots/HotbarSlot9"]
+layout_mode = 2
+offset_right = 128.0
+offset_bottom = 128.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_1w3yr")

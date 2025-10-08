@@ -49,7 +49,7 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_823sl"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_umk53"]
 bg_color = Color(0.6, 0.6, 0.6, 0)
 border_width_left = 3
 border_width_top = 3
@@ -118,7 +118,7 @@ theme_override_constants/outline_size = 0
 theme_override_constants/h_separation = 0
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
-text = " WEAPONS "
+text = " GEAR "
 
 [node name="Arm" type="Button" parent="Player_Panel/LeftVBox/FilterBar"]
 layout_mode = 2
@@ -318,7 +318,7 @@ theme_override_constants/outline_size = 0
 theme_override_constants/h_separation = 0
 theme_override_font_sizes/font_size = 22
 theme_override_styles/normal = SubResource("StyleBoxFlat_bo7l5")
-text = " WEAPONS "
+text = " GEAR "
 
 [node name="Arm" type="Button" parent="Container_control/Storage_Panel/LeftVBox/FilterBar"]
 layout_mode = 2
@@ -509,17 +509,17 @@ text = "MOUNT WEIGHT"
 z_index = 2
 layout_mode = 0
 offset_left = 806.0
-offset_top = 154.0
+offset_top = 136.0
 offset_right = 1124.0
-offset_bottom = 902.0
+offset_bottom = 904.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_ao3kr")
 
 [node name="MarginContainer" type="MarginContainer" parent="AppraisalPanel"]
 layout_mode = 0
 offset_left = 7.0
 offset_top = 5.0
-offset_right = 313.0
-offset_bottom = 834.0
+offset_right = 310.0
+offset_bottom = 759.0
 
 [node name="ScrollContainer" type="ScrollContainer" parent="AppraisalPanel/MarginContainer"]
 layout_mode = 2
@@ -543,7 +543,7 @@ texture = ExtResource("6_68i24")
 
 [node name="Panel" type="Panel" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainerItem"]
 layout_mode = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_823sl")
+theme_override_styles/panel = SubResource("StyleBoxFlat_umk53")
 
 [node name="MarginContainer" type="MarginContainer" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer"]
 layout_mode = 2
@@ -561,24 +561,13 @@ theme_override_font_sizes/font_size = 23
 text = "Pigface Knight Helm"
 autowrap_mode = 3
 
-[node name="DurabilityLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+[node name="SpecialLabel" type="RichTextLabel" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+z_index = 4
 layout_mode = 2
 size_flags_vertical = 5
-text = "Good Condition 92/100"
-autowrap_mode = 3
-
-[node name="ValueLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 5
-text = "Value: 20"
-autowrap_mode = 3
-
-[node name="BonusLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
-layout_mode = 2
-size_flags_vertical = 5
-text = "+5 Def, -5 Dex
-"
-autowrap_mode = 3
+bbcode_enabled = true
+text = "Special Stuff Here"
+fit_content = true
 
 [node name="Spacer3" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
 layout_mode = 2
@@ -590,6 +579,30 @@ layout_mode = 2
 size_flags_vertical = 5
 theme_override_font_sizes/font_size = 19
 text = "A knightly helm crafted with great skill. Provides ample protection with a price to nimbleness"
+autowrap_mode = 3
+
+[node name="Spacer4" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+autowrap_mode = 3
+
+[node name="ValueLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "Value: 20"
+autowrap_mode = 3
+
+[node name="DurabilityLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "Good Condition 92/100"
+autowrap_mode = 3
+
+[node name="BonusLabel" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 5
+text = "+5 Def, -5 Dex
+"
 autowrap_mode = 3
 
 [node name="Spacer" type="Label" parent="AppraisalPanel/MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer"]

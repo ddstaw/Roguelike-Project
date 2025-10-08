@@ -263,7 +263,6 @@ func _update_sort_visuals() -> void:
 			(b as Button).add_theme_color_override("font_pressed_color", col)
 			(b as Button).add_theme_color_override("font_hover_color", col)
 
-
 func _refresh_grid() -> void:
 	for c in inv_grid.get_children():
 		c.queue_free()
@@ -274,8 +273,9 @@ func _refresh_grid() -> void:
 		slot.mouse_filter = Control.MOUSE_FILTER_STOP
 		inv_grid.add_child(slot)
 
-		var tex := _icon_for(str(s.get("item_ID", "")))
+		var tex := _icon_for(s)
 		slot.call_deferred("set_data", s, tex)
+
 
 		# ✅ Wire slot click → appraisal
 		slot.gui_input.connect(func(event: InputEvent):
@@ -367,11 +367,11 @@ func _pass_filter(s: Dictionary) -> bool:
 		return true
 
 	var id: String = str(s.get("item_ID", ""))
-	var t: String  = str(s.get("type", "")).to_upper()  # e.g., "CON", "MAT", "WEAP", "ARM", "LOOT"
+	var t: String  = str(s.get("type", "")).to_upper()  # e.g., "CON", "MAT", "GEAR", "ARM", "LOOT"
 
 	match _filter:
-		"WEAP":
-			return id.begins_with("WEA") or t == "WEAP"
+		"GEAR":
+			return id.begins_with("GEA") or t == "GEAR"
 		"ARM":
 			return id.begins_with("ARM") or t == "ARM"
 		"CON":
@@ -383,34 +383,46 @@ func _pass_filter(s: Dictionary) -> bool:
 		_:
 			return true
 
-func _icon_for(item_id: String) -> Texture2D:
-	if _icon_cache.has(item_id):
-		return _icon_cache[item_id]
-
-	var def := (ITEM_DATA.ITEM_PROPERTIES.get(item_id, {}) as Dictionary)
-	if def.is_empty():
-		push_warning("[Icon] No item def for id: " + item_id)
-		_icon_cache[item_id] = null
+func _icon_for(item: Dictionary) -> Texture2D:
+	if !_inventory.has(item.get("unique_ID", "")):
 		return null
+	if _icon_cache.has(item.get("unique_ID", "")):
+		return _icon_cache[item.get("unique_ID", "")]
 
-	var path: String = str(def.get("img_path", ""))
-	if path == "":
-		push_warning("[Icon] No img_path for id: " + item_id)
-		_icon_cache[item_id] = null
-		return null
+	var tex: Texture2D = null
 
-	# Verify the resource actually exists (helps catch typos)
-	if !ResourceLoader.exists(path):
-		push_warning("[Icon] Resource not found: " + path + " (id=" + item_id + ")")
-		_icon_cache[item_id] = null
-		return null
+	if item.has("img_layers"):
+		var layers: Array = item["img_layers"]
+		
+		for i: String in layers:
+			if !ResourceLoader.exists(i):
+				push_warning("Missing image in img_layers: " + i)
+				continue
 
-	var tex := ResourceLoader.load(path) as Texture2D
-	if tex == null:
-		push_warning("[Icon] Failed to load Texture2D at: " + path + " (id=" + item_id + ")")
+			var layer_tex: Texture2D = ResourceLoader.load(i) as Texture2D
+			if layer_tex == null:
+				continue
 
-	_icon_cache[item_id] = tex
+			if tex == null:
+				tex = layer_tex
+			else:
+				var base_img: Image = tex.get_image()
+				var layer_img: Image = layer_tex.get_image()
+				if base_img == null or layer_img == null:
+					continue
+
+				base_img.blend_rect(layer_img, Rect2(Vector2.ZERO, layer_tex.get_size()), Vector2.ZERO)
+				tex = ImageTexture.create_from_image(base_img)
+
+	else:
+		var def: Dictionary = ITEM_DATA.ITEM_PROPERTIES.get(str(item.get("item_ID", "")), {})
+		var fallback: String = str(def.get("img_path", ""))
+		if fallback != "" and ResourceLoader.exists(fallback):
+			tex = ResourceLoader.load(fallback) as Texture2D
+
+	_icon_cache[item.get("unique_ID", "")] = tex
 	return tex
+
 
 # Build YYYYMMDDHHMM as an integer. Bigger = newer.
 func _stack_sort_key(s: Dictionary) -> int:
@@ -505,8 +517,53 @@ func _canonical_filter(label: String) -> String:
 	match u:
 		"ALL": return "ALL"
 		"CON", "CONSUMABLES": return "CON"
-		"WEAP", "WEAPONS": return "WEAP"
+		"GEAR", "GEAR": return "GEAR"
 		"ARM", "ARMOR", "ARMOUR": return "ARM"
 		"MAT", "MATS", "MATERIALS": return "MATS"
 		"LOOT": return "LOOT"
 		_: return u
+
+func _generate_layered_icon(layer_paths: Array[String]) -> Texture2D:
+	if layer_paths.is_empty():
+		return null
+
+	var base_image: Image = null
+
+	for i in range(layer_paths.size()):
+		var path := layer_paths[i]
+		if !ResourceLoader.exists(path):
+			push_warning("Missing layer path: %s" % path)
+			continue
+
+		var tex := ResourceLoader.load(path) as Texture2D
+		if tex == null:
+			continue
+
+		var img: Image = tex.get_image()
+		if base_image == null:
+			base_image = img.duplicate()
+			continue
+
+		var is_overlay: bool = path.to_lower().find("overlay") != -1
+
+		for y in range(img.get_height()):
+			for x in range(img.get_width()):
+				var base_col := base_image.get_pixel(x, y)
+				var layer_col := img.get_pixel(x, y)
+
+				var final_col: Color = base_col
+
+				if is_overlay:
+					# Additive blend
+					final_col.r = clamp(base_col.r + layer_col.r * layer_col.a, 0.0, 1.0)
+					final_col.g = clamp(base_col.g + layer_col.g * layer_col.a, 0.0, 1.0)
+					final_col.b = clamp(base_col.b + layer_col.b * layer_col.a, 0.0, 1.0)
+					final_col.a = max(base_col.a, layer_col.a)
+				else:
+					# Normal alpha blend
+					final_col = layer_col.blend(base_col)
+
+				base_image.set_pixel(x, y, final_col)
+
+	var final_tex := ImageTexture.create_from_image(base_image)
+	return final_tex

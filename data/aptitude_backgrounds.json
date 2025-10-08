@@ -1,118 +1,118 @@
 [
-    {
-        "title": "Technomancer",
-        "description": "A visionary of technology, fusing machines with arcane principles.",
-        "bonus": "Bonus: +2 to Technology Skills, Access to Advanced Workshops.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": [],
-        "aptitude_requirements": {
-            "magic": 0,
-            "technology": 2
-        }
-    },
-    {
-        "title": "Synthesist",
-        "description": "A rare blend of magic and technology, uniting the best of both worlds.",
-        "bonus": "Bonus: +1 to Magic and Technology Skills, Access to Hybrid Crafting.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": [],
-        "aptitude_requirements": {
-            "magic": 1,
-            "technology": 1
-        }
-    },
-    {
-        "title": "Mastermind",
-        "description": "A calculating genius combining dark magic and advanced technology to create minions.",
-        "bonus": "Bonus: +3 to Minion Control, Access to Unique Constructs.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": [],
-        "skill_combinations": {
-            "magitech": ["robo", "necr"]
-        }
-    },
-    {
-        "title": "Arcanist",
-        "description": "A master of the mystical arts, drawn to the secrets of magic.",
-        "bonus": "Bonus: +2 to Magic Skills, Access to Arcane Libraries.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": [],
-        "aptitude_requirements": {
-            "magic": 2,
-            "technology": 0
-        }
-    },
-    {
-        "title": "Demolitionist",
-        "description": "You specialize in combing technology and fire magick for devastion.",
-        "bonus": "Bonus: +2 to fire dmg.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": [],
-        "skill_combinations": {
-            "magitech": ["exp", "pyro"]
-        }
-    },
-    {
-        "title": "Necroslinger",
-        "description": "A dark gunfighter who combines sharpshooting and necromancy.",
-        "bonus": "Bonus: +2 to Necromancy, +1 to Gunsmithing, Access to Forbidden Labs.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": [],
-        "skill_combinations": {
-            "magitech": ["necr", "guns"]
-        }
-    },
-    {
-        "title": "Gunsmith Alchemist",
-        "description": "Blending firearms expertise with alchemy, you create explosive and potent ammunition.",
-        "bonus": "Bonus: +2 to Firearms, +1 to Alchemy, Access to Gunsmith Workshops.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": [],
-        "skill_combinations": {
-            "magitech": ["guns", "chem"]
-        }
-    },
-    {
-        "title": "Thaumaturgic Tinkerer",
-        "description": "A blend of magical insight and mechanical prowess, you tinker with magical devices to enhance their power.",
-        "bonus": "Bonus: +1 to Tinkering, +1 to Magic, Access to Arcane Workshops.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": [],
-        "skill_combinations": {
-            "magitech": ["tink", "thau"]
-        }
-    },
-    {
-        "title": "Battle Enchanter",
-        "description": "You specialize in imbuing weapons and armor with powerful enchantments, combining combat prowess with arcane mastery.",
-        "bonus": "Bonus: +2 to Enchantment, +1 to Combat Skills, Access to Enchanter’s Forge.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": [],
-        "skill_combinations": {
-            "magitech": ["ench", "exp"]
-        }
-    },
-    {
-        "title": "Cryo-Engineer",
-        "description": "You fuse cryomancy with technological innovations to create freezing traps and chilling weaponry.",
-        "bonus": "Bonus: +1 to Cryomancy, +1 to Technology, Access to Cryo Labs.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": [],
-        "aptitude_requirements": {
-            "technology": 1
-        },
-        "skill_combinations": {
-            "magitech": ["cyro"]
-        }
-    }
+	{
+		"title": "Technomancer",
+		"description": "A visionary of technology, fusing machines with arcane principles.",
+		"bonus": "Bonus: +2 to Technology Skills, Access to Advanced Workshops.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": [],
+		"aptitude_requirements": {
+			"magic": 0,
+			"technology": 2
+		}
+	},
+	{
+		"title": "Synthesist",
+		"description": "A rare blend of magic and technology, uniting the best of both worlds.",
+		"bonus": "Bonus: +1 to Magic and Technology Skills, Access to Hybrid Crafting.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": [],
+		"aptitude_requirements": {
+			"magic": 1,
+			"technology": 1
+		}
+	},
+	{
+		"title": "Mastermind",
+		"description": "A calculating genius combining dark magic and advanced technology to create minions.",
+		"bonus": "Bonus: +3 to Minion Control, Access to Unique Constructs.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": [],
+		"skill_combinations": {
+			"magitech": ["robo", "necr"]
+		}
+	},
+	{
+		"title": "Arcanist",
+		"description": "A master of the mystical arts, drawn to the secrets of magic.",
+		"bonus": "Bonus: +2 to Magic Skills, Access to Arcane Libraries.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": [],
+		"aptitude_requirements": {
+			"magic": 2,
+			"technology": 0
+		}
+	},
+	{
+		"title": "Demolitionist",
+		"description": "You specialize in combing technology and fire magick for devastion.",
+		"bonus": "Bonus: +2 to fire dmg.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": [],
+		"skill_combinations": {
+			"magitech": ["exp", "pyro"]
+		}
+	},
+	{
+		"title": "Necroslinger",
+		"description": "A dark gunfighter who combines sharpshooting and necromancy.",
+		"bonus": "Bonus: +2 to Necromancy, +1 to Gunsmithing, Access to Forbidden Labs.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": [],
+		"skill_combinations": {
+			"magitech": ["necr", "guns"]
+		}
+	},
+	{
+		"title": "Gunsmith Alchemist",
+		"description": "Blending firearms expertise with alchemy, you create explosive and potent ammunition.",
+		"bonus": "Bonus: +2 to Firearms, +1 to Alchemy, Access to Gunsmith Workshops.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": [],
+		"skill_combinations": {
+			"magitech": ["guns", "chem"]
+		}
+	},
+	{
+		"title": "Thaumaturgic Tinkerer",
+		"description": "A blend of magical insight and mechanical prowess, you tinker with magical devices to enhance their power.",
+		"bonus": "Bonus: +1 to Tinkering, +1 to Magic, Access to Arcane Workshops.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": [],
+		"skill_combinations": {
+			"magitech": ["tink", "thau"]
+		}
+	},
+	{
+		"title": "Battle Enchanter",
+		"description": "You specialize in imbuing weapons and armor with powerful enchantments, combining combat prowess with arcane mastery.",
+		"bonus": "Bonus: +2 to Enchantment, +1 to Combat Skills, Access to Enchanter’s Forge.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": [],
+		"skill_combinations": {
+			"magitech": ["ench", "exp"]
+		}
+	},
+	{
+		"title": "Cryo-Engineer",
+		"description": "You fuse cryomancy with technological innovations to create freezing traps and chilling weaponry.",
+		"bonus": "Bonus: +1 to Cryomancy, +1 to Technology, Access to Cryo Labs.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": [],
+		"aptitude_requirements": {
+			"technology": 1
+		},
+		"skill_combinations": {
+			"magitech": ["cyro"]
+		}
+	}
 ]

@@ -8,6 +8,7 @@ extends Control
 @onready var dark_overlay = $UILayer/DarkOverlay
 @onready var light_overlay := $LightOverlay
 @onready var travel_log = $UILayer/LocalPlayUI/TravelLogControl
+@onready var buildables_overlay := preload("res://scenes/play/BuildablesOverlay.tscn").instantiate()
 
 
 var light_map: Array = []  # 🌕 Stores per-tile light levels
@@ -36,6 +37,12 @@ var current_z_level: int = 0
 var last_egress_pos: Vector2i = Vector2i(-999, -999)  # Declare this at the top of your
 var visible_chunks: Array = []
 
+enum TargetingMode { NONE, BUILD, AIM, INSPECT }
+var targeting_mode: TargetingMode = TargetingMode.NONE
+var targeting_cursor: Node = null  # instance of your TargetingCursor scene
+var target_cursor_grid_pos: Vector2i = Vector2i.ZERO
+
+
 const VISIBILITY_UPDATE_INTERVAL := 0.1  # seconds
 
 const TEXTURES = Constants.TILE_TEXTURES
@@ -46,6 +53,13 @@ func _ready():
 	#print("🔍 DEBUG: LocalMap.gd _ready() is running!")
 
 	await get_tree().process_frame  # Let scene tree settle
+	var cursor_scene = preload("res://scenes/play/TargetingCursor.tscn")
+	targeting_cursor = cursor_scene.instantiate()
+	print("TargetingCursor instance:", targeting_cursor, "visible:", targeting_cursor.visible, "z_index:", targeting_cursor.z_index)
+	tile_container.add_child(targeting_cursor)
+	# Make sure it's drawn above other things
+	targeting_cursor.z_index = 900
+	targeting_cursor.set_mode(TargetingMode.NONE)
 
 	# 🔄 Load placement data first
 	var placement = LoadHandlerSingleton.load_temp_localmap_placement()
@@ -79,7 +93,11 @@ func _ready():
 
 	# 🗺️ Render map and objects
 	load_and_render_local_map()
-
+	
+	print("TargetingCursor position:", targeting_cursor.position)
+	if is_instance_valid(targeting_cursor):
+		tile_container.move_child(targeting_cursor, tile_container.get_child_count() - 1)
+	
 	# 💡 Manually initialize LightOverlay AFTER map is built
 	if light_overlay and light_overlay.has_method("initialize"):
 		#print("🔧 Initializing LightOverlay manually...")
@@ -97,7 +115,7 @@ func _ready():
 	update_play_scene_name()
 	update_local_progress_bars()
 	update_dark_overlay()
-
+	
 	# 🔦 Kick off FOV + lighting update if player exists
 	if player:
 		var grid_pos = Vector2i(round(player.position.x / TILE_SIZE), round(player.position.y / TILE_SIZE))
@@ -105,11 +123,13 @@ func _ready():
 	else:
 		print("⚠️ Player not ready yet — skipping FOV update (will happen on spawn)")
 		
-
+	$UILayer.add_child(buildables_overlay)
+	buildables_overlay.visible = false
 
 func load_and_render_local_map():
 	for child in tile_container.get_children():
-		child.queue_free()
+		if child.name != "TargetingCursor":
+			child.queue_free()
 	#print("📂 Loading local map data from saved JSONs...")
 
 	# 🔍 Get entry context and chunk info
@@ -356,9 +376,14 @@ func update_zoom():
 
 	#print("Zoom Updated. New TileContainer Position:", tile_container.position)
 
-
-
 func _unhandled_input(event):
+	if is_in_targeting_mode():
+		if event.is_action_pressed("ui_cancel"):
+			exit_targeting()
+			get_viewport().set_input_as_handled()
+			return
+
+	# Zoom remains globally available
 	if event.is_action_pressed("local_zoom_in"):
 		zoom_in()
 	elif event.is_action_pressed("local_zoom_out"):
@@ -1357,3 +1382,43 @@ func get_visible_chunks() -> Array:
 	# For now, we make visible_chunks be just the current chunk
 	# Could be expanded later (neighboring chunks, etc.)
 	return visible_chunks
+
+func enter_targeting(mode: TargetingMode) -> void:
+	if not is_instance_valid(targeting_cursor):
+		print("❌ Targeting cursor is not valid!")
+		return
+
+	targeting_mode = mode
+	targeting_cursor.set_mode(mode)
+
+	# 🧱 Toggle buildables overlay
+	if is_instance_valid(buildables_overlay):
+		buildables_overlay.visible = (mode == TargetingMode.BUILD)
+
+	# ⛺ Start target cursor at player position
+	if player:
+		var player_grid_pos = Vector2i(player.position / TILE_SIZE)
+		target_cursor_grid_pos = player_grid_pos
+		targeting_cursor.set_grid_position(player_grid_pos, TILE_SIZE)
+	else:
+		print("⚠️ No player position found!")
+
+	targeting_cursor.visible = true
+
+func exit_targeting() -> void:
+	targeting_mode = TargetingMode.NONE
+	if is_instance_valid(targeting_cursor):
+		targeting_cursor.visible = false
+	if is_instance_valid(buildables_overlay):
+		buildables_overlay.visible = false
+		
+func move_target_cursor(delta: Vector2i) -> void:
+	target_cursor_grid_pos += delta
+	if is_instance_valid(targeting_cursor):
+		targeting_cursor.set_grid_position(target_cursor_grid_pos, TILE_SIZE)
+	else:
+		print("⚠️ Targeting cursor not valid on move.")
+
+
+func is_in_targeting_mode() -> bool:
+	return targeting_mode != TargetingMode.NONE

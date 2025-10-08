@@ -1,143 +1,143 @@
 [
-    {
-        "title": "Lady of the Manor",
-        "description": "Born into wealth and privilege, you manage estates and command respect through charm and wit.",
-        "bonus": "Bonus: +2 to Charisma, Access to Noble Estates.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": ["female"],
-        "aptitude_requirements": {
-            "magic": 1
-        },
-        "skill_combinations": {
-            "skills": ["acumen"]
-        }
-    },
-    {
-        "title": "Iron Matron",
-        "description": "A tough, no-nonsense woman who has carved out her own place in the male-dominated world of industry.",
-        "bonus": "Bonus: +2 to Blacksmithing, +1 to Construction.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": ["female"],
-        "aptitude_requirements": {
-            "technology": 1
-        },
-        "skill_combinations": {
-            "skills": ["blacksmithing"]
-        }
-    },
-    {
-        "title": "Gentleman's Duelist",
-        "description": "Trained in the art of fencing and honor-bound combat, you uphold a code of chivalry and skill.",
-        "bonus": "Bonus: +2 to Deftstriking, +1 to Erudition.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": ["male"],
-        "aptitude_requirements": {
-            "magic": 0,
-            "technology": 0
-        },
-        "skill_combinations": {
-            "skills": ["deftstriking"]
-        }
-    },
-    {
-        "title": "Street Urchin Queen",
-        "description": "Growing up on the streets, you've learned to command the respect of other outcasts, using your wits and cunning.",
-        "bonus": "Bonus: +2 to Skullduggery, +1 to Leadership.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": ["female"],
-        "aptitude_requirements": {
-            "technology": 0
-        },
-        "skill_combinations": {
-            "skills": ["skullduggery"]
-        }
-    },
-    {
-        "title": "Military Captain",
-        "description": "A decorated officer with a tactical mind, known for leading troops into battle with bravery.",
-        "bonus": "Bonus: +2 to Leadership, +1 to Firearms.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": ["male"],
-        "aptitude_requirements": {
-            "technology": 1
-        },
-        "skill_combinations": {
-            "skills": ["firearms"]
-        }
-    },
-    {
-        "title": "Enchantress",
-        "description": "A woman skilled in the magical arts, using beauty and arcane power to influence those around you.",
-        "bonus": "Bonus: +2 to Enchantment, +1 to Glamour.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": ["female"],
-        "aptitude_requirements": {
-            "magic": 2
-        },
-        "skill_combinations": {
-            "magitech": ["glam"]
-        }
-    },
-    {
-        "title": "Master Craftsman",
-        "description": "An expert artisan, known for producing the finest goods in the land, blending skill with ingenuity.",
-        "bonus": "Bonus: +2 to Crafting Skills, Access to Master Workshops.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": ["male"],
-        "aptitude_requirements": {
-            "technology": 1
-        },
-        "skill_combinations": {
-            "skills": ["construction", "blacksmithing"]
-        }
-    },
-    {
-        "title": "Arcane Maiden",
-        "description": "Young but powerful, you have dedicated your life to mastering the arcane arts.",
-        "bonus": "Bonus: +2 to Magic Skills, Access to Arcane Libraries.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": ["female"],
-        "aptitude_requirements": {
-            "magic": 2
-        },
-        "skill_combinations": {
-            "magitech": ["thau"]
-        }
-    },
-    {
-        "title": "Guildmaster",
-        "description": "A respected leader in the business world, you manage trade and commerce with a firm hand.",
-        "bonus": "Bonus: +2 to Acumen, Access to Business Networks.",
-        "allowed_races": [],
-        "allowed_faiths": [],
-        "allowed_sexes": ["male"],
-        "aptitude_requirements": {
-            "technology": 1
-        },
-        "skill_combinations": {
-            "skills": ["acumen"]
-        }
-    },
-    {
-        "title": "High Priestess",
-        "description": "A revered spiritual leader, using your faith to inspire and guide your followers.",
-        "bonus": "Bonus: +2 to Faith Skills, Access to Sacred Sites.",
-        "allowed_races": [],
-        "allowed_faiths": ["Follower of The Old Ways", "Pious Reformationist"],
-        "allowed_sexes": ["female"],
-        "aptitude_requirements": {
-            "magic": 1
-        },
-        "skill_combinations": {
-            "magitech": ["thau"]
-        }
-    }
+	{
+		"title": "Lady of the Manor",
+		"description": "Born into wealth and privilege, you manage estates and command respect through charm and wit.",
+		"bonus": "Bonus: +2 to Charisma, Access to Noble Estates.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": ["female"],
+		"aptitude_requirements": {
+			"magic": 1
+		},
+		"skill_combinations": {
+			"skills": ["acumen"]
+		}
+	},
+	{
+		"title": "Iron Matron",
+		"description": "A tough, no-nonsense woman who has carved out her own place in the male-dominated world of industry.",
+		"bonus": "Bonus: +2 to Blacksmithing, +1 to Construction.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": ["female"],
+		"aptitude_requirements": {
+			"technology": 1
+		},
+		"skill_combinations": {
+			"skills": ["blacksmithing"]
+		}
+	},
+	{
+		"title": "Gentleman's Duelist",
+		"description": "Trained in the art of fencing and honor-bound combat, you uphold a code of chivalry and skill.",
+		"bonus": "Bonus: +2 to Deftstriking, +1 to Erudition.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": ["male"],
+		"aptitude_requirements": {
+			"magic": 0,
+			"technology": 0
+		},
+		"skill_combinations": {
+			"skills": ["deftstriking"]
+		}
+	},
+	{
+		"title": "Street Urchin Queen",
+		"description": "Growing up on the streets, you've learned to command the respect of other outcasts, using your wits and cunning.",
+		"bonus": "Bonus: +2 to Skullduggery, +1 to Leadership.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": ["female"],
+		"aptitude_requirements": {
+			"technology": 0
+		},
+		"skill_combinations": {
+			"skills": ["skullduggery"]
+		}
+	},
+	{
+		"title": "Military Captain",
+		"description": "A decorated officer with a tactical mind, known for leading troops into battle with bravery.",
+		"bonus": "Bonus: +2 to Leadership, +1 to Firearms.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": ["male"],
+		"aptitude_requirements": {
+			"technology": 1
+		},
+		"skill_combinations": {
+			"skills": ["firearms"]
+		}
+	},
+	{
+		"title": "Enchantress",
+		"description": "A woman skilled in the magical arts, using beauty and arcane power to influence those around you.",
+		"bonus": "Bonus: +2 to Enchantment, +1 to Glamour.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": ["female"],
+		"aptitude_requirements": {
+			"magic": 2
+		},
+		"skill_combinations": {
+			"magitech": ["glam"]
+		}
+	},
+	{
+		"title": "Master Craftsman",
+		"description": "An expert artisan, known for producing the finest goods in the land, blending skill with ingenuity.",
+		"bonus": "Bonus: +2 to Crafting Skills, Access to Master Workshops.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": ["male"],
+		"aptitude_requirements": {
+			"technology": 1
+		},
+		"skill_combinations": {
+			"skills": ["construction", "blacksmithing"]
+		}
+	},
+	{
+		"title": "Arcane Maiden",
+		"description": "Young but powerful, you have dedicated your life to mastering the arcane arts.",
+		"bonus": "Bonus: +2 to Magic Skills, Access to Arcane Libraries.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": ["female"],
+		"aptitude_requirements": {
+			"magic": 2
+		},
+		"skill_combinations": {
+			"magitech": ["thau"]
+		}
+	},
+	{
+		"title": "Guildmaster",
+		"description": "A respected leader in the business world, you manage trade and commerce with a firm hand.",
+		"bonus": "Bonus: +2 to Acumen, Access to Business Networks.",
+		"allowed_races": [],
+		"allowed_faiths": [],
+		"allowed_sexes": ["male"],
+		"aptitude_requirements": {
+			"technology": 1
+		},
+		"skill_combinations": {
+			"skills": ["acumen"]
+		}
+	},
+	{
+		"title": "High Priestess",
+		"description": "A revered spiritual leader, using your faith to inspire and guide your followers.",
+		"bonus": "Bonus: +2 to Faith Skills, Access to Sacred Sites.",
+		"allowed_races": [],
+		"allowed_faiths": ["Follower of The Old Ways", "Pious Reformationist"],
+		"allowed_sexes": ["female"],
+		"aptitude_requirements": {
+			"magic": 1
+		},
+		"skill_combinations": {
+			"magitech": ["thau"]
+		}
+	}
 ]
