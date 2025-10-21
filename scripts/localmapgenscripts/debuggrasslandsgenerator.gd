@@ -1,5 +1,5 @@
 extends Node
-
+# res://scripts/localmapgenscripts/debuggrasslandsgenerator.gd
 # 🔖 DEBUG GRASSLAND GENERATOR (biome-specific configuration)
 
 # 🧭 Generation grid layout (used for blueprint loop)

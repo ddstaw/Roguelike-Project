@@ -1,0 +1,55 @@
+[gd_scene load_steps=6 format=3 uid="uid://dwqpo34u7chr4"]
+
+[ext_resource type="Script" path="res://ui/scripts/blueprint_slot.gd" id="1_paclg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ctfke"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hqy5c"]
+bg_color = Color(0.0465127, 0.260942, 0.260931, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dasv3"]
+bg_color = Color(0.374683, 0.0673042, 0.106754, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gf4oi"]
+content_margin_left = 23.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="BlueprintSlot" type="Button"]
+custom_minimum_size = Vector2(429, 70)
+focus_mode = 0
+mouse_filter = 1
+theme_override_styles/normal = SubResource("StyleBoxFlat_ctfke")
+theme_override_styles/hover = SubResource("StyleBoxFlat_hqy5c")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dasv3")
+toggle_mode = true
+script = ExtResource("1_paclg")
+
+[node name="Label" type="Label" parent="."]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_gf4oi")
+text = "Blueprint Name "
+vertical_alignment = 1

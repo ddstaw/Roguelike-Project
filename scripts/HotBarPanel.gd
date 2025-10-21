@@ -1,3 +1,4 @@
+# res://scripts/HotBarPanel.gd
 extends Panel
 
 const ITEM_DATA := preload("res://constants/item_data.gd")
@@ -27,11 +28,18 @@ var _icon_cache: Dictionary = {}
 
 
 func _ready():
+	print("🔷 HotBarPanel _ready at path:", get_path())
 	_load_hotbar_data()
 	_update_hotbar_slots()
+	
+	# 🔁 Hook up signal to auto-refresh hotbar when inventory changes
+	if LoadHandlerSingleton.has_signal("inventory_changed"):
+		print("🔷 HotBarPanel sees inventory_changed signal, connecting…")
+		LoadHandlerSingleton.inventory_changed.connect(refresh_from_storage)
+		
 	hotbar_up_btn.pressed.connect(_next_hotbar)
 	hotbar_down_btn.pressed.connect(_prev_hotbar)
-
+	
 
 func _load_hotbar_data():
 	hotbar_data = LoadHandlerSingleton.load_player_hotbar()
@@ -203,4 +211,10 @@ func handle_slot_drop(target_slot: ItemSlot, data: Dictionary) -> void:
 	# Save and refresh
 	hotbar_data["current_hotbar"] = current_hotbar_id
 	LoadHandlerSingleton.save_player_hotbar(hotbar_data)
+	_update_hotbar_slots()
+
+func refresh_from_storage():
+	print("🔁 HotBarPanel received inventory_changed → refreshing from storage.")
+	hotbar_data = LoadHandlerSingleton.load_player_hotbar()
+	player_inventory = LoadHandlerSingleton.load_player_inventory_dict()
 	_update_hotbar_slots()

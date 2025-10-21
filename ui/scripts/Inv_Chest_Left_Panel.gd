@@ -596,3 +596,7 @@ func _save_inventory() -> void:
 	if chest_ui and chest_ui.has_method("refresh_weight_labels"):
 		print("📢 Player_Panel triggered refresh on parent")
 		chest_ui.refresh_weight_labels()
+
+		# ✅ Emit global inventory change signal
+	if LoadHandlerSingleton.has_signal("inventory_changed"):
+		LoadHandlerSingleton.emit_signal("inventory_changed")

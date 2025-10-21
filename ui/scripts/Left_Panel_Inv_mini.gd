@@ -1,6 +1,8 @@
 extends Panel
 #this script is attached to Left_Panel, child of parent Inventory_mini (control)
 
+signal inventory_saved
+
 const ITEM_DATA := preload("res://constants/item_data.gd")
 const SLOT_SCENE := preload("res://scenes/play/ItemSlot.tscn")
 
@@ -69,6 +71,10 @@ func _ready():
 	_wire_sort_buttons()
 	_load_inventory_from_save()
 	_refresh_grid()
+	
+	# 🔁 Connect to inventory_changed
+	if LoadHandlerSingleton.has_signal("inventory_changed"):
+		LoadHandlerSingleton.inventory_changed.connect(refresh_from_inventory_change)
 	
 	# Bring InvScroll above any stray overlays without reparenting:
 	inv_scroll.z_as_relative = false
@@ -553,6 +559,8 @@ func _close_loot_interface():
 	self.queue_free()
 	
 func _save_inventory() -> void:
+	print("📦 Left_Panel._save_inventory invoked; inventory count:", _inventory.size())
+
 	# Always flatten before saving
 	if _inventory.has("inventory") and _inventory["inventory"] is Dictionary:
 		push_warning("⚠️ _save_inventory got WRAPPED dict! Flattening…")
@@ -561,7 +569,13 @@ func _save_inventory() -> void:
 	LoadHandlerSingleton.save_player_inventory_dict(_inventory)
 	LoadHandlerSingleton.recalc_player_and_mount_weight()
 
-	# Then refresh UI
-	var mini_ui := get_tree().root.get_node_or_null("LocalMap/UILayer/Inventory_mini")
-	if mini_ui and mini_ui.has_method("refresh_weight_labels"):
-		mini_ui.call_deferred("refresh_weight_labels")
+	# ✅ Emit global inventory change signal
+	if LoadHandlerSingleton.has_signal("inventory_changed"):
+		print("📢 Emitting inventory_changed from Left_Panel._save_inventory")
+		LoadHandlerSingleton.emit_signal("inventory_changed")
+		
+func refresh_from_inventory_change():
+	print("♻️ Refreshing inventory grid after inventory_changed signal")
+	_load_inventory_from_save()
+	_rebuild_sort_keys_if_needed()
+	_refresh_grid()

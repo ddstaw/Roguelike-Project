@@ -1,3 +1,4 @@
+# res://scripts/TimeManager.gd
 extends Node
 
 # Flavor file paths based on time of day

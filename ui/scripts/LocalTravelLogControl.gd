@@ -29,23 +29,30 @@ func add_message_to_log(message_text: String) -> void:
 
 
 func _scroll_to_bottom_when_ready(old_max: float) -> void:
+	if not is_inside_tree():
+		# Not yet in tree, postpone or abort
+		print("⚠️ _scroll_to_bottom_when_ready called too early")
+		return
+
 	if scroll_container == null:
 		return
 
 	var vbar: VScrollBar = scroll_container.get_v_scroll_bar()
 
-	# wait up to a few frames for the content/scrollbar to expand
 	var tries: int = 4
 	while tries > 0:
+		# Check again inside_tree before awaiting
+		if not is_inside_tree():
+			print("⚠️ Lost tree during scroll wait")
+			return
 		await get_tree().process_frame
 		if vbar.max_value > old_max:
 			break
 		tries -= 1
 
-	# force to bottom (use both APIs to be extra safe)
+	# Do the rest...
 	scroll_container.scroll_vertical = vbar.max_value
 	vbar.value = vbar.max_value
 
-	# pin horizontal to 0 (prevents left-edge clipping if wrapping)
 	var hbar: HScrollBar = scroll_container.get_h_scroll_bar()
 	hbar.value = hbar.min_value

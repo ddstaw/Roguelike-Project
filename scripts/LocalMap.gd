@@ -1,3 +1,4 @@
+#localmap.gd
 extends Control
 
 @onready var tile_container = $TileContainer  # A Node2D that holds all tile sprites
@@ -42,6 +43,21 @@ var targeting_mode: TargetingMode = TargetingMode.NONE
 var targeting_cursor: Node = null  # instance of your TargetingCursor scene
 var target_cursor_grid_pos: Vector2i = Vector2i.ZERO
 
+var retry_attempts := 0
+var cursor_realigned := false  # Global flag to avoid loops
+
+
+var chunk_id: String = LoadHandlerSingleton.get_current_chunk_id()
+var placement: Dictionary = LoadHandlerSingleton.load_temp_localmap_placement()
+var biome_key: String = placement.get("local_map", {}).get("biome_key", "")
+var z_level: String = str(LoadHandlerSingleton.get_current_z_level())
+
+
+const MAX_RETRIES := 10
+
+const TerrainData = preload("res://constants/terrain_data.gd")
+
+const BuildData = preload("res://constants/build_data.gd")
 
 const VISIBILITY_UPDATE_INTERVAL := 0.1  # seconds
 
@@ -97,6 +113,8 @@ func _ready():
 	print("TargetingCursor position:", targeting_cursor.position)
 	if is_instance_valid(targeting_cursor):
 		tile_container.move_child(targeting_cursor, tile_container.get_child_count() - 1)
+	_attempt_cursor_realignment()
+
 	
 	# 💡 Manually initialize LightOverlay AFTER map is built
 	if light_overlay and light_overlay.has_method("initialize"):
@@ -125,7 +143,13 @@ func _ready():
 		
 	$UILayer.add_child(buildables_overlay)
 	buildables_overlay.visible = false
-
+	
+	# ✅ Cursor safety setup after full scene load
+	call_deferred("_finalize_targeting_cursor")
+	await get_tree().create_timer(0.3).timeout
+	_attempt_cursor_realignment()
+	
+	
 func load_and_render_local_map():
 	for child in tile_container.get_children():
 		if child.name != "TargetingCursor":
@@ -380,7 +404,10 @@ func _unhandled_input(event):
 	if is_in_targeting_mode():
 		if event.is_action_pressed("ui_cancel"):
 			exit_targeting()
-			get_viewport().set_input_as_handled()
+			if get_viewport() != null:
+				get_viewport().set_input_as_handled()
+			else:
+				print("⚠️ Viewport is null when trying to set input as handled.")
 			return
 
 	# Zoom remains globally available
@@ -1382,35 +1409,112 @@ func get_visible_chunks() -> Array:
 	# For now, we make visible_chunks be just the current chunk
 	# Could be expanded later (neighboring chunks, etc.)
 	return visible_chunks
-
+	
 func enter_targeting(mode: TargetingMode) -> void:
-	if not is_instance_valid(targeting_cursor):
-		print("❌ Targeting cursor is not valid!")
-		return
-
 	targeting_mode = mode
-	targeting_cursor.set_mode(mode)
 
-	# 🧱 Toggle buildables overlay
+	# Toggle overlay visibility here
 	if is_instance_valid(buildables_overlay):
 		buildables_overlay.visible = (mode == TargetingMode.BUILD)
 
-	# ⛺ Start target cursor at player position
-	if player:
-		var player_grid_pos = Vector2i(player.position / TILE_SIZE)
-		target_cursor_grid_pos = player_grid_pos
+	if is_instance_valid(targeting_cursor):
+		targeting_cursor.set_mode(mode)
+		targeting_cursor.visible = true
+	else:
+		print("❌ Targeting cursor invalid in enter_targeting")
+
+	call_deferred("_place_cursor_at_player_deferred")
+
+func _place_cursor_at_player_deferred() -> void:
+	if not is_inside_tree():
+		if retry_attempts < MAX_RETRIES:
+			retry_attempts += 1
+			call_deferred("_place_cursor_at_player_deferred")
+		else:
+			print("❌ Failed to place cursor after retries.")
+		return
+
+	await get_tree().process_frame
+
+	if not is_instance_valid(player):
+		print("⚠️ No player instance found.")
+		return
+
+	var player_grid_pos = Vector2i(player.position / TILE_SIZE)
+	target_cursor_grid_pos = player_grid_pos
+
+	if is_instance_valid(targeting_cursor):
 		targeting_cursor.set_grid_position(player_grid_pos, TILE_SIZE)
 	else:
-		print("⚠️ No player position found!")
+		print("❌ Targeting cursor not valid in deferred placement.")
+		
+func _deferred_enter_targeting(mode: TargetingMode) -> void:
+	await get_tree().process_frame  # wait a frame to let player position finalize
 
-	targeting_cursor.visible = true
+	if not is_instance_valid(player):
+		print("❌ Player node is not valid yet.")
+		return
+
+	var player_grid_pos = Vector2i(player.position / TILE_SIZE)
+	target_cursor_grid_pos = player_grid_pos
+
+	if is_instance_valid(targeting_cursor):
+		targeting_cursor.set_mode(mode)
+		targeting_cursor.set_grid_position(player_grid_pos, TILE_SIZE)
+		targeting_cursor.visible = true
+		print("🎯 Deferred enter_targeting: cursor placed at player:", player_grid_pos)
+	else:
+		print("❌ Targeting cursor is not valid!")
+
+	# Build overlay toggle
+	if is_instance_valid(buildables_overlay):
+		buildables_overlay.visible = (mode == TargetingMode.BUILD)
+
+	call_deferred("update_target_cursor_position")
+
+
+func _position_cursor_at_player(mode: TargetingMode) -> void:
+	if not is_inside_tree():
+		print("⚠️ _position_cursor_at_player: node not in tree yet.")
+		return
+
+	if not is_instance_valid(player):
+		print("⚠️ _position_cursor_at_player: player still invalid. Retrying shortly.")
+		await get_tree().create_timer(0.2).timeout
+		if not is_instance_valid(player):
+			print("❌ _position_cursor_at_player: player invalid after wait. Aborting.")
+			return
+
+	var player_grid_pos = Vector2i(player.position / TILE_SIZE)
+	target_cursor_grid_pos = player_grid_pos
+	print("📍 _position_cursor_at_player: repositioning cursor to", player_grid_pos)
+
+	if is_instance_valid(targeting_cursor):
+		targeting_cursor.set_mode(mode)
+		targeting_cursor.set_grid_position(player_grid_pos, TILE_SIZE)
+		targeting_cursor.visible = true
+	else:
+		print("❌ _position_cursor_at_player: targeting_cursor still invalid!")
+
 
 func exit_targeting() -> void:
+	var was_in_build_mode := (targeting_mode == TargetingMode.BUILD)
 	targeting_mode = TargetingMode.NONE
+
 	if is_instance_valid(targeting_cursor):
 		targeting_cursor.visible = false
 	if is_instance_valid(buildables_overlay):
 		buildables_overlay.visible = false
+
+	var chunk_id = LoadHandlerSingleton.get_current_chunk_id()
+	var placement = LoadHandlerSingleton.load_temp_localmap_placement()
+	var biome_key = placement.get("local_map", {}).get("biome_key", "")
+	var z_level = str(LoadHandlerSingleton.get_current_z_level())
+
+	if was_in_build_mode:
+		hard_refresh_chunk_on_build_mode_exit(chunk_id, biome_key, z_level, true)
+		rebuild_walkability()
+
 		
 func move_target_cursor(delta: Vector2i) -> void:
 	target_cursor_grid_pos += delta
@@ -1419,6 +1523,338 @@ func move_target_cursor(delta: Vector2i) -> void:
 	else:
 		print("⚠️ Targeting cursor not valid on move.")
 
-
 func is_in_targeting_mode() -> bool:
 	return targeting_mode != TargetingMode.NONE
+
+func get_current_targeting_mode() -> TargetingMode:
+	return targeting_mode
+
+func get_chunk_coords_from_tile(tile_pos: Vector2i) -> Vector2i:
+	var chunk_id := LoadHandlerSingleton.get_current_chunk_id()
+	var chunk_origin := LoadHandlerSingleton.get_chunk_origin(chunk_id)
+	var global_tile_pos := chunk_origin + tile_pos
+
+	var chunk_info := ChunkTools.get_chunk_for_global_tile(global_tile_pos)
+	if chunk_info.has("id"):
+		var parts: PackedStringArray = chunk_info["id"].split("_")
+		if parts.size() == 3:
+			return Vector2i(parts[1].to_int(), parts[2].to_int())
+	
+	push_warning("⚠️ Could not resolve chunk coords for tile_pos: %s (global: %s)" % [tile_pos, global_tile_pos])
+	return Vector2i.ZERO
+
+
+func get_current_z_level() -> int:
+	var placement := LoadHandlerSingleton.load_temp_placement()
+	return placement.get("local_map", {}).get("z_level", 0)
+
+func is_valid_build_position(pos: Vector2i) -> bool:
+	var placement := LoadHandlerSingleton.load_temp_placement()
+	var player_pos: Dictionary = placement.get("local_map", {}).get("grid_position_local", {})
+
+	if player_pos.get("x", -999) == pos.x and player_pos.get("y", -999) == pos.y:
+		return false  # ❌ Player tile
+
+	var walk_grid = walkability_grid
+	if pos.y >= 0 and pos.y < walk_grid.size() and pos.x >= 0 and pos.x < walk_grid[0].size():
+		var cell: Dictionary = walk_grid[pos.y][pos.x]
+
+		if not cell.get("walkable", false):
+			return false  # ❌ Not walkable
+
+		var raw_terrain_type: String = cell.get("terrain_type", "")
+		var terrain_type := raw_terrain_type
+
+		# 🧼 Normalize terrain (e.g., "stonedoor_open" → "stonedoor")
+		if terrain_type.ends_with("_open"):
+			var stripped := terrain_type.replace("_open", "")
+			if TerrainData.TERRAIN_PROPERTIES.has(stripped):
+				terrain_type = stripped
+
+		print("🌍 Tile type:", terrain_type)
+		var terrain_info: Dictionary = TerrainData.TERRAIN_PROPERTIES.get(terrain_type, {})
+
+		if terrain_info.get("door", false):
+			return false  # ❌ Always disallow building on doors
+
+		if terrain_info.get("block_building", false):
+			return false
+
+	# 🧍 Block NPC overlap
+	var chunk_id := LoadHandlerSingleton.get_current_chunk_id()
+	var npc_chunk: Dictionary = LoadHandlerSingleton.get_npcs_in_chunk(chunk_id)
+
+	for npc_id in npc_chunk.keys():
+		var npc: Dictionary = npc_chunk[npc_id]
+		if not npc.has("position"):
+			continue
+
+		var npc_pos := Vector2i(
+			int(npc["position"].get("x", -1)),
+			int(npc["position"].get("y", -1))
+		)
+
+		if npc_pos == pos:
+			return false  # ❌ Can't build on NPCs
+
+	return true  # ✅ All checks passed
+
+func _finalize_targeting_cursor() -> void:
+	await get_tree().process_frame  # ensure frame settles
+
+	if player and is_instance_valid(targeting_cursor):
+		var grid_pos = Vector2i(player.position / TILE_SIZE)
+		target_cursor_grid_pos = grid_pos
+		targeting_cursor.set_grid_position(grid_pos, TILE_SIZE)
+		print("🎯 Post-load cursor forced to player grid pos:", grid_pos)
+
+		# Remove or comment this! It auto-re-enters targeting:
+		# if LoadHandlerSingleton.is_holding_hammer_tool():
+		#     enter_targeting(TargetingMode.BUILD)
+
+func hard_refresh_chunk_on_build_mode_exit(chunk_id: String, biome_key: String, z_level: String, force_reload: bool = false) -> void:
+	var tile_container := get_tree().root.get_node_or_null("LocalMap/TileContainer")
+	if tile_container == null:
+		print("❌ TileContainer not found — cannot refresh visuals.")
+		return
+
+	var tile_path := LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_id, biome_key, z_level)
+	var object_path := LoadHandlerSingleton.get_chunked_object_chunk_path(chunk_id, biome_key, z_level)
+	var npc_path := LoadHandlerSingleton.get_chunked_npc_chunk_path(chunk_id, biome_key, z_level)
+
+	var tile_data: Dictionary = LoadHandlerSingleton.load_json_file(tile_path)
+	var object_data: Dictionary = LoadHandlerSingleton.load_json_file(object_path)
+	var npc_data: Dictionary = LoadHandlerSingleton.load_json_file(npc_path)
+
+	MapRenderer.render_map(tile_data, { "objects": object_data }, npc_data, tile_container, chunk_id)
+
+	if force_reload:
+		print("🔁 Forcing full chunk reload to initialize tile behavior.")
+		var player_pos_dict: Dictionary = LoadHandlerSingleton.load_temp_localmap_placement().get("local_map", {}).get("grid_position_local", {})
+		var player_pos := Vector2i(
+			int(player_pos_dict.get("x", 0)),
+			int(player_pos_dict.get("y", 0))
+		)
+		SceneManager.transition_to_chunk(chunk_id, player_pos)
+
+		
+func place_current_buildable_at(grid_pos: Vector2i) -> void:
+	var build_reg: Dictionary = LoadHandlerSingleton.load_player_buildreg()
+	var build_key: String = build_reg.get("current_build", "")
+	if build_key == "":
+		push_warning("❌ No current build selected.")
+		return
+
+	print("📦 Current build key:", build_key)
+
+	var build_data: Dictionary = BuildData.BUILD_PROPERTIES.get(build_key, null)
+	if build_data == null:
+		push_warning("❌ Build data not found for: " + build_key)
+		return
+
+	print("📚 Build data found:", build_data)
+
+	var chunk_id: String = LoadHandlerSingleton.get_current_chunk_id()
+	var placement: Dictionary = LoadHandlerSingleton.load_temp_localmap_placement()
+	var biome_key: String = placement.get("local_map", {}).get("biome_key", "")
+	var z_level: String = str(LoadHandlerSingleton.get_current_z_level())
+	var chunk_origin: Vector2i = LoadHandlerSingleton.get_chunk_origin(chunk_id)
+
+	var local_x: int = grid_pos.x
+	var local_y: int = grid_pos.y
+
+	print("🧭 Chunk ID:", chunk_id)
+	print("🌍 Biome key:", biome_key)
+	print("🗺️ Z level:", z_level)
+	print("🧱 Chunk origin:", chunk_origin)
+	print("🎯 Local grid pos:", grid_pos)
+
+	if build_data.get("type", "") == "tile":
+		var tile_path: String = LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_id, biome_key, z_level)
+		print("📄 Tile path to modify:", tile_path)
+
+		var tile_data: Dictionary = LoadHandlerSingleton.load_json_file(tile_path)
+		var tile_grid: Dictionary = tile_data.get("tile_grid", {})
+
+		var key: String = "%d_%d" % [local_x, local_y]
+		print("🧩 Tile key to set:", key)
+		print("🧱 Tile name to place:", build_data.get("terrain_name", ""))
+
+		tile_grid[key] = {
+			"tile": build_data.get("terrain_name", ""),
+			"state": LoadHandlerSingleton.get_tile_state_for(build_data.get("terrain_name", ""))
+		}
+
+		tile_data["tile_grid"] = tile_grid
+		LoadHandlerSingleton.save_json_file(tile_path, tile_data)
+
+	elif build_data.get("type", "") == "object":
+		var object_path: String = LoadHandlerSingleton.get_chunked_object_chunk_path(chunk_id, biome_key, z_level)
+		print("📄 Object path to modify:", object_path)
+
+		var object_data: Dictionary = LoadHandlerSingleton.load_json_file(object_path)
+
+		var id: String
+		if build_data.get("cat", "") == "storage":
+			id = "%s_%d_%d" % [build_data.get("object_name", "unknown"), local_x, local_y]
+		else:
+			var next_id: String = str(randi() % 100000)
+			id = "%s_%s" % [build_data.get("object_name", "unknown"), next_id]
+
+		print("🆔 Generated object ID:", id)
+		print("📦 Object type:", build_data.get("object_name", "unknown"))
+		print("📌 Placing at:", { "x": local_x, "y": local_y, "z": int(z_level) })
+
+		object_data[id] = {
+			"type": build_data.get("object_name", "unknown"),
+			"position": { "x": local_x, "y": local_y, "z": int(z_level) }
+		}
+
+		LoadHandlerSingleton.save_json_file(object_path, object_data)
+
+		# 🧰 Create empty storage entry if this is a storage buildable
+		if build_data.get("cat", "") == "storage":
+			var time_data := LoadHandlerSingleton.get_time_and_date()
+			var timestamp := {
+				"date": time_data.get("gamedate", "Unknown"),
+				"time": time_data.get("gametime", "Unknown")
+			}
+
+			var biome: String = placement.get("local_map", {}).get("biome_key", "")
+			var z_key: String = z_level
+			var storage_id: String = id  # same ID used above
+			var register := LoadHandlerSingleton.load_storage_register(biome)
+
+			if not register.has(z_key):
+				register[z_key] = {}
+			if not register[z_key].has(chunk_id):
+				register[z_key][chunk_id] = {}
+			if not register[z_key][chunk_id].has(biome_key):
+				register[z_key][chunk_id][biome_key] = {}
+
+			if not register[z_key][chunk_id][biome_key].has(storage_id):
+				register[z_key][chunk_id][biome_key][storage_id] = {
+					"position": [local_x, local_y],
+					"inventory": {},
+					"storage_type": build_data.get("object_name", "storage"),
+					"rolled_once": true,
+					"is_built": true,  # 🧱 Prevent loot roll on built storage
+					"created_at": timestamp
+				}
+				LoadHandlerSingleton.save_storage_register(biome, register)
+
+
+	# ✅ Refresh visuals
+	refresh_chunk_after_build(chunk_id, biome_key, z_level)
+	
+
+func consume_materials_for_current_build() -> Dictionary:
+	var build_reg: Dictionary = LoadHandlerSingleton.load_player_buildreg()
+	var build_key: String = build_reg.get("current_build", "")
+	if build_key == "":
+		print("❌ No current build selected in build register.")
+		return {}
+
+	var build_data: Dictionary = BuildData.BUILD_PROPERTIES.get(build_key)
+	if build_data == null:
+		print("❌ Build data not found for:", build_key)
+		return {}
+
+	var requirements: Dictionary = build_data.get("requires", {})
+	var inventory: Dictionary = LoadHandlerSingleton.load_player_inventory_dict()
+
+	print("🛠️ Build requires:", requirements)
+	print("🎒 Player inventory snapshot:")
+	for item_id: String in inventory.keys():
+		var item: Dictionary = inventory[item_id]
+		print("  -", item_id, ":", item)
+
+	var to_consume: Dictionary = {}
+	var used_snapshot: Dictionary = {}  # 🧾 Store readable data for UI logging later
+
+	for tag: String in requirements.keys():
+		var needed_qty: int = int(requirements[tag])
+		var remaining: int = needed_qty
+		print("🔍 Searching for tag:", tag, " — Need:", needed_qty)
+
+		for item_id: String in inventory.keys():
+			var item: Dictionary = inventory[item_id]
+			var crafting_tags: Array = item.get("crafting_tags", [])
+			if tag in crafting_tags and remaining > 0:
+				var qty: int = item.get("qty", 0)
+				var used: int = min(qty, remaining)
+				remaining -= used
+				to_consume[item_id] = used if not to_consume.has(item_id) else to_consume[item_id] + used
+				print("    ➕ Would consume", used, "from", item_id, "(has", qty, ")")
+
+				# ✅ Stop once we've consumed enough for this tag
+				if remaining <= 0:
+					break
+
+		if remaining > 0:
+			print("❗ Not enough '%s'. Still missing: %d" % [tag, remaining])
+		else:
+			print("✅ All '%s' accounted for." % tag)
+
+	print("📦 Final material plan:")
+	for id: String in to_consume.keys():
+		print("  -", id, "→", to_consume[id], "units")
+
+	# ✅ Actually consume items
+	for item_id: String in to_consume.keys():
+		var used_qty: int = to_consume[item_id]
+		if inventory.has(item_id):
+			var item: Dictionary = inventory[item_id]
+
+			# 🧾 Save snapshot for UI logging before modifying inventory
+			used_snapshot[item_id] = {
+				"display_name": item.get("display_name", item_id),
+				"used_qty": used_qty
+			}
+
+			inventory[item_id]["qty"] -= used_qty
+			if inventory[item_id]["qty"] <= 0:
+				inventory.erase(item_id)
+
+	# 💾 Save updated inventory
+	LoadHandlerSingleton.save_player_inventory_dict(inventory)
+	print("💾 Inventory updated after consumption.")
+
+	return used_snapshot  # ✅ return readable snapshot instead of raw item IDs
+
+	
+func refresh_chunk_after_build(chunk_id: String, biome_key: String, z_level: String) -> void:
+	var tile_container := get_tree().root.get_node_or_null("LocalMap/TileContainer")
+	if tile_container == null:
+		print("❌ TileContainer not found — cannot refresh visuals.")
+		return
+
+	var tile_path: String = LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_id, biome_key, z_level)
+	var object_path: String = LoadHandlerSingleton.get_chunked_object_chunk_path(chunk_id, biome_key, z_level)
+	var npc_path: String = LoadHandlerSingleton.get_chunked_npc_chunk_path(chunk_id, biome_key, z_level)
+
+	var tile_data: Dictionary = LoadHandlerSingleton.load_json_file(tile_path)
+	var object_data: Dictionary = LoadHandlerSingleton.load_json_file(object_path)
+	var npc_data: Dictionary = LoadHandlerSingleton.load_json_file(npc_path)
+
+	MapRenderer.render_map(tile_data, { "objects": object_data }, npc_data, tile_container, chunk_id)
+
+	# ✅ Refresh walkability + FOV
+	if player:
+		var grid_pos = Vector2i(player.position / TILE_SIZE)
+		walkability_grid = LoadHandlerSingleton.build_walkability_grid(
+			tile_data.get("tile_grid", {}), object_data
+		)
+		update_fov_from_player(grid_pos)
+
+func _attempt_cursor_realignment():
+	if cursor_realigned:
+		return  # ✅ Only fix once per scene
+
+	if is_instance_valid(targeting_cursor) and is_instance_valid(player):
+		if targeting_cursor.position == Vector2.ZERO:
+			var grid_pos = Vector2i(player.position / TILE_SIZE)
+			target_cursor_grid_pos = grid_pos
+			targeting_cursor.set_grid_position(grid_pos, TILE_SIZE)
+			cursor_realigned = true
+			print("🛠️ Failsafe realignment triggered at:", grid_pos)

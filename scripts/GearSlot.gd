@@ -1,3 +1,4 @@
+# res://scripts/GearSlot.gd
 extends ItemSlot
 class_name GearSlot
 

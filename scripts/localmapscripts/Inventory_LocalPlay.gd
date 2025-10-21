@@ -1,5 +1,6 @@
 extends Control
 #parent script in res://scenes/play/Inventory_LocalPlay.tscn // attachecd to parent contrl node
+# res://scripts/localmapscripts/Inventory_LocalPlay.gd
 
 @onready var player_weight_label := $PlayerInvWeightLabel
 @onready var appraisal_panel := $AppraisalPanel

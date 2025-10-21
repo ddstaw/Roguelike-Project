@@ -303,6 +303,7 @@ func render_chunk_transitions(current_chunk_coords: Vector2i, tile_container: No
 			tile_container.add_child(sprite)
 
 		#print("↪️ Drew %s indicators | Neighbor: %s | Valid: %s" % [dir, str(neighbor_coords), str(is_valid)])
+		
 func redraw_npcs(npc_data: Dictionary, tile_container: Node, chunk_id: String) -> void:
 	if not npc_data.has("npcs"):
 		return
@@ -350,3 +351,51 @@ func redraw_npcs(npc_data: Dictionary, tile_container: Node, chunk_id: String) -
 	# 🧹 Any leftover old NPCs get deleted
 	for old_sprite in existing_npcs.values():
 		old_sprite.queue_free()
+
+func redraw_tile_and_object_at(grid_pos: Vector2i, tile_data: Dictionary, object_data: Dictionary, tile_container: Node) -> void:
+	print("🔄 Redraw at", grid_pos)
+
+	# Tile side
+	var key = "tile_%d_%d" % [grid_pos.x, grid_pos.y]
+	var tile_info = tile_data.get("tile_grid", {}).get(key, null)
+	if tile_info == null:
+		print("❌ No tile_info at", key)
+	else:
+		print("✅ Found tile_info:", tile_info)
+
+	var texture: Texture2D = null
+	if tile_info != null:
+		var tile_name = tile_info.get("tile", "")
+		texture = TEXTURES.get(tile_name, null)
+
+	if texture == null:
+		print("❌ No texture for tile:", tile_info.get("tile", "") if tile_info != null else "none")
+	else:
+		var existing_tile = tile_container.get_node_or_null(key)
+		if existing_tile:
+			print("🔍 Found existing tile node:", existing_tile.name)
+			if existing_tile is Sprite2D:
+				existing_tile.texture = texture
+				existing_tile.position = Vector2(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE)
+				print("🎨 Updated tile sprite at", grid_pos)
+			else:
+				print("❌ existing_tile is not a Sprite2D!")
+		else:
+			print("➕ No existing tile — creating new tile sprite")
+			var new_tile = Sprite2D.new()
+			new_tile.name = key
+			new_tile.texture = texture
+			new_tile.position = Vector2(grid_pos.x * TILE_SIZE, grid_pos.y * TILE_SIZE)
+			new_tile.z_index = -10
+			tile_container.add_child(new_tile)
+			print("🎨 Created new tile sprite at", grid_pos)
+
+	# Object side
+	if object_data.has("objects"):
+		for id in object_data["objects"].keys():
+			var obj = object_data["objects"][id]
+			var pos = obj.get("position", {})
+			if pos.get("x", -1) == grid_pos.x and pos.get("y", -1) == grid_pos.y:
+				print("🔧 Found object at tile:", grid_pos, obj)
+				MapRenderer.render_single_object(grid_pos, obj, tile_container)
+				break

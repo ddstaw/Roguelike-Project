@@ -1,3 +1,4 @@
+## res://scripts/NpcBehaviorManager.gd
 extends Node
 
 const NpcStates = preload("res://constants/npc_states.gd")
@@ -22,19 +23,19 @@ func process_visible_npc_turns(visible_chunks: Array, walkability_grid: Array) -
 
 	for chunk_id in visible_chunks:
 		var chunk_npcs = LoadHandlerSingleton.get_npcs_in_chunk(chunk_id)
-		print("🐾 Processing NPCs in chunk:", chunk_id, "→ count:", chunk_npcs.size())  # 👈 debug
+		#print("🐾 Processing NPCs in chunk:", chunk_id, "→ count:", chunk_npcs.size())  # 👈 debug
 
 		var changed_npcs := false
 
 		for npc_id in chunk_npcs.keys():
 			var npc = chunk_npcs[npc_id]
-			print("   🔍 NPC", npc_id, "state=", npc.get("state", "MISSING"))  # 👈 debug
+			#print("   🔍 NPC", npc_id, "state=", npc.get("state", "MISSING"))  # 👈 debug
 
 			match npc.get("state", ""):
 				NpcStates.DAZZED:
 					var moved = process_dazzed_npc(npc_id, chunk_npcs, walkability_grid)
 					if moved:
-						print("✅ NPC moved:", npc_id, "→", npc["position"])
+						#print("✅ NPC moved:", npc_id, "→", npc["position"])
 						changed_npcs = true
 				NpcStates.FOLLOW:
 					process_follow_npc(npc, player_position)
@@ -43,7 +44,7 @@ func process_visible_npc_turns(visible_chunks: Array, walkability_grid: Array) -
 				pass  # Bark, alert nearby NPCs, etc
 
 		if changed_npcs:
-			print("💾 Saving updated NPCs for chunk", chunk_id)
+			#print("💾 Saving updated NPCs for chunk", chunk_id)
 			LoadHandlerSingleton.save_chunked_npc_chunk(chunk_id, { "npcs": chunk_npcs })
 			MapRenderer.redraw_npcs({ "npcs": chunk_npcs }, local_map.tile_container, chunk_id)
 
@@ -59,7 +60,7 @@ func process_dazzed_npc(npc_id: String, chunk_npcs: Dictionary, walkability_grid
 		var new_pos = current_pos + dir
 
 		if not LoadHandlerSingleton.is_tile_walkable(walkability_grid, new_pos):
-			print("🚫 Not walkable for", npc_id, "→", new_pos)
+			#print("🚫 Not walkable for", npc_id, "→", new_pos)
 			continue
 		if active_npc_positions.has(new_pos):
 			print("🚫 Occupied by another NPC:", new_pos)
@@ -71,10 +72,10 @@ func process_dazzed_npc(npc_id: String, chunk_npcs: Dictionary, walkability_grid
 		active_npc_positions.erase(current_pos)
 		active_npc_positions[new_pos] = true
 
-		print("✅ NPC moved:", npc_id, "from", current_pos, "to", new_pos)
+		#print("✅ NPC moved:", npc_id, "from", current_pos, "to", new_pos)
 		return true
 
-	print("❌ No valid moves for", npc_id, "at", current_pos)
+	#print("❌ No valid moves for", npc_id, "at", current_pos)
 	return false
 
 func process_follow_npc(npc: Dictionary, player_pos: Vector2i) -> void:

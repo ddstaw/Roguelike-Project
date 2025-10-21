@@ -1,4 +1,5 @@
 extends Node
+# res://scripts/localmapgenscripts/ObjectPlacer.gd
 
 class_name MapObjectPlacer
 

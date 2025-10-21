@@ -1,0 +1,621 @@
+[gd_scene load_steps=24 format=3 uid="uid://c5nyphp8orrbd"]
+
+[ext_resource type="Script" path="res://scripts/CraftingScreen.gd" id="1_0hrt4"]
+[ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="1_5sv0l"]
+[ext_resource type="Texture2D" uid="uid://clwj7r8u66f5b" path="res://assets/ui/cutting_green.png" id="2_2ph3n"]
+[ext_resource type="Texture2D" uid="uid://b4ml04uwa63wo" path="res://assets/ui/campfire_green.png" id="3_celvf"]
+[ext_resource type="Texture2D" uid="uid://dogydmvywtolc" path="res://assets/ui/workbench_green.png" id="4_sgky6"]
+[ext_resource type="Texture2D" uid="uid://cgwpujo26cypo" path="res://assets/inv/wood-logs.png" id="5_icv6a"]
+[ext_resource type="Texture2D" uid="uid://dsdll7rqdh1ag" path="res://assets/inv/stone_axe.png" id="6_assfy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wppsb"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x6oag"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1oljx"]
+content_margin_left = 12.0
+content_margin_right = 12.0
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tbkf7"]
+content_margin_left = 9.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+expand_margin_left = 5.0
+expand_margin_top = 6.0
+expand_margin_right = 8.0
+expand_margin_bottom = 6.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8p1oc"]
+bg_color = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3amct"]
+bg_color = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xrow5"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bdhjj"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fmk4w"]
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c6pjo"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gal4a"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+expand_margin_top = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_08fka"]
+content_margin_left = 16.0
+content_margin_top = 9.0
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oheqt"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+expand_margin_left = 13.0
+expand_margin_top = 13.0
+expand_margin_right = 13.0
+expand_margin_bottom = 13.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ancjn"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+expand_margin_top = 9.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eviok"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4qu5q"]
+bg_color = Color(0, 0, 0, 1)
+
+[node name="CraftingScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_0hrt4")
+
+[node name="LeftPanel" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 28.0
+offset_top = 30.0
+offset_right = 467.0
+offset_bottom = 1042.0
+
+[node name="Panel_LeftBackground" type="Panel" parent="LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_wppsb")
+
+[node name="LeftContent" type="VBoxContainer" parent="LeftPanel/Panel_LeftBackground"]
+layout_mode = 1
+offset_top = 6.0
+offset_right = 439.0
+offset_bottom = 99.0
+
+[node name="HeaderLabel" type="Label" parent="LeftPanel/Panel_LeftBackground/LeftContent"]
+custom_minimum_size = Vector2(10, 70)
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
+theme_override_constants/shadow_offset_x = 0
+theme_override_constants/outline_size = 0
+theme_override_constants/shadow_outline_size = 0
+theme_override_constants/line_spacing = 0
+theme_override_fonts/font = ExtResource("1_5sv0l")
+theme_override_font_sizes/font_size = 42
+text = " CRAFTING"
+vertical_alignment = 1
+
+[node name="SearchPanel" type="Panel" parent="LeftPanel/Panel_LeftBackground/LeftContent"]
+custom_minimum_size = Vector2(90, 70)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_x6oag")
+
+[node name="SearchHBox" type="HBoxContainer" parent="LeftPanel/Panel_LeftBackground/LeftContent/SearchPanel"]
+layout_mode = 2
+offset_left = 7.0
+offset_top = 6.0
+offset_right = 431.0
+offset_bottom = 39.0
+theme_override_constants/separation = 7
+
+[node name="PromptLabel" type="Label" parent="LeftPanel/Panel_LeftBackground/LeftContent/SearchPanel/SearchHBox"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_font_sizes/font_size = 52
+theme_override_styles/normal = SubResource("StyleBoxFlat_1oljx")
+text = ">"
+
+[node name="SearchBlueprint" type="LineEdit" parent="LeftPanel/Panel_LeftBackground/LeftContent/SearchPanel/SearchHBox"]
+custom_minimum_size = Vector2(60, 58)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 28
+theme_override_styles/normal = SubResource("StyleBoxFlat_tbkf7")
+placeholder_text = "Search Blueprint                       "
+max_length = 20
+
+[node name="ListPanel" type="Panel" parent="LeftPanel/Panel_LeftBackground/LeftContent"]
+custom_minimum_size = Vector2(20, 856)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_8p1oc")
+
+[node name="ScrollContainer" type="ScrollContainer" parent="LeftPanel/Panel_LeftBackground/LeftContent/ListPanel"]
+layout_mode = 0
+offset_top = -4.0
+offset_right = 437.0
+offset_bottom = 857.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_3amct")
+horizontal_scroll_mode = 0
+
+[node name="BluePrintList" type="VBoxContainer" parent="LeftPanel/Panel_LeftBackground/LeftContent/ListPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 8
+
+[node name="RightPanel" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 465.0
+offset_top = 30.0
+offset_right = 1893.0
+offset_bottom = 1042.0
+
+[node name="Panel_TopRightBackground" type="Panel" parent="RightPanel"]
+custom_minimum_size = Vector2(0, 500)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_xrow5")
+
+[node name="TopRow" type="HBoxContainer" parent="RightPanel/Panel_TopRightBackground"]
+layout_mode = 2
+offset_left = 24.0
+offset_top = 15.0
+offset_right = 1404.0
+offset_bottom = 484.0
+
+[node name="RequireVBox" type="VBoxContainer" parent="RightPanel/Panel_TopRightBackground/TopRow"]
+custom_minimum_size = Vector2(50, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="RequirePanel" type="Panel" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox"]
+custom_minimum_size = Vector2(20, 109)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_bdhjj")
+
+[node name="RequireHBox" type="HBoxContainer" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/RequirePanel"]
+layout_mode = 2
+offset_left = 2.0
+offset_top = 4.0
+offset_right = 1065.0
+offset_bottom = 79.0
+theme_override_constants/separation = 6
+
+[node name="RequiresLabel" type="Label" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/RequirePanel/RequireHBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "REQUIRES:"
+
+[node name="CuttingToolIcon" type="TextureRect" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/RequirePanel/RequireHBox"]
+clip_contents = true
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 2
+tooltip_text = "Cutting Tool"
+texture = ExtResource("2_2ph3n")
+expand_mode = 1
+
+[node name="CampfireStationIcon" type="TextureRect" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/RequirePanel/RequireHBox"]
+clip_contents = true
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 2
+tooltip_text = "Lit Campfire"
+texture = ExtResource("3_celvf")
+expand_mode = 1
+
+[node name="WorkbenchStationIcon" type="TextureRect" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/RequirePanel/RequireHBox"]
+clip_contents = true
+custom_minimum_size = Vector2(75, 75)
+layout_mode = 2
+tooltip_text = "Workbench"
+texture = ExtResource("4_sgky6")
+expand_mode = 1
+
+[node name="MaterialsHBox" type="HBoxContainer" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox"]
+layout_mode = 2
+theme_override_constants/separation = 50
+alignment = 1
+
+[node name="MatSlot1" type="VBoxContainer" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox"]
+layout_mode = 2
+
+[node name="MatIcon" type="TextureRect" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot1"]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("5_icv6a")
+expand_mode = 1
+
+[node name="MatOverlay" type="ColorRect" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot1/MatIcon"]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+offset_right = 160.0
+offset_bottom = 160.0
+color = Color(1, 1, 1, 0.290196)
+
+[node name="Panel" type="Panel" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot1/MatIcon"]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 160.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_fmk4w")
+
+[node name="ReqLabel" type="Label" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot1"]
+layout_mode = 2
+text = "Common Wood Logs"
+
+[node name="ReqQty" type="Label" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot1"]
+layout_mode = 2
+text = "Required: 10"
+
+[node name="OnhandLabel" type="RichTextLabel" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot1"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0, 1, 0, 1)
+bbcode_enabled = true
+text = "Onhand: 16"
+fit_content = true
+
+[node name="MatSlot2" type="VBoxContainer" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox"]
+layout_mode = 2
+
+[node name="MatIcon" type="TextureRect" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot2"]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("5_icv6a")
+expand_mode = 1
+
+[node name="MatOverlay" type="ColorRect" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot2/MatIcon"]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+offset_right = 160.0
+offset_bottom = 160.0
+color = Color(1, 1, 1, 0.290196)
+
+[node name="Panel" type="Panel" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot2/MatIcon"]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 160.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_fmk4w")
+
+[node name="ReqLabel" type="Label" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot2"]
+layout_mode = 2
+text = "Common Wood Logs"
+
+[node name="ReqQty" type="Label" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot2"]
+layout_mode = 2
+text = "Required: 10"
+
+[node name="OnhandLabel" type="RichTextLabel" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot2"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0, 1, 0, 1)
+bbcode_enabled = true
+text = "Onhand: 16"
+fit_content = true
+
+[node name="MatSlot3" type="VBoxContainer" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox"]
+layout_mode = 2
+
+[node name="MatIcon" type="TextureRect" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot3"]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("5_icv6a")
+expand_mode = 1
+
+[node name="MatOverlay" type="ColorRect" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot3/MatIcon"]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+offset_right = 160.0
+offset_bottom = 160.0
+color = Color(1, 1, 1, 0.290196)
+
+[node name="Panel" type="Panel" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot3/MatIcon"]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 160.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_fmk4w")
+
+[node name="ReqLabel" type="Label" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot3"]
+layout_mode = 2
+text = "Common Wood Logs"
+
+[node name="ReqQty" type="Label" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot3"]
+layout_mode = 2
+text = "Required: 10"
+
+[node name="OnhandLabel" type="RichTextLabel" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot3"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0, 1, 0, 1)
+bbcode_enabled = true
+text = "Onhand: 16"
+fit_content = true
+
+[node name="MatSlot4" type="VBoxContainer" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox"]
+layout_mode = 2
+
+[node name="MatIcon" type="TextureRect" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot4"]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+size_flags_vertical = 3
+texture = ExtResource("5_icv6a")
+expand_mode = 1
+
+[node name="MatOverlay" type="ColorRect" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot4/MatIcon"]
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+offset_right = 160.0
+offset_bottom = 160.0
+color = Color(1, 1, 1, 0.290196)
+
+[node name="Panel" type="Panel" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot4/MatIcon"]
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 160.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_fmk4w")
+
+[node name="ReqLabel" type="Label" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot4"]
+layout_mode = 2
+text = "Common Wood Logs"
+
+[node name="ReqQty" type="Label" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot4"]
+layout_mode = 2
+text = "Required: 10"
+
+[node name="OnhandLabel" type="RichTextLabel" parent="RightPanel/Panel_TopRightBackground/TopRow/RequireVBox/MaterialsHBox/MatSlot4"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/default_color = Color(0, 1, 0, 1)
+bbcode_enabled = true
+text = "Onhand: 16"
+fit_content = true
+
+[node name="CraftLogPanelBackground" type="Panel" parent="RightPanel/Panel_TopRightBackground/TopRow"]
+clip_contents = true
+custom_minimum_size = Vector2(280, 404)
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_c6pjo")
+
+[node name="LogLabel" type="Label" parent="RightPanel/Panel_TopRightBackground/TopRow/CraftLogPanelBackground"]
+layout_mode = 2
+offset_left = 2.0
+offset_top = 7.0
+offset_right = 278.0
+offset_bottom = 39.0
+theme_override_font_sizes/font_size = 31
+text = "Crafting Log"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="CraftLogPanel" type="PanelContainer" parent="RightPanel/Panel_TopRightBackground/TopRow/CraftLogPanelBackground"]
+custom_minimum_size = Vector2(260, 357)
+layout_direction = 3
+layout_mode = 2
+offset_top = 47.0
+offset_right = 280.0
+offset_bottom = 404.0
+size_flags_horizontal = 0
+size_flags_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_gal4a")
+
+[node name="ScrollLogContainer" type="ScrollContainer" parent="RightPanel/Panel_TopRightBackground/TopRow/CraftLogPanelBackground/CraftLogPanel"]
+custom_minimum_size = Vector2(275, 0)
+layout_direction = 2
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_08fka")
+
+[node name="CraftingLogLabel" type="RichTextLabel" parent="RightPanel/Panel_TopRightBackground/TopRow/CraftLogPanelBackground/CraftLogPanel/ScrollLogContainer"]
+custom_minimum_size = Vector2(257, 86)
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 20
+bbcode_enabled = true
+fit_content = true
+scroll_following = true
+
+[node name="CraftButtons" type="HBoxContainer" parent="RightPanel/Panel_TopRightBackground"]
+layout_mode = 2
+offset_left = 58.0
+offset_top = 417.0
+offset_right = 1535.0
+offset_bottom = 446.0
+theme_override_constants/separation = 59
+
+[node name="Craft1" type="Button" parent="RightPanel/Panel_TopRightBackground/CraftButtons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_oheqt")
+text = "CRAFT"
+
+[node name="Craft5" type="Button" parent="RightPanel/Panel_TopRightBackground/CraftButtons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_oheqt")
+text = "CRAFT x5"
+
+[node name="Craft10" type="Button" parent="RightPanel/Panel_TopRightBackground/CraftButtons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_oheqt")
+text = "CRAFT x10"
+
+[node name="Craft20" type="Button" parent="RightPanel/Panel_TopRightBackground/CraftButtons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_oheqt")
+text = "CRAFT x20"
+
+[node name="Craft50" type="Button" parent="RightPanel/Panel_TopRightBackground/CraftButtons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_oheqt")
+text = "CRAFT x50"
+
+[node name="Craft100" type="Button" parent="RightPanel/Panel_TopRightBackground/CraftButtons"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_oheqt")
+text = "CRAFT x10"
+
+[node name="Panel_BottomRightBackground" type="Panel" parent="RightPanel"]
+custom_minimum_size = Vector2(0, 508)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ancjn")
+
+[node name="PreviewHBoxTop" type="HBoxContainer" parent="RightPanel/Panel_BottomRightBackground"]
+layout_mode = 2
+offset_left = 48.0
+offset_top = 36.0
+offset_right = 1400.0
+offset_bottom = 249.0
+theme_override_constants/separation = 90
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RightPanel/Panel_BottomRightBackground/PreviewHBoxTop"]
+custom_minimum_size = Vector2(160, 20)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="PreviewIcon" type="TextureRect" parent="RightPanel/Panel_BottomRightBackground/PreviewHBoxTop/VBoxContainer"]
+custom_minimum_size = Vector2(260, 260)
+layout_mode = 2
+size_flags_horizontal = 3
+texture = ExtResource("6_assfy")
+
+[node name="Panel" type="Panel" parent="RightPanel/Panel_BottomRightBackground/PreviewHBoxTop/VBoxContainer/PreviewIcon"]
+custom_minimum_size = Vector2(260, 260)
+layout_mode = 0
+offset_right = 160.0
+offset_bottom = 160.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_eviok")
+
+[node name="PreviewInfoMain" type="VBoxContainer" parent="RightPanel/Panel_BottomRightBackground/PreviewHBoxTop"]
+custom_minimum_size = Vector2(160, 450)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 11
+
+[node name="ItemName" type="Label" parent="RightPanel/Panel_BottomRightBackground/PreviewHBoxTop/PreviewInfoMain"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 39
+text = "Stone Axe"
+
+[node name="ItemDesc" type="Label" parent="RightPanel/Panel_BottomRightBackground/PreviewHBoxTop/PreviewInfoMain"]
+custom_minimum_size = Vector2(270, 40)
+layout_mode = 2
+theme_override_font_sizes/font_size = 32
+text = "A simple axe of knapped stone and wood."
+autowrap_mode = 3
+
+[node name="PreviewInfoStats" type="VBoxContainer" parent="RightPanel/Panel_BottomRightBackground/PreviewHBoxTop"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 20
+
+[node name="PreviewItemInfoHeader" type="Label" parent="RightPanel/Panel_BottomRightBackground/PreviewHBoxTop/PreviewInfoStats"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "ITEM INFO:"
+
+[node name="PreviewInfoLabel" type="Label" parent="RightPanel/Panel_BottomRightBackground/PreviewHBoxTop/PreviewInfoStats"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "DURABILITY: 50/50
+SLASH DMG: 20
+PIERCE DMG: 10
+ATTACK SPEED: MEDIUM"
+
+[node name="PreviewInfoTags" type="VBoxContainer" parent="RightPanel/Panel_BottomRightBackground"]
+layout_mode = 0
+offset_left = 48.0
+offset_top = 323.0
+offset_right = 370.0
+offset_bottom = 489.0
+
+[node name="TagLabel" type="RichTextLabel" parent="RightPanel/Panel_BottomRightBackground/PreviewInfoTags"]
+custom_minimum_size = Vector2(257, 0)
+layout_mode = 2
+size_flags_horizontal = 5
+size_flags_vertical = 5
+theme_override_font_sizes/normal_font_size = 21
+bbcode_enabled = true
+text = "One Handed Weapon
+"
+fit_content = true
+
+[node name="Panel" type="Panel" parent="."]
+z_index = -1
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_4qu5q")
+metadata/_edit_lock_ = true

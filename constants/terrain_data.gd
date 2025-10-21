@@ -67,6 +67,7 @@ const TERRAIN_PROPERTIES := {
 		"pottable": true,
 		"pottable_liquid": "dirty_water",
 		"wet": true,
+		"block_building": true,
 		"blocks_movement": false
 	},
 	"path": {
@@ -85,6 +86,7 @@ const TERRAIN_PROPERTIES := {
 		"bush_search": true,
 		"burnable": true,
 		"blocks_movement": false,
+		"block_building": true,
 		"destroy_to": "dirt"
 	},
 	"flowers": {
@@ -96,6 +98,7 @@ const TERRAIN_PROPERTIES := {
 		"flowers_search": true,
 		"burnable": true,
 		"blocks_movement": false,
+		"block_building": true,
 		"destroy_to": "dirt"
 	},
 	"bridge": {
@@ -115,6 +118,7 @@ const TERRAIN_PROPERTIES := {
 		"blocks_vision": false,
 		"hole_enter": true,
 		"hole_spawn": true,
+		"block_building": true,
 		"blocks_movement": false
 	},
 	"stonefloor": {
@@ -135,6 +139,7 @@ const TERRAIN_PROPERTIES := {
 		"blocks_vision": false,
 		"stairs_enter_down": true,
 		"buildable": true,
+		"block_building": true,
 		"blocks_movement": false
 	},
 	"stonewallside": {
@@ -198,6 +203,7 @@ const TERRAIN_PROPERTIES := {
 		"blocks_vision": false,
 		"stairs_enter_up": true,
 		"buildable": true,
+		"block_building": true,
 		"blocks_movement": false
 	},
 	"long_ladder": {
@@ -207,6 +213,7 @@ const TERRAIN_PROPERTIES := {
 		"blocks_vision": false,
 		"stairs_enter_up": true,
 		"buildable": true,
+		"block_building": true,
 		"blocks_movement": false
 	},
 	"stonedoor": {
@@ -221,6 +228,7 @@ const TERRAIN_PROPERTIES := {
 		"buildable": true,
 		"destroy_to": "dirt",
 		"indoor_wall": true,
+		"block_building": true,
 		"blocks_movement": true
 	},
 	"slum_road_floor": {
@@ -352,6 +360,7 @@ const TERRAIN_PROPERTIES := {
 		"blocks_vision": false,
 		"stairs_enter_down": true,
 		"buildable": true,
+		"block_building": true,
 		"blocks_movement": false
 	},	
 	"slum_wood_fence": {
@@ -363,6 +372,7 @@ const TERRAIN_PROPERTIES := {
 		"destroy_to": "dirt",
 		"indoor_wall": true,
 		"buildable": true,
+		"block_building": true,
 		"blocks_movement": true
 	},
 	"cavewallbottom": {

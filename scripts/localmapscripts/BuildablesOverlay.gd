@@ -36,7 +36,6 @@ func populate_categories():
 			child.queue_free()
 
 	var buildables = LoadHandlerSingleton.load_player_buildreg()
-	print("Loaded buildables register keys:", buildables.keys())
 	for build_id in buildables.keys():
 		if build_id == "current_build":
 			continue
@@ -60,8 +59,6 @@ func populate_categories():
 
 				if Constants.TILE_TEXTURES.has(tex_id):
 					icon.texture_normal = Constants.TILE_TEXTURES[tex_id]
-				else:
-					print("⚠️ Missing texture for build_id:", build_id, "tex_id:", tex_id)
 					
 				icon.tooltip_text = build_id.capitalize()
 				icon.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -73,12 +70,14 @@ func populate_categories():
 				icon.connect("pressed", Callable(self, "select_buildable").bind(build_id))
 
 				category_containers[cat].add_child(icon)
-				print("Adding icon for build_id:", build_id, "category:", cat, "to container:", category_containers[cat])
 
 				# Highlight if it's the current buildable
 				if build_id == buildables.get("current_build", ""):
 					icon.modulate = Color(1, 1, 0)  # yellow highlight
-
+					
+				var initial_build: String = buildables.get("current_build", "")
+				if initial_build != "":
+					select_buildable(initial_build)
 
 func select_buildable(id: String):
 	current_selection = id
@@ -131,10 +130,17 @@ func update_appraisal_panel(id: String):
 	var req_lines = []
 
 	for mat in requirements.keys():
-		var words = Array(mat.split("_"))  # ✅ Convert to normal Array
-		for i in range(words.size()):
-			words[i] = words[i].capitalize()
-		var pretty_mat = " ".join(words)  # ✅ Works fine now
+		var words: Array
+
+		# ✅ Special rename rule for metaljunk
+		if mat == "metaljunk":
+			words = ["Junk", "Metal"]
+		else:
+			words = Array(mat.split("_"))
+			for i in range(words.size()):
+				words[i] = words[i].capitalize()
+
+		var pretty_mat = " ".join(words)
 		var line = "%d× %s" % [requirements[mat], pretty_mat]
 		req_lines.append(line)
 
@@ -152,9 +158,7 @@ func update_appraisal_panel(id: String):
 	if Constants.TILE_TEXTURES.has(tex_id):
 		appraisal_panel.get_node("TextureRect").texture = Constants.TILE_TEXTURES[tex_id]
 	else:
-		print("⚠️ Texture not found for appraisal panel tex_id:", tex_id)
 		appraisal_panel.get_node("TextureRect").texture = null
-
 
 
 # --- Helpers --- #

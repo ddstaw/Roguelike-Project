@@ -1,3 +1,4 @@
+# res://scripts/ItemSlot.gd
 extends Control
 class_name ItemSlot
 
@@ -144,11 +145,14 @@ func _can_drop_data(at_position: Vector2, data: Variant) -> bool:
 
 func _drop_data(at_position: Vector2, data: Variant) -> void:
 	var parent = get_parent()
-	while parent and not parent.has_method("handle_gear_slot_drop"):
+	while parent:
+		if parent.has_method("handle_gear_slot_drop"):
+			parent.handle_gear_slot_drop(self, data)
+			break
+		elif parent.has_method("handle_slot_drop"):
+			parent.handle_slot_drop(self, data)
+			break
 		parent = parent.get_parent()
-
-	if parent:
-		parent.handle_gear_slot_drop(self, data)
 
 	DragLayer._clear_drag_preview()
 

@@ -97,7 +97,7 @@ const OBJECT_PROPERTIES := {
 		"blocks_vision": false,
 		"mount_to_exit": true,
 		"storage": true,
-		"storage_type": "mount",
+		"storage_type": "mount",		
 		"blocks_movement": true
 	}
 }

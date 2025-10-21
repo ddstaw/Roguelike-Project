@@ -1,3 +1,4 @@
+##res://scripts/localmapgenscripts/PlayerVisual.gd
 extends CharacterBody2D
 
 # 🕒 Held movement timing
@@ -11,6 +12,8 @@ var travel_log_control: Node = null
 var interaction_mode := false
 var interaction_origin: Vector2i = Vector2i(-1, -1)  # where the player stood when entering mode
 
+const BuildData = preload("res://constants/build_data.gd")
+
 
 signal fov_updated(tiles)
 
@@ -19,6 +22,21 @@ func _ready():
 	var looks = LoadHandlerSingleton.load_player_looks()
 	if looks != null:
 		apply_appearance(looks)
+
+	# 🧭 Force initial grid position tracking
+	var current_grid_pos = Vector2i(round(position.x / TILE_SIZE), round(position.y / TILE_SIZE))
+	last_grid_position = current_grid_pos
+
+	var local_map = get_tree().root.get_node_or_null("LocalMap")
+	if local_map != null:
+		local_map.update_fov_from_player(current_grid_pos)
+		local_map.update_object_visibility(current_grid_pos)
+
+	# 🧪 Optional: auto-start build mode for debug purposes (remove or comment for prod)
+	# if local_map != null and local_map.has_method("enter_targeting"):
+	#     local_map.enter_targeting(local_map.TargetingMode.BUILD)
+
+
 
 func _process(delta):
 	if is_moving:
@@ -91,6 +109,22 @@ func _unhandled_input(event):
 
 	# Normal controls when NOT in interaction mode
 	if event.is_pressed():
+		# 🧱 BUILD MODE: Freeze other inputs and hijack E key for placement
+		if local_map != null and local_map.get_current_targeting_mode() == local_map.TargetingMode.BUILD:
+			# 🔨 Place buildable with E
+			if event.is_action("interact"):
+				get_viewport().set_input_as_handled()
+				travel_log_control.add_message_to_log("🚧 Attempting to build at: " + str(local_map.target_cursor_grid_pos))
+				attempt_build_placement()
+				return
+
+			# ❄️ Block aim and inspect during build mode
+			if event.is_action("toggle_aim_mode") or event.is_action("toggle_inspect_mode"):
+				get_viewport().set_input_as_handled()
+				travel_log_control.add_message_to_log("❌ Can't aim or inspect during building.")
+				return
+
+		# 🧩 Normal non-build controls
 		if event.is_action("interact"):
 			get_viewport().set_input_as_handled()
 			_enter_interaction_mode()
@@ -121,6 +155,8 @@ func _unhandled_input(event):
 			start_held_move(Vector2i(1, 1))
 		elif event.is_action("rest_select"):
 			rest_player()
+
+		# 🧱 Enter build mode
 		elif event.is_action("toggle_build_mode"):
 			get_viewport().set_input_as_handled()
 			if LoadHandlerSingleton.is_holding_hammer_tool():
@@ -130,6 +166,8 @@ func _unhandled_input(event):
 			else:
 				travel_log_control.add_message_to_log("You need a hammer to build.")
 			return
+
+		# 🎯 Enter aim mode
 		elif event.is_action("toggle_aim_mode"):
 			travel_log_control.add_message_to_log("You size up a shot.")
 			get_viewport().set_input_as_handled()
@@ -137,24 +175,26 @@ func _unhandled_input(event):
 				local_map.enter_targeting(local_map.TargetingMode.AIM)
 			return
 
+		# 👁 Enter inspect mode
 		elif event.is_action("toggle_inspect_mode"):
 			travel_log_control.add_message_to_log("You strain your eyes to review what's around.")
 			get_viewport().set_input_as_handled()
 			if local_map != null:
 				local_map.enter_targeting(local_map.TargetingMode.INSPECT)
 			return
-		
-		elif event.is_action("confirm_action"):
+
+		# ✅ Confirm action
+		elif InputMap.has_action("confirm_action") and event.is_action("confirm_action"):
 			if local_map != null and local_map.is_in_targeting_mode():
 				travel_log_control.add_message_to_log("🎯 Confirmed target at: " + str(local_map.target_cursor_grid_pos))
 				local_map.exit_targeting()
 				get_viewport().set_input_as_handled()
 				return
 
-		
 	elif event.is_released():
 		is_moving = false
 		held_direction = Vector2.ZERO
+
 
 func _dir_from_event(event) -> Vector2i:
 	# Map the same actions you use for movement
@@ -382,7 +422,17 @@ func move_player(dir: Vector2i):
 	apply_movement_stat_effects()
 	local_map.update_object_visibility(current_grid_pos)
 	#print("📍 Player moved to local tile:", current_grid_pos)
+	
+	# 💾 Update grid_position_local on actual movement
+	var placement_data := LoadHandlerSingleton.load_temp_placement()
+	if not placement_data.has("local_map"):
+		placement_data["local_map"] = {}
 
+	placement_data["local_map"]["grid_position_local"] = {
+		"x": current_grid_pos.x,
+		"y": current_grid_pos.y
+	}
+	LoadHandlerSingleton.save_temp_placement(placement_data)
 
 func start_held_move(dir: Vector2i):
 	move_player(dir)  # Immediate step
@@ -621,3 +671,45 @@ func handle_egress_check():
 
 	var new_pos = Vector2i(pos["x"], pos["y"])
 	change_z_level(new_z, new_pos)
+
+func attempt_build_placement():
+	var local_map = get_tree().root.get_node_or_null("LocalMap")
+	if local_map == null:
+		travel_log_control.add_message_to_log("This won't do.")
+		return
+
+	var grid_pos: Vector2i = local_map.target_cursor_grid_pos
+
+	# Validate
+	if not local_map.is_valid_build_position(grid_pos):
+		travel_log_control.add_message_to_log("I can’t build that here.")
+		return
+
+	if not LoadHandlerSingleton.has_required_materials_for_current_build():
+		travel_log_control.add_message_to_log("I don't have the required materials.")
+		return
+
+	# Delegate the actual placement to LocalMap
+	local_map.place_current_buildable_at(grid_pos)
+	
+	var used_materials: Dictionary = local_map.consume_materials_for_current_build()
+	if used_materials.size() > 0:
+		var msg: String = "Used materials:\n"
+		for id: String in used_materials.keys():
+			var entry = used_materials[id]
+			var name: String = entry.get("display_name", id)
+			var qty: int = entry.get("used_qty", 0)
+			msg += "- %s x%d\n" % [name, qty]
+		travel_log_control.add_message_to_log(msg.strip_edges())
+	else:
+		travel_log_control.add_message_to_log("⚠️ No materials consumed — possible logic issue.")
+	
+			# ✅ Emit global inventory change signal
+	if LoadHandlerSingleton.has_signal("inventory_changed"):
+		LoadHandlerSingleton.emit_signal("inventory_changed")
+
+
+
+	# PlayerVisual does NOT re-enter targeting. That is managed by LocalMap logic.
+
+		

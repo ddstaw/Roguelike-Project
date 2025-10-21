@@ -13,6 +13,9 @@ static var _cached_egress_data := {}
 const Consts = preload("res://scripts/Constants.gd")
 const NodeTable := preload("res://constants/node_table.gd")
 const ItemData := preload("res://constants/item_data.gd") # adjust!
+const BuildData = preload("res://constants/build_data.gd")
+const CraftData = preload("res://constants/crafting_blueprints.gd")
+const RegisterPath := "res://characterdata/building_register.json"
 
 
 var elfhaven_proper: String = "sample elf haven"  # Default values
@@ -23,6 +26,7 @@ var villages: Dictionary = {}
 
 # ✅ Add the signal and function HERE:
 signal request_map_reload
+signal inventory_changed
 
 # -------------------------------------------------------------------
 # 🌍 LOCAL MAP SAVE/LOAD
@@ -2825,11 +2829,15 @@ static func ensure_storage_entry_with_loot(
 	if not register[z_key][chunk_key].has(biome_key):
 		register[z_key][chunk_key][biome_key] = {}
 
-	# ✅ If already has this storage_id, do nothing (chest has already rolled)
+	# 🧱 If this storage already exists, check if it's a player-built one
 	if register[z_key][chunk_key][biome_key].has(storage_id):
-		return
+		var existing: Dictionary = register[z_key][chunk_key][biome_key][storage_id]
+		if existing.get("is_built", false):
+			print("🧱 Skipping loot roll — built storage detected:", storage_id)
+			return  # ✅ do nothing for player-built chests
+		return  # ✅ do nothing if already rolled naturally
 
-	# Otherwise, first interaction → roll loot
+	# Otherwise, first interaction → roll loot for *naturally spawned* chests
 	var rolled := roll_node_loot(storage_type, 3)
 	var inv := expand_loot_to_inventory(rolled, timestamp)
 
@@ -2837,10 +2845,11 @@ static func ensure_storage_entry_with_loot(
 		"position": [int(position.x), int(position.y)],
 		"inventory": inv,
 		"storage_type": storage_type,
-		"rolled_once": true,   # optional marker, can help debugging
+		"rolled_once": true,
 		"created_at": timestamp
 	}
 
+	print("🎁 Rolled new natural chest loot for:", storage_id)
 	LoadHandlerSingleton.save_storage_register(biome, register)
 
 
@@ -2986,6 +2995,13 @@ static func transfer_item(
 
 	LoadHandlerSingleton.normalize_stack_stats(new_stack) # ✅ normalize new stack
 	target_inventory[new_stack["unique_ID"]] = new_stack
+	if Engine.has_singleton("LoadHandlerSingleton"):
+		var handler = Engine.get_singleton("LoadHandlerSingleton")
+		if handler is Object:
+			handler._on_transfer_item_completed()
+
+func _on_transfer_item_completed():
+	emit_signal("inventory_changed")
 
 static func update_storage_inventory(
 	biome: String,
@@ -3268,3 +3284,56 @@ func set_current_build(id: String) -> void:
 	var reg = load_player_buildreg()
 	reg["current_build"] = id
 	save_player_buildreg(reg)
+
+
+func has_required_materials_for_current_build() -> bool:
+	var build_reg: Dictionary = LoadHandlerSingleton.load_player_buildreg()
+	var build_key: String = build_reg.get("current_build", "")
+
+	if build_key == "":
+		push_warning("No current_build set in build register.")
+		return false
+
+	var build_data: Dictionary = BuildData.BUILD_PROPERTIES.get(build_key)
+	if build_data == null:
+		push_warning("Build key '%s' not found in BUILD_PROPERTIES." % build_key)
+		return false
+
+	var requirements: Dictionary = build_data.get("requires", {})
+	var inventory: Dictionary = LoadHandlerSingleton.load_player_inventory_dict()
+
+	for tag in requirements.keys():
+		var needed_qty: int = requirements[tag]
+		var found_qty := 0
+
+		for item in inventory.values():
+			if tag in item.get("crafting_tags", []):
+				found_qty += item.get("qty", 0)
+
+		if found_qty < needed_qty:
+			return false  # Not enough of this resource
+
+	return true  # All requirements met
+	
+func get_blueprint_register_path() -> String:
+	return get_save_file_path() + "characterdata/blueprint_register.json"
+
+func load_blueprint_register() -> Dictionary:
+	var path = get_blueprint_register_path()
+	return load_json_file(path)
+	
+func save_blueprint_register(data: Dictionary) -> void:
+	var path = get_blueprint_register_path()
+	save_json_file(path, data)
+
+func clear_blueprint_register() -> void:
+	save_blueprint_register({ "blueprints": {} })
+
+func get_display_name_from_item_data(item_id: String) -> String:
+	# Matches your item_data.gd structure
+	if ItemData.ITEM_PROPERTIES.has(item_id):
+		var entry = ItemData.ITEM_PROPERTIES[item_id]
+		if entry.has("base_display_name"):
+			return entry["base_display_name"]
+	# fallback if missing or invalid
+	return "[Unknown Item: %s]" % item_id
