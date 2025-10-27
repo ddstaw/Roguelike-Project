@@ -1,0 +1,289 @@
+[gd_scene load_steps=10 format=3 uid="uid://bhp3bg7ud83re"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hvjui"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qn2x3"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ptc6a"]
+content_margin_left = 21.0
+content_margin_top = 15.0
+content_margin_bottom = 15.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ykrwr"]
+content_margin_left = 21.0
+content_margin_top = 15.0
+content_margin_bottom = 15.0
+bg_color = Color(0.352213, 0.00338891, 0.361346, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d7ofd"]
+content_margin_left = 21.0
+content_margin_top = 15.0
+content_margin_bottom = 15.0
+bg_color = Color(0.582501, 0.511784, 1.92523e-07, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w8wc4"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hxnkm"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_k232u"]
+content_margin_left = 279.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_arait"]
+bg_color = Color(1, 1, 1, 0)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(1, 1, 1, 1)
+
+[node name="JournalScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackgroundPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hvjui")
+
+[node name="LeftPanelBackground" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 26.0
+offset_right = 436.0
+offset_bottom = 580.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_qn2x3")
+
+[node name="LeftPanel" type="VBoxContainer" parent="LeftPanelBackground"]
+layout_mode = 0
+offset_top = 11.0
+offset_right = 411.0
+offset_bottom = 1039.0
+
+[node name="Label" type="Label" parent="LeftPanelBackground/LeftPanel"]
+custom_minimum_size = Vector2(0, 90)
+layout_mode = 2
+theme_override_font_sizes/font_size = 51
+text = "JOURNAL"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Tabs" type="VBoxContainer" parent="LeftPanelBackground/LeftPanel"]
+layout_mode = 2
+theme_override_constants/separation = -1
+
+[node name="Button_ActiveTasks" type="Button" parent="LeftPanelBackground/LeftPanel/Tabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_ptc6a")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ykrwr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_d7ofd")
+toggle_mode = true
+text = "Active Tasks"
+alignment = 0
+
+[node name="Button_Investigations" type="Button" parent="LeftPanelBackground/LeftPanel/Tabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_ptc6a")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ykrwr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_d7ofd")
+toggle_mode = true
+text = "Investigations"
+alignment = 0
+
+[node name="Button_Contracts" type="Button" parent="LeftPanelBackground/LeftPanel/Tabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_ptc6a")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ykrwr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_d7ofd")
+toggle_mode = true
+text = "Contracts"
+alignment = 0
+
+[node name="Button_Rumors" type="Button" parent="LeftPanelBackground/LeftPanel/Tabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_ptc6a")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ykrwr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_d7ofd")
+toggle_mode = true
+text = "Rumors"
+alignment = 0
+
+[node name="Button_News" type="Button" parent="LeftPanelBackground/LeftPanel/Tabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_ptc6a")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ykrwr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_d7ofd")
+toggle_mode = true
+text = "Recent News"
+alignment = 0
+
+[node name="Button_Reputation" type="Button" parent="LeftPanelBackground/LeftPanel/Tabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_ptc6a")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ykrwr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_d7ofd")
+toggle_mode = true
+text = "Reputation"
+alignment = 0
+
+[node name="Button_RememberedPlaces" type="Button" parent="LeftPanelBackground/LeftPanel/Tabs"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_ptc6a")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ykrwr")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_d7ofd")
+toggle_mode = true
+text = "Remembered Places"
+alignment = 0
+
+[node name="CenterPanelBackground" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 435.0
+offset_top = 26.0
+offset_right = 991.0
+offset_bottom = 1050.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_w8wc4")
+
+[node name="CenterPanel" type="VBoxContainer" parent="CenterPanelBackground"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 548.0
+offset_bottom = 1012.0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="CenterPanelBackground/CenterPanel"]
+custom_minimum_size = Vector2(10, 1003)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="EntryList" type="VBoxContainer" parent="CenterPanelBackground/CenterPanel/ScrollContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="HighlightOverlay" type="Control" parent="CenterPanelBackground"]
+visible = false
+anchors_preset = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="RightPanelBackground" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 990.0
+offset_top = 26.0
+offset_right = 1892.0
+offset_bottom = 1050.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hxnkm")
+
+[node name="RightPanel" type="VBoxContainer" parent="RightPanelBackground"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 39.0
+offset_right = 887.0
+offset_bottom = 1009.0
+theme_override_constants/separation = 5
+
+[node name="MapTitleHeader" type="HBoxContainer" parent="RightPanelBackground/RightPanel"]
+layout_mode = 2
+theme_override_constants/separation = -10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RightPanelBackground/RightPanel/MapTitleHeader"]
+layout_mode = 2
+
+[node name="WorldMapTimeLabel" type="Label" parent="RightPanelBackground/RightPanel/MapTitleHeader/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 25
+text = "September 12, 1846"
+
+[node name="WorldMapTimeLabel2" type="Label" parent="RightPanelBackground/RightPanel/MapTitleHeader/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+text = "10:30AM"
+
+[node name="WorldMapNameLabel" type="Label" parent="RightPanelBackground/RightPanel/MapTitleHeader"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+theme_override_styles/normal = SubResource("StyleBoxFlat_k232u")
+text = "DARKRIDGE TERRITORY"
+horizontal_alignment = 1
+
+[node name="MapPreviewFrame" type="Panel" parent="RightPanelBackground"]
+layout_mode = 0
+offset_left = 185.0
+offset_top = 191.0
+offset_right = 706.0
+offset_bottom = 712.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_arait")
+
+[node name="MiniMapContainer" type="SubViewportContainer" parent="RightPanelBackground/MapPreviewFrame"]
+layout_mode = 0
+offset_left = 7.0
+offset_top = 4.0
+offset_right = 7.0
+offset_bottom = 4.0
+
+[node name="MiniViewport" type="SubViewport" parent="RightPanelBackground/MapPreviewFrame/MiniMapContainer"]
+handle_input_locally = false
+render_target_update_mode = 4
+
+[node name="JournalTextureRect" type="TextureRect" parent="RightPanelBackground/MapPreviewFrame/MiniMapContainer/MiniViewport"]
+offset_left = 720.0
+offset_top = 192.0
+offset_right = 888.0
+offset_bottom = 715.0
+mouse_filter = 2
+
+[node name="OverlayLayer" type="Control" parent="RightPanelBackground/MapPreviewFrame/MiniMapContainer/MiniViewport"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2

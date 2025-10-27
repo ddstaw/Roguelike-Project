@@ -1,0 +1,527 @@
+[gd_scene load_steps=5 format=3 uid="uid://dejyayvbvux78"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_whiteborder"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yellowbtn"]
+content_margin_left = 15.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yellowbtn_hover"]
+content_margin_left = 15.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(1, 1, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+
+[node name="Spellbook" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="BackgroundPanel" type="Panel" parent="."]
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+
+[node name="LeftPanelBackground" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 25.0
+offset_right = 435.0
+offset_bottom = 1050.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="LeftPanel" type="VBoxContainer" parent="LeftPanelBackground"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 395.0
+offset_bottom = 1010.0
+theme_override_constants/separation = 10
+
+[node name="Label_SpellbookTitle" type="Label" parent="LeftPanelBackground/LeftPanel"]
+custom_minimum_size = Vector2(0, 70)
+layout_mode = 2
+theme_override_font_sizes/font_size = 50
+text = "Spell Book"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Button_AddNewSpell" type="Button" parent="LeftPanelBackground/LeftPanel"]
+custom_minimum_size = Vector2(0, 55)
+layout_mode = 2
+theme_override_font_sizes/font_size = 30
+theme_override_styles/normal = SubResource("StyleBoxFlat_yellowbtn")
+theme_override_styles/hover = SubResource("StyleBoxFlat_yellowbtn_hover")
+text = "+ ADD NEW SPELL"
+
+[node name="SpellListScroll" type="ScrollContainer" parent="LeftPanelBackground/LeftPanel"]
+custom_minimum_size = Vector2(0, 880)
+layout_mode = 2
+horizontal_scroll_mode = 0
+
+[node name="SpellListVBox" type="VBoxContainer" parent="LeftPanelBackground/LeftPanel/SpellListScroll"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 6
+
+[node name="Label_SpellPlaceholder1" type="Label" parent="LeftPanelBackground/LeftPanel/SpellListScroll/SpellListVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Blazing Contaminant"
+
+[node name="Label_SpellPlaceholder2" type="Label" parent="LeftPanelBackground/LeftPanel/SpellListScroll/SpellListVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Dave's Fast Feet"
+
+[node name="CenterPanelBackground" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 435.0
+offset_top = 25.0
+offset_right = 1380.0
+offset_bottom = 1050.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="CenterContainer" type="CenterContainer" parent="CenterPanelBackground"]
+layout_mode = 0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 930.0
+offset_bottom = 1010.0
+
+[node name="Label_CenterPlaceholder" type="Label" parent="CenterPanelBackground/CenterContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "Center Panel — Dynamic Content"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RightPanelBackground" type="Panel" parent="."]
+layout_mode = 0
+offset_left = 1380.0
+offset_top = 25.0
+offset_right = 1895.0
+offset_bottom = 1050.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="RightPanel" type="VBoxContainer" parent="RightPanelBackground"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 25.0
+offset_right = 470.0
+offset_bottom = 1000.0
+theme_override_constants/separation = 14
+
+[node name="Label_MagicSkillsHeader" type="Label" parent="RightPanelBackground/RightPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 0.8, 1, 1)
+theme_override_font_sizes/font_size = 40
+text = "Magic Skills"
+horizontal_alignment = 1
+
+[node name="MagicSkillsVBox" type="VBoxContainer" parent="RightPanelBackground/RightPanel"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="VBox_Pyro" type="VBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox"]
+layout_mode = 2
+
+[node name="HBox_Pyro" type="HBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Pyro"]
+layout_mode = 2
+
+[node name="Label_Pyro" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Pyro/HBox_Pyro"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.25, 0.25, 1)
+theme_override_font_sizes/font_size = 26
+text = "pyromancy"
+
+[node name="Label_PyroLVL" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Pyro/HBox_Pyro"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "LVL 1"
+
+[node name="Panel_PyroXP" type="Panel" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Pyro"]
+custom_minimum_size = Vector2(380, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="ColorRect_PyroFill" type="ColorRect" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Pyro/Panel_PyroXP"]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 28.0
+color = Color(0.5, 0, 0, 1)
+
+[node name="Label_PyroXP" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Pyro/Panel_PyroXP"]
+layout_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "current xp: 20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox_Cyro" type="VBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox"]
+layout_mode = 2
+
+[node name="HBox_Cyro" type="HBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Cyro"]
+layout_mode = 2
+
+[node name="Label_Cyro" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Cyro/HBox_Cyro"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.4, 0.9, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "cyromancy"
+
+[node name="Label_CyroLVL" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Cyro/HBox_Cyro"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "LVL 0"
+
+[node name="Panel_CyroXP" type="Panel" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Cyro"]
+custom_minimum_size = Vector2(380, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="ColorRect_CyroFill" type="ColorRect" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Cyro/Panel_CyroXP"]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 28.0
+color = Color(0.2, 0.8, 1, 1)
+
+[node name="Label_CyroXP" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Cyro/Panel_CyroXP"]
+layout_mode = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "current xp: 20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox_Fulm" type="VBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox"]
+layout_mode = 2
+
+[node name="HBox_Fulm" type="HBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Fulm"]
+layout_mode = 2
+
+[node name="Label_Fulm" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Fulm/HBox_Fulm"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.3, 1)
+theme_override_font_sizes/font_size = 26
+text = "fulminancy"
+
+[node name="Label_FulmLVL" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Fulm/HBox_Fulm"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "LVL 0"
+
+[node name="Panel_FulmXP" type="Panel" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Fulm"]
+custom_minimum_size = Vector2(380, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="ColorRect_FulmFill" type="ColorRect" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Fulm/Panel_FulmXP"]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 28.0
+color = Color(0.9, 0.8, 0.1, 1)
+
+[node name="Label_FulmXP" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Fulm/Panel_FulmXP"]
+layout_mode = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 22
+text = "current xp: 20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox_Veno" type="VBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox"]
+layout_mode = 2
+
+[node name="HBox_Veno" type="HBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Veno"]
+layout_mode = 2
+
+[node name="Label_Veno" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Veno/HBox_Veno"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.3, 1, 0.3, 1)
+theme_override_font_sizes/font_size = 26
+text = "venomancy"
+
+[node name="Label_VenoLVL" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Veno/HBox_Veno"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "LVL 0"
+
+[node name="Panel_VenoXP" type="Panel" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Veno"]
+custom_minimum_size = Vector2(380, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="ColorRect_VenoFill" type="ColorRect" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Veno/Panel_VenoXP"]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 28.0
+color = Color(0.2, 1, 0.3, 1)
+
+[node name="Label_VenoXP" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Veno/Panel_VenoXP"]
+layout_mode = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 22
+text = "current xp: 20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox_Glam" type="VBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox"]
+layout_mode = 2
+
+[node name="HBox_Glam" type="HBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Glam"]
+layout_mode = 2
+
+[node name="Label_Glam" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Glam/HBox_Glam"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.3, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "glamourmancy"
+
+[node name="Label_GlamLVL" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Glam/HBox_Glam"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "LVL 0"
+
+[node name="Panel_GlamXP" type="Panel" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Glam"]
+custom_minimum_size = Vector2(380, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="ColorRect_GlamFill" type="ColorRect" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Glam/Panel_GlamXP"]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 28.0
+color = Color(1, 0.3, 1, 1)
+
+[node name="Label_GlamXP" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Glam/Panel_GlamXP"]
+layout_mode = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 22
+text = "current xp: 20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox_Necro" type="VBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox"]
+layout_mode = 2
+
+[node name="HBox_Necro" type="HBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Necro"]
+layout_mode = 2
+
+[node name="Label_Necro" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Necro/HBox_Necro"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 0.4, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "necromancy"
+
+[node name="Label_NecroLVL" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Necro/HBox_Necro"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "LVL 0"
+
+[node name="Panel_NecroXP" type="Panel" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Necro"]
+custom_minimum_size = Vector2(380, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="ColorRect_NecroFill" type="ColorRect" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Necro/Panel_NecroXP"]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 28.0
+color = Color(0.7, 0.5, 1, 1)
+
+[node name="Label_NecroXP" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Necro/Panel_NecroXP"]
+layout_mode = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 22
+text = "current xp: 20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox_Vito" type="VBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox"]
+layout_mode = 2
+
+[node name="HBox_Vito" type="HBoxContainer" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Vito"]
+layout_mode = 2
+
+[node name="Label_Vito" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Vito/HBox_Vito"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 0.8, 1)
+theme_override_font_sizes/font_size = 26
+text = "vitomancy"
+
+[node name="Label_VitoLVL" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Vito/HBox_Vito"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "LVL 0"
+
+[node name="Panel_VitoXP" type="Panel" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Vito"]
+custom_minimum_size = Vector2(380, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="ColorRect_VitoFill" type="ColorRect" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Vito/Panel_VitoXP"]
+layout_mode = 0
+offset_right = 120.0
+offset_bottom = 28.0
+color = Color(0.8, 1, 0.9, 1)
+
+[node name="Label_VitoXP" type="Label" parent="RightPanelBackground/RightPanel/MagicSkillsVBox/VBox_Vito/Panel_VitoXP"]
+layout_mode = 0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 22
+text = "current xp: 20"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Label_LangHeader" type="Label" parent="RightPanelBackground/RightPanel"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.85, 0.75, 0.3, 1)
+theme_override_font_sizes/font_size = 40
+text = "Language Skills"
+horizontal_alignment = 1
+
+[node name="LanguageSkillsVBox" type="VBoxContainer" parent="RightPanelBackground/RightPanel"]
+layout_mode = 2
+theme_override_constants/separation = 15
+
+[node name="VBox_Arcane" type="VBoxContainer" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HBox_Arcane" type="HBoxContainer" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Arcane"]
+layout_mode = 2
+
+[node name="Label_Arcane" type="Label" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Arcane/HBox_Arcane"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "Old Arcane"
+
+[node name="Label_ArcaneLVL" type="Label" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Arcane/HBox_Arcane"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "LVL 3"
+
+[node name="Panel_ArcaneXP" type="Panel" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Arcane"]
+custom_minimum_size = Vector2(380, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="Label_ArcaneProficiency" type="Label" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Arcane/Panel_ArcaneXP"]
+layout_mode = 0
+theme_override_colors/font_color = Color(0.85, 0.75, 0.3, 1)
+theme_override_font_sizes/font_size = 22
+text = "Illiterate"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox_Elderspeak" type="VBoxContainer" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HBox_Elderspeak" type="HBoxContainer" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Elderspeak"]
+layout_mode = 2
+
+[node name="Label_Elder" type="Label" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Elderspeak/HBox_Elderspeak"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "Elderspeak"
+
+[node name="Label_ElderLVL" type="Label" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Elderspeak/HBox_Elderspeak"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "LVL 5"
+
+[node name="Panel_ElderXP" type="Panel" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Elderspeak"]
+custom_minimum_size = Vector2(380, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="ColorRect_ElderFill" type="ColorRect" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Elderspeak/Panel_ElderXP"]
+layout_mode = 0
+offset_right = 190.0
+offset_bottom = 28.0
+color = Color(0.35, 0.3, 0.1, 1)
+
+[node name="Label_ElderProficiency" type="Label" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Elderspeak/Panel_ElderXP"]
+layout_mode = 0
+theme_override_colors/font_color = Color(0.2, 1, 1, 1)
+theme_override_font_sizes/font_size = 22
+text = "Competent"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="VBox_Lingua" type="VBoxContainer" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="HBox_Lingua" type="HBoxContainer" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Lingua"]
+layout_mode = 2
+
+[node name="Label_Lingua" type="Label" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Lingua/HBox_Lingua"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "Lingua Obscura"
+
+[node name="Label_LinguaLVL" type="Label" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Lingua/HBox_Lingua"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 26
+text = "LVL 8"
+
+[node name="Panel_LinguaXP" type="Panel" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Lingua"]
+custom_minimum_size = Vector2(380, 28)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_whiteborder")
+
+[node name="ColorRect_LinguaFill" type="ColorRect" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Lingua/Panel_LinguaXP"]
+layout_mode = 0
+offset_right = 320.0
+offset_bottom = 28.0
+color = Color(0.35, 0.3, 0.1, 1)
+
+[node name="Label_LinguaProficiency" type="Label" parent="RightPanelBackground/RightPanel/LanguageSkillsVBox/VBox_Lingua/Panel_LinguaXP"]
+layout_mode = 0
+theme_override_colors/font_color = Color(0.2, 1, 0.2, 1)
+theme_override_font_sizes/font_size = 22
+text = "Proficient"
+horizontal_alignment = 1
+vertical_alignment = 1

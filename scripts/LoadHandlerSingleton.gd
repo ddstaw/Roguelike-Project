@@ -117,6 +117,9 @@ func get_temp_localmap_npcs_path() -> String:
 func get_combat_stats_path() -> String:
 	return get_save_file_path() + "characterdata/combat_stats-save" + str(get_save_slot()) + ".json"
 
+func get_skill_save_path() -> String:
+	return get_save_file_path() + "characterdata/skills-save" + str(get_save_slot()) + ".json"
+
 func get_base_attributes_path() -> String:
 	return get_save_file_path() + "characterdata/base_attributes-save" + str(get_save_slot()) + ".json"
 
@@ -3337,3 +3340,84 @@ func get_display_name_from_item_data(item_id: String) -> String:
 			return entry["base_display_name"]
 	# fallback if missing or invalid
 	return "[Unknown Item: %s]" % item_id
+
+
+# 🔹 Determine which faith the player chose
+func detect_player_faith() -> String:
+	var path = get_character_creation_path()
+	var data = load_json_file(path)
+	if data.has("divineskills"):
+		for faith_key in data["divineskills"].keys():
+			if data["divineskills"][faith_key]:
+				return faith_key
+	return "negation"  # default to godless if not found
+
+
+func get_conviction_level_for_faith(faith_key: String) -> int:
+	var path = get_skill_save_path()
+	var data = load_json_file(path)
+
+	# ✅ Safely handle missing or malformed files
+	if typeof(data) != TYPE_DICTIONARY:
+		push_warning("⚠️ Skills file not found or invalid at: %s" % path)
+		return 0
+
+	if not data.has("divine_skills"):
+		return 0
+	if typeof(data["divine_skills"]) != TYPE_DICTIONARY:
+		return 0
+	if not data["divine_skills"].has(faith_key):
+		return 0
+
+	var faith_data = data["divine_skills"][faith_key]
+	if typeof(faith_data) != TYPE_DICTIONARY:
+		return 0
+
+	return int(faith_data.get("level", 0))
+
+
+# 🔹 Get current conviction level (based on active faith)
+func get_current_conviction_level() -> int:
+	var active_faith = detect_player_faith()
+	return get_conviction_level_for_faith(active_faith)
+
+
+func get_conviction_rank_title(level: int, faith: String = "negation") -> String:
+	var table: Dictionary = FaithConvictionTitles.TITLES
+	if not table.has(faith):
+		return "Uninitiated"
+	var ranks: Array = table[faith]
+	var idx: int = int(clamp(floor(level / 3.0), 0, ranks.size() - 1))
+	return ranks[idx]
+
+# 🔹 Get current XP for a given faith
+func get_current_xp_for_faith(faith_key: String) -> int:
+	var path = get_skill_save_path()
+	var data = load_json_file(path)
+	if data == null or not data.has("divine_skills"):
+		return 0
+	var skill_data = data["divine_skills"].get(faith_key, null)
+	if skill_data == null:
+		return 0
+	return int(skill_data.get("current_xp", 0))
+
+
+# 🔹 Get XP required for next level
+func get_xp_to_next_level_for_faith(faith_key: String) -> int:
+	var path = get_skill_save_path()
+	var data = load_json_file(path)
+	if data == null or not data.has("divine_skills"):
+		return 100
+	var skill_data = data["divine_skills"].get(faith_key, null)
+	if skill_data == null:
+		return 100
+	return int(skill_data.get("xp_to_next_level", 100))
+
+
+# 🔹 Calculate XP progress as float 0.0–1.0
+func get_xp_progress_ratio_for_faith(faith_key: String) -> float:
+	var current_xp = float(get_current_xp_for_faith(faith_key))
+	var next_xp = float(get_xp_to_next_level_for_faith(faith_key))
+	if next_xp <= 0:
+		return 0.0
+	return clamp(current_xp / next_xp, 0.0, 1.0)

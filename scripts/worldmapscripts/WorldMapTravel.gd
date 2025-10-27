@@ -1,3 +1,4 @@
+# res://scenes/play/WorldMapTravel.tscn Parent Node Script
 extends Control
 
 @onready var health_bar = get_node("MetersContainer/Hboxhealth/healthbar")

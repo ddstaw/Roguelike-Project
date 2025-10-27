@@ -1,3 +1,4 @@
+# res://scenes/play/WorldMapTravel.tscn LeftInfoContainer/TravelLogControl Script
 extends Control
 
 # Access the RichTextLabel directly with the updated path

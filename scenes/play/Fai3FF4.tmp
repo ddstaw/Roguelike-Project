@@ -1,0 +1,167 @@
+[gd_scene load_steps=8 format=3 uid="uid://cnxvss4mju438"]
+
+[ext_resource type="Script" path="res://ui/scripts/Faith_Screen.gd" id="1_q2uq3"]
+[ext_resource type="Texture2D" uid="uid://ce686r4sdny64" path="res://assets/ui/faith/void_port.png" id="1_rbqdg"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lddld"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_mer2n"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tt5vx"]
+bg_color = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jkdte"]
+bg_color = Color(1, 1, 1, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hpfxg"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[node name="FaithScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_q2uq3")
+
+[node name="FaithBackground" type="Panel" parent="."]
+z_index = -1
+layout_mode = 0
+offset_right = 1920.0
+offset_bottom = 1080.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_lddld")
+
+[node name="LeftPanel" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 28.0
+offset_right = 560.0
+offset_bottom = 1048.0
+
+[node name="LeftPanel_Background" type="Panel" parent="LeftPanel"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_mer2n")
+
+[node name="LeftPanel_Background_Content" type="Panel" parent="LeftPanel/LeftPanel_Background"]
+layout_mode = 0
+offset_left = 23.0
+offset_top = 21.0
+offset_right = 511.0
+offset_bottom = 997.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_tt5vx")
+
+[node name="FaithPort" type="TextureRect" parent="LeftPanel/LeftPanel_Background/LeftPanel_Background_Content"]
+layout_mode = 0
+offset_left = 32.0
+offset_top = 19.0
+offset_right = 442.0
+offset_bottom = 556.0
+texture = ExtResource("1_rbqdg")
+
+[node name="Panel" type="Panel" parent="LeftPanel/LeftPanel_Background/LeftPanel_Background_Content/FaithPort"]
+layout_mode = 0
+offset_right = 410.0
+offset_bottom = 537.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_jkdte")
+
+[node name="RichTextLabel" type="RichTextLabel" parent="LeftPanel/LeftPanel_Background/LeftPanel_Background_Content"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -203.0
+offset_top = -391.0
+offset_right = 203.0
+offset_bottom = -19.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Followers of the void are known as [color=34e8eb]Esoteric Orders[/color] they gather in abandoned places under a [color=34e8eb]Great One. [/color]The void speaks directly to you and asks you sometimes horrible, sometime [color=34e8eb]strange[/color] acts. Serve the void by obeying it's requests, acts of prayer, studying [color=34e8eb]Esoteric Tomes[/color], but be ready for the void is capricious - [color=34e8eb] it gives it's blessings and curses with no reason.[/color]"
+fit_content = true
+
+[node name="RightPanel" type="VBoxContainer" parent="."]
+layout_mode = 0
+offset_left = 558.0
+offset_top = 28.0
+offset_right = 1892.0
+offset_bottom = 305.0
+theme_override_constants/separation = -1
+
+[node name="TopPanel_Background" type="Panel" parent="RightPanel"]
+clip_contents = true
+custom_minimum_size = Vector2(0, 220)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_hpfxg")
+
+[node name="FaithLevelTile" type="Label" parent="RightPanel/TopPanel_Background"]
+layout_mode = 0
+offset_left = 34.0
+offset_top = 23.0
+offset_right = 661.0
+offset_bottom = 55.0
+theme_override_font_sizes/font_size = 31
+text = "Conviction Level 3: Novice Dreamer"
+
+[node name="BottomPanel_Background" type="Panel" parent="RightPanel"]
+custom_minimum_size = Vector2(0, 631)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_hpfxg")
+
+[node name="Panel" type="Panel" parent="RightPanel/BottomPanel_Background"]
+layout_mode = 0
+offset_left = 24.0
+offset_top = 3.0
+offset_right = 1332.0
+offset_bottom = 628.0
+
+[node name="FaithPowerTitle" type="Label" parent="RightPanel/BottomPanel_Background/Panel"]
+layout_mode = 2
+offset_left = 16.0
+offset_top = 5.0
+offset_right = 496.0
+offset_bottom = 45.0
+theme_override_constants/line_spacing = 0
+theme_override_font_sizes/font_size = 40
+text = "Eldritch Invocations"
+
+[node name="ScrollContainer" type="ScrollContainer" parent="RightPanel/BottomPanel_Background/Panel"]
+layout_mode = 0
+offset_left = 16.0
+offset_top = 56.0
+offset_right = 1308.0
+offset_bottom = 624.0
+horizontal_scroll_mode = 0
+vertical_scroll_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="RightPanel/BottomPanel_Background/Panel/ScrollContainer"]
+clip_contents = true
+custom_minimum_size = Vector2(0, 569)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3

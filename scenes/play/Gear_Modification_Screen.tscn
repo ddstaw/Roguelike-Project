@@ -1,0 +1,423 @@
+[gd_scene load_steps=16 format=3 uid="uid://dnh8ygo8ptux1"]
+
+[ext_resource type="Texture2D" uid="uid://dsiyhjgdhybao" path="res://assets/inv/weap/nobleman_pistol_base.png" id="1_idcn5"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uly2q"]
+bg_color = Color(0, 0, 0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vaaoq"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wrtpd"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y1ib3"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+expand_margin_left = 6.0
+expand_margin_top = 16.0
+expand_margin_right = 10.0
+expand_margin_bottom = 20.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_clear"]
+bg_color = Color(0, 0, 0, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qhfpg"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_juhoe"]
+bg_color = Color(0.118581, 0.118581, 0.118581, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(0.351563, 0.351563, 0.351563, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xtrh0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lgklf"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_apmbv"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1xc1x"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y6hqd"]
+bg_color = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_border"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xk168"]
+content_margin_top = 19.0
+content_margin_bottom = 20.0
+bg_color = Color(1, 1, 1, 0)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+expand_margin_left = 9.0
+expand_margin_right = 2.0
+
+[node name="GearModificationScreen" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="Panel" parent="."]
+z_index = -1
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_uly2q")
+
+[node name="MainHBox" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 23.0
+offset_top = 20.0
+offset_right = -20.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_vaaoq")
+
+[node name="LeftPanelBackground" type="Panel" parent="MainHBox"]
+custom_minimum_size = Vector2(510, 0)
+layout_mode = 2
+offset_right = 510.0
+offset_bottom = 1040.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_wrtpd")
+
+[node name="LeftPanel" type="VBoxContainer" parent="MainHBox/LeftPanelBackground"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+offset_left = 6.0
+offset_top = 16.0
+offset_right = 500.0
+offset_bottom = 1039.0
+
+[node name="LeftHeader" type="Label" parent="MainHBox/LeftPanelBackground/LeftPanel"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 34
+theme_override_styles/normal = SubResource("StyleBoxFlat_y1ib3")
+text = "REPAIRS & MODIFICATIONS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LeftScroll" type="ScrollContainer" parent="MainHBox/LeftPanelBackground/LeftPanel"]
+custom_minimum_size = Vector2(480, 980)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_clear")
+horizontal_scroll_mode = 0
+
+[node name="ItemListVBox" type="VBoxContainer" parent="MainHBox/LeftPanelBackground/LeftPanel/LeftScroll"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+alignment = 1
+
+[node name="Placeholder1" type="Label" parent="MainHBox/LeftPanelBackground/LeftPanel/LeftScroll/ItemListVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.615686, 0.745098, 0.00392157, 1)
+theme_override_font_sizes/font_size = 24
+text = "Click an item to begin modifying."
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="RightVBox" type="VBoxContainer" parent="MainHBox"]
+layout_mode = 2
+offset_left = 540.0
+offset_top = 19.0
+offset_right = 1768.0
+offset_bottom = 1080.0
+theme_override_constants/separation = 24
+
+[node name="TopRow" type="HBoxContainer" parent="MainHBox/RightVBox"]
+custom_minimum_size = Vector2(0, 480)
+layout_mode = 2
+theme_override_constants/separation = 30
+
+[node name="ItemArea" type="VBoxContainer" parent="MainHBox/RightVBox/TopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 2
+
+[node name="ItemHeader" type="HBoxContainer" parent="MainHBox/RightVBox/TopRow/ItemArea"]
+custom_minimum_size = Vector2(170, 340)
+layout_mode = 2
+theme_override_constants/separation = 36
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainHBox/RightVBox/TopRow/ItemArea/ItemHeader"]
+custom_minimum_size = Vector2(0, 361)
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="ItemPreview" type="TextureRect" parent="MainHBox/RightVBox/TopRow/ItemArea/ItemHeader/VBoxContainer"]
+custom_minimum_size = Vector2(260, 260)
+layout_mode = 2
+texture = ExtResource("1_idcn5")
+stretch_mode = 4
+
+[node name="Panel" type="Panel" parent="MainHBox/RightVBox/TopRow/ItemArea/ItemHeader/VBoxContainer/ItemPreview"]
+layout_mode = 0
+offset_right = 260.0
+offset_bottom = 260.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_qhfpg")
+
+[node name="Button" type="Button" parent="MainHBox/RightVBox/TopRow/ItemArea/ItemHeader/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 31
+theme_override_styles/normal = SubResource("StyleBoxFlat_juhoe")
+theme_override_styles/hover = SubResource("StyleBoxFlat_xtrh0")
+text = "REPAIR "
+
+[node name="Label" type="Label" parent="MainHBox/RightVBox/TopRow/ItemArea/ItemHeader/VBoxContainer"]
+layout_mode = 2
+text = "> Ready to Repair...
+Not Enough Resources..."
+autowrap_mode = 3
+
+[node name="ItemTextVBox" type="VBoxContainer" parent="MainHBox/RightVBox/TopRow/ItemArea/ItemHeader"]
+custom_minimum_size = Vector2(549, 0)
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="ItemName" type="Label" parent="MainHBox/RightVBox/TopRow/ItemArea/ItemHeader/ItemTextVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 38
+text = "Nobleman Pistol"
+
+[node name="ItemDesc" type="Label" parent="MainHBox/RightVBox/TopRow/ItemArea/ItemHeader/ItemTextVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 26
+text = "A pistol used by the upper class."
+autowrap_mode = 3
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MainHBox/RightVBox/TopRow/ItemArea"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="MainHBox/RightVBox/TopRow/ItemArea/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+text = "Installed Attachments"
+
+[node name="ModSlotsHBox" type="HBoxContainer" parent="MainHBox/RightVBox/TopRow/ItemArea/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+
+[node name="ModSlot1" type="TextureRect" parent="MainHBox/RightVBox/TopRow/ItemArea/VBoxContainer/ModSlotsHBox"]
+custom_minimum_size = Vector2(88, 88)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Panel" type="Panel" parent="MainHBox/RightVBox/TopRow/ItemArea/VBoxContainer/ModSlotsHBox/ModSlot1"]
+custom_minimum_size = Vector2(88, 88)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_lgklf")
+
+[node name="ModSlot2" type="TextureRect" parent="MainHBox/RightVBox/TopRow/ItemArea/VBoxContainer/ModSlotsHBox"]
+custom_minimum_size = Vector2(88, 88)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Panel" type="Panel" parent="MainHBox/RightVBox/TopRow/ItemArea/VBoxContainer/ModSlotsHBox/ModSlot2"]
+custom_minimum_size = Vector2(88, 88)
+layout_mode = 0
+offset_right = 88.0
+offset_bottom = 88.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_lgklf")
+
+[node name="ModSlot3" type="TextureRect" parent="MainHBox/RightVBox/TopRow/ItemArea/VBoxContainer/ModSlotsHBox"]
+custom_minimum_size = Vector2(88, 88)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Panel" type="Panel" parent="MainHBox/RightVBox/TopRow/ItemArea/VBoxContainer/ModSlotsHBox/ModSlot3"]
+custom_minimum_size = Vector2(88, 88)
+layout_mode = 0
+offset_right = 88.0
+offset_bottom = 88.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_lgklf")
+
+[node name="ModSlot4" type="TextureRect" parent="MainHBox/RightVBox/TopRow/ItemArea/VBoxContainer/ModSlotsHBox"]
+custom_minimum_size = Vector2(88, 88)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Panel" type="Panel" parent="MainHBox/RightVBox/TopRow/ItemArea/VBoxContainer/ModSlotsHBox/ModSlot4"]
+custom_minimum_size = Vector2(88, 88)
+layout_mode = 0
+offset_right = 88.0
+offset_bottom = 88.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_lgklf")
+
+[node name="TagsPanel" type="Panel" parent="MainHBox/RightVBox/TopRow"]
+custom_minimum_size = Vector2(440, 0)
+layout_mode = 2
+size_flags_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_apmbv")
+
+[node name="TagsVBox" type="VBoxContainer" parent="MainHBox/RightVBox/TopRow/TagsPanel"]
+layout_mode = 2
+offset_left = 22.0
+offset_right = 438.0
+offset_bottom = 492.0
+theme_override_constants/separation = 28
+
+[node name="Panel" type="Panel" parent="MainHBox/RightVBox/TopRow/TagsPanel/TagsVBox"]
+custom_minimum_size = Vector2(0, 44)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_1xc1x")
+
+[node name="TagsHeader" type="Label" parent="MainHBox/RightVBox/TopRow/TagsPanel/TagsVBox/Panel"]
+layout_mode = 2
+offset_top = 6.0
+offset_right = 416.0
+offset_bottom = 36.0
+theme_override_constants/line_spacing = 0
+theme_override_font_sizes/font_size = 30
+text = "ITEM TAGS"
+horizontal_alignment = 1
+
+[node name="TagsScroll" type="ScrollContainer" parent="MainHBox/RightVBox/TopRow/TagsPanel/TagsVBox"]
+custom_minimum_size = Vector2(-10, 433)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_clear")
+horizontal_scroll_mode = 0
+
+[node name="TagsListVBox" type="VBoxContainer" parent="MainHBox/RightVBox/TopRow/TagsPanel/TagsVBox/TagsScroll"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="TagPlaceholder" type="Label" parent="MainHBox/RightVBox/TopRow/TagsPanel/TagsVBox/TagsScroll/TagsListVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 22
+text = "Defiled
+Spiked grgergerg 
+sergsergser"
+vertical_alignment = 1
+
+[node name="BottomRow" type="HBoxContainer" parent="MainHBox/RightVBox"]
+custom_minimum_size = Vector2(0, 360)
+layout_mode = 2
+theme_override_constants/separation = 28
+
+[node name="StatsPanel" type="Panel" parent="MainHBox/RightVBox/BottomRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_y6hqd")
+
+[node name="StatsScroll" type="ScrollContainer" parent="MainHBox/RightVBox/BottomRow/StatsPanel"]
+custom_minimum_size = Vector2(0, 340)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_clear")
+horizontal_scroll_mode = 0
+
+[node name="StatsVBox" type="VBoxContainer" parent="MainHBox/RightVBox/BottomRow/StatsPanel/StatsScroll"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="StatsPlaceholder" type="Label" parent="MainHBox/RightVBox/BottomRow/StatsPanel/StatsScroll/StatsVBox"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 26
+text = "DMG TYPE: —
+DMG: —
+ARMOR PENETRATION: —
+ACCURACY: —
+EFFECTIVE RANGE: —
+SOUND PROFILE: —
+DURABILITY: —"
+
+[node name="AttachmentsPanel" type="Panel" parent="MainHBox/RightVBox/BottomRow"]
+custom_minimum_size = Vector2(642, 493)
+layout_mode = 2
+size_flags_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_border")
+
+[node name="AttachmentsVBox" type="VBoxContainer" parent="MainHBox/RightVBox/BottomRow/AttachmentsPanel"]
+layout_mode = 2
+offset_left = 9.0
+offset_right = 640.0
+offset_bottom = 488.0
+theme_override_constants/separation = 8
+
+[node name="AttachmentsHeader" type="Label" parent="MainHBox/RightVBox/BottomRow/AttachmentsPanel/AttachmentsVBox"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 43
+theme_override_styles/normal = SubResource("StyleBoxFlat_xk168")
+text = "AVAILABLE ATTACHMENTS"
+horizontal_alignment = 1
+
+[node name="AttachmentsScroll" type="ScrollContainer" parent="MainHBox/RightVBox/BottomRow/AttachmentsPanel/AttachmentsVBox"]
+custom_minimum_size = Vector2(0, 300)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_clear")
+horizontal_scroll_mode = 0
+
+[node name="AttachmentsGrid" type="GridContainer" parent="MainHBox/RightVBox/BottomRow/AttachmentsPanel/AttachmentsVBox/AttachmentsScroll"]
+layout_mode = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 12
+columns = 4
+
+[node name="AttachmentsPlaceholder" type="Label" parent="MainHBox/RightVBox/BottomRow/AttachmentsPanel/AttachmentsVBox/AttachmentsScroll/AttachmentsGrid"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/font_size = 22
+text = "Attachments will appear 
+here once an item is selected."
+horizontal_alignment = 1
+vertical_alignment = 1

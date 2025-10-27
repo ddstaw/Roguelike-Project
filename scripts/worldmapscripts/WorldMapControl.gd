@@ -1,3 +1,4 @@
+# res://scenes/play/WorldMapTravel.tscn WorldMapControl Script
 extends Control
 
 # Load the world map grid

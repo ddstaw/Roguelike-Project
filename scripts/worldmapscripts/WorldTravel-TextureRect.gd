@@ -1,3 +1,4 @@
+# res://scenes/play/WorldMapTravel.tscn MapControl/SubViewportContainer/SubViewport/WorldTextureRect Script
 extends TextureRect
 
 # Preload resources

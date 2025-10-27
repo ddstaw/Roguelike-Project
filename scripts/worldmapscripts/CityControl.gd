@@ -1,3 +1,4 @@
+# res://scenes/play/WorldMapTravel.tscn CityControl Script
 extends Control
 
 # Function to load the city grid based on the city_name

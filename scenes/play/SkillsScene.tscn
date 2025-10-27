@@ -1,0 +1,750 @@
+[gd_scene load_steps=13 format=3 uid="uid://diivkt2lu2wmb"]
+
+[ext_resource type="Texture2D" uid="uid://dpykfxvh13xlw" path="res://ui/gs/fi.png" id="1_msar6"]
+[ext_resource type="Texture2D" uid="uid://owlk7ujat26x" path="res://assets/localmap-graphics/terrain/village-slums/slum_brick_floor.png" id="2_qpuax"]
+[ext_resource type="PackedScene" uid="uid://bp1jigvct3sol" path="res://ui/scenes/HotBarPanel.tscn" id="3_2nvwv"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_an0vx"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x0r2g"]
+content_margin_left = 11.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qv0nh"]
+content_margin_left = 11.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.247059, 0, 0.32549, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6oa1b"]
+content_margin_left = 11.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.466667, 0, 0.0745098, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d6jfh"]
+content_margin_left = 11.0
+content_margin_top = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0.351563, 0.351563, 0.351563, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f8okk"]
+content_margin_left = 11.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.239216, 0.0156863, 0.239216, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fas3r"]
+content_margin_left = 11.0
+content_margin_top = 6.0
+content_margin_bottom = 6.0
+bg_color = Color(0.466667, 0, 0.0745098, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nga0k"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4wr0m"]
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[node name="SkillsScene" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 0
+offset_left = 23.0
+offset_top = 22.0
+offset_right = 1920.0
+offset_bottom = 1080.0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = -2
+
+[node name="LeftPanel" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(394, 0)
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="MarginContainer/HBoxContainer/LeftPanel"]
+custom_minimum_size = Vector2(519, 811)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_an0vx")
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel"]
+custom_minimum_size = Vector2(544, 40)
+layout_mode = 2
+offset_top = 10.0
+offset_right = 544.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 90
+text = "SKILLS"
+horizontal_alignment = 1
+
+[node name="SkillsList" type="VBoxContainer" parent="MarginContainer/HBoxContainer/LeftPanel/Panel"]
+layout_mode = 2
+offset_left = 1.0
+offset_top = 107.0
+offset_right = 519.0
+offset_bottom = 1085.0
+theme_override_constants/separation = -2
+
+[node name="SkillButton_Pugilism" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Pugilism"
+alignment = 0
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Pugilism"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 12.0
+offset_right = 505.0
+offset_bottom = 32.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_BruteForce" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Brute Force"
+alignment = 0
+
+[node name="Label2" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_BruteForce"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 12.0
+offset_right = 505.0
+offset_bottom = 32.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Striking" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Striking"
+alignment = 0
+
+[node name="Label3" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Striking"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 12.0
+offset_right = 505.0
+offset_bottom = 32.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Archery" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Archery"
+alignment = 0
+
+[node name="Label4" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Archery"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 12.0
+offset_right = 505.0
+offset_bottom = 32.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Firearms" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Firearms"
+alignment = 0
+
+[node name="Label5" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Firearms"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 12.0
+offset_right = 505.0
+offset_bottom = 32.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Skullduggery" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Skullduggery"
+alignment = 0
+
+[node name="Label12" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Skullduggery"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 13.0
+offset_right = 505.0
+offset_bottom = 33.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Athletics" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Athletics"
+alignment = 0
+
+[node name="Label11" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Athletics"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 13.0
+offset_right = 505.0
+offset_bottom = 33.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Armoring" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Armoring"
+alignment = 0
+
+[node name="Label10" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Armoring"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 13.0
+offset_right = 505.0
+offset_bottom = 33.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Acumen" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Acumen"
+alignment = 0
+
+[node name="Label9" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Acumen"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 12.0
+offset_right = 505.0
+offset_bottom = 32.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Erudition" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Erudition"
+alignment = 0
+
+[node name="Label8" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Erudition"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 12.0
+offset_right = 505.0
+offset_bottom = 32.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Frontiersmanship" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Frontiersmanship"
+alignment = 0
+
+[node name="Label7" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Frontiersmanship"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 13.0
+offset_right = 505.0
+offset_bottom = 33.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Construction" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Construction"
+alignment = 0
+
+[node name="Label6" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Construction"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 13.0
+offset_right = 505.0
+offset_bottom = 33.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Tailoring" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Tailoring"
+alignment = 0
+
+[node name="Label7" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Tailoring"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 13.0
+offset_right = 505.0
+offset_bottom = 33.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Blacksmithing" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Blacksmithing"
+alignment = 0
+
+[node name="Label7" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Blacksmithing"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 12.0
+offset_right = 505.0
+offset_bottom = 32.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_BoweryFletching" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Bowery & Fletching"
+alignment = 0
+
+[node name="Label7" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_BoweryFletching"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 11.0
+offset_right = 505.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Metallurgy" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Metallurgy"
+alignment = 0
+
+[node name="Label8" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Metallurgy"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 14.0
+offset_right = 505.0
+offset_bottom = 34.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Alchemy" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_x0r2g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_qv0nh")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_6oa1b")
+toggle_mode = true
+text = "Alchemy"
+alignment = 0
+
+[node name="Label9" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Alchemy"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 13.0
+offset_right = 505.0
+offset_bottom = 33.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Gunsmithing" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_d6jfh")
+theme_override_styles/hover = SubResource("StyleBoxFlat_f8okk")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fas3r")
+toggle_mode = true
+text = "Gunsmithing"
+alignment = 0
+
+[node name="Label10" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Gunsmithing"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 11.0
+offset_right = 505.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Tinkering" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_d6jfh")
+theme_override_styles/hover = SubResource("StyleBoxFlat_f8okk")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fas3r")
+toggle_mode = true
+text = "Tinkering"
+alignment = 0
+
+[node name="Label7" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Tinkering"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 12.0
+offset_right = 505.0
+offset_bottom = 32.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_ExperimentalWeap" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_d6jfh")
+theme_override_styles/hover = SubResource("StyleBoxFlat_f8okk")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fas3r")
+toggle_mode = true
+text = "Experimental Weaponry"
+alignment = 0
+
+[node name="Label8" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_ExperimentalWeap"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 11.0
+offset_right = 505.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Chemistry" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_d6jfh")
+theme_override_styles/hover = SubResource("StyleBoxFlat_f8okk")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fas3r")
+toggle_mode = true
+text = "Chemistry"
+alignment = 0
+
+[node name="Label9" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Chemistry"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 13.0
+offset_right = 505.0
+offset_bottom = 33.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="SkillButton_Robotics" type="Button" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList"]
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2
+theme_override_font_sizes/font_size = 27
+theme_override_styles/normal = SubResource("StyleBoxFlat_d6jfh")
+theme_override_styles/hover = SubResource("StyleBoxFlat_f8okk")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_fas3r")
+toggle_mode = true
+text = "Robotics"
+alignment = 0
+
+[node name="Label10" type="Label" parent="MarginContainer/HBoxContainer/LeftPanel/Panel/SkillsList/SkillButton_Robotics"]
+layout_mode = 2
+offset_left = 389.0
+offset_top = 14.0
+offset_right = 505.0
+offset_bottom = 34.0
+theme_override_font_sizes/font_size = 19
+text = "Level 28"
+horizontal_alignment = 2
+vertical_alignment = 1
+
+[node name="Spacer" type="Control" parent="MarginContainer/HBoxContainer/LeftPanel/Panel"]
+layout_mode = 2
+anchors_preset = 0
+offset_top = 663.0
+offset_right = 210.0
+offset_bottom = 663.0
+
+[node name="RightPanel" type="VBoxContainer" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="MarginContainer/HBoxContainer/RightPanel"]
+custom_minimum_size = Vector2(1350, 783)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_nga0k")
+
+[node name="SkillHeader" type="HBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/Panel"]
+clip_contents = true
+custom_minimum_size = Vector2(340, 340)
+layout_mode = 2
+offset_left = 47.0
+offset_top = 49.0
+offset_right = 1323.0
+offset_bottom = 389.0
+theme_override_constants/separation = 30
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer/HBoxContainer/RightPanel/Panel/SkillHeader"]
+custom_minimum_size = Vector2(340, 340)
+layout_mode = 2
+texture = ExtResource("1_msar6")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/Panel/SkillHeader"]
+layout_mode = 2
+theme_override_constants/separation = 17
+
+[node name="SkillTitle" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/Panel/SkillHeader/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 61
+text = "Experimental Weaponry"
+
+[node name="SkillSubtitle" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/Panel/SkillHeader/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = "Combat Skill - All Ballistics including Flintlocks, Muskets, Pistols, Rifles "
+
+[node name="SkillDescription" type="RichTextLabel" parent="MarginContainer/HBoxContainer/RightPanel/Panel/SkillHeader/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 29
+bbcode_enabled = true
+text = "You don't need a doctorate to pull a trigger but some practice will help. The skill of handling firearms insures you get your money's worth from your sidearm."
+fit_content = true
+
+[node name="SkillIncreaseLabel" type="RichTextLabel" parent="MarginContainer/HBoxContainer/RightPanel/Panel/SkillHeader/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/normal_font_size = 23
+bbcode_enabled = true
+text = "Skill increased by: Shooting firearms and hitting targets successfully & reading technique manuals"
+fit_content = true
+
+[node name="SkillProgress" type="VBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/Panel"]
+layout_mode = 2
+offset_left = 48.0
+offset_top = 413.0
+offset_right = 1326.0
+offset_bottom = 619.0
+theme_override_constants/separation = 19
+
+[node name="SkillLevelDisplay" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/Panel/SkillProgress"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 37
+theme_override_styles/normal = SubResource("StyleBoxFlat_4wr0m")
+text = "Skill Level: 1"
+
+[node name="XPBar" type="ProgressBar" parent="MarginContainer/HBoxContainer/RightPanel/Panel/SkillProgress"]
+custom_minimum_size = Vector2(0, 40)
+layout_mode = 2
+show_percentage = false
+
+[node name="XPLabel" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/Panel/SkillProgress/XPBar"]
+layout_mode = 0
+offset_left = 11.0
+offset_top = 6.0
+offset_right = 235.0
+offset_bottom = 34.0
+theme_override_font_sizes/font_size = 27
+text = "current xp: 20"
+
+[node name="NextXPLabel" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/Panel/SkillProgress/XPBar"]
+layout_mode = 0
+offset_left = 977.0
+offset_top = 6.0
+offset_right = 1265.0
+offset_bottom = 34.0
+theme_override_font_sizes/font_size = 27
+text = "to next level: 100"
+
+[node name="DragDropHint" type="Label" parent="MarginContainer/HBoxContainer/RightPanel/Panel"]
+layout_mode = 0
+offset_left = 49.0
+offset_top = 541.0
+offset_right = 679.0
+offset_bottom = 566.0
+theme_override_font_sizes/font_size = 25
+text = "Drag and drop Active Skill Feats to hotbar"
+
+[node name="FeatSlots" type="HBoxContainer" parent="MarginContainer/HBoxContainer/RightPanel/Panel"]
+clip_contents = true
+layout_mode = 0
+offset_left = 51.0
+offset_top = 584.0
+offset_right = 1289.0
+offset_bottom = 704.0
+theme_override_constants/separation = 13
+
+[node name="TextureButton" type="TextureButton" parent="MarginContainer/HBoxContainer/RightPanel/Panel/FeatSlots"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("2_qpuax")
+stretch_mode = 0
+
+[node name="TextureButton2" type="TextureButton" parent="MarginContainer/HBoxContainer/RightPanel/Panel/FeatSlots"]
+custom_minimum_size = Vector2(120, 120)
+layout_mode = 2
+texture_normal = ExtResource("2_qpuax")
+stretch_mode = 0
+
+[node name="HotBarPanel" parent="." instance=ExtResource("3_2nvwv")]
+layout_mode = 1
+offset_top = 865.0
+offset_bottom = -74.0

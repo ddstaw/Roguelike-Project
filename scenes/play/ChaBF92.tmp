@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=3 uid="uid://h2af4eslxw48"]
+[gd_scene load_steps=17 format=3 uid="uid://h2af4eslxw48"]
 
 [ext_resource type="Texture2D" uid="uid://kmm12pkjfyce" path="res://ui/p/h/m/hm1.png" id="1_1ycci"]
 [ext_resource type="Script" path="res://ui/scripts/chrp-control.gd" id="1_hom4i"]
@@ -13,10 +13,6 @@ border_width_top = 4
 border_width_right = 4
 border_width_bottom = 4
 border_color = Color(1, 1, 1, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yh3n7"]
-content_margin_bottom = 9.0
-bg_color = Color(1, 1, 1, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jmosx"]
 bg_color = Color(0.18359, 0.18359, 0.18359, 1)
@@ -36,16 +32,8 @@ bg_color = Color(1, 1, 1, 0)
 content_margin_bottom = 9.0
 bg_color = Color(0.6, 0.6, 0.6, 0)
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yutwl"]
-content_margin_bottom = 1.0
-bg_color = Color(1, 1, 1, 0)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jrtwt"]
 content_margin_bottom = 9.0
-bg_color = Color(1, 1, 1, 0)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_i2vvx"]
-content_margin_bottom = 1.0
 bg_color = Color(1, 1, 1, 0)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3h0by"]
@@ -68,6 +56,10 @@ border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
 border_color = Color(1, 1, 1, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_850ce"]
+content_margin_bottom = 9.0
+bg_color = Color(1, 1, 1, 0)
 
 [node name="CharProfile" type="Control"]
 layout_mode = 3
@@ -101,8 +93,8 @@ z_index = 3
 layout_mode = 2
 offset_left = 48.0
 offset_top = 50.0
-offset_right = 333.0
-offset_bottom = 335.0
+offset_right = 324.0
+offset_bottom = 326.0
 size_flags_vertical = 3
 texture = ExtResource("1_1ycci")
 expand_mode = 5
@@ -119,57 +111,21 @@ theme_override_constants/separation = 5
 unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
-theme_override_font_sizes/font_size = 46
+theme_override_font_sizes/font_size = 39
 text = "Douglas MacDouglas"
 
 [node name="chrptitlelabel" type="Label" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo"]
 unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
-theme_override_font_sizes/font_size = 37
-theme_override_styles/normal = SubResource("StyleBoxFlat_yh3n7")
+theme_override_font_sizes/font_size = 33
 text = "Super Duper Guy"
 
-[node name="chrp-HBoxContainer-worldviewfaith" type="HBoxContainer" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="chrpworldviewlabel" type="Label" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-worldviewfaith"]
+[node name="chrpbackground" type="Label" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo"]
 unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
-theme_override_font_sizes/font_size = 29
-text = "Humanist"
-
-[node name="divider2" type="Label" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-worldviewfaith"]
-unique_name_in_owner = true
-z_index = 2
-layout_mode = 2
-theme_override_font_sizes/font_size = 29
-text = "|"
-
-[node name="chrpfaithlabel" type="Label" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-worldviewfaith"]
-unique_name_in_owner = true
-z_index = 2
-layout_mode = 2
-theme_override_font_sizes/font_size = 29
-text = "Orthodox Dogmatist"
-
-[node name="chrp-HBoxContainer-background" type="HBoxContainer" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo"]
-layout_mode = 2
-theme_override_constants/separation = 10
-
-[node name="backgroundlabel" type="Label" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-background"]
-z_index = 2
-layout_mode = 2
-theme_override_font_sizes/font_size = 29
-text = "Background:"
-
-[node name="chrpbackground" type="Label" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-background"]
-unique_name_in_owner = true
-z_index = 2
-layout_mode = 2
-theme_override_font_sizes/font_size = 29
+theme_override_font_sizes/font_size = 33
 text = "Former Bandit"
 
 [node name="chrp-HBoxContainer-racesex" type="HBoxContainer" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo"]
@@ -197,17 +153,42 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 29
 text = "Male"
 
+[node name="chrp-HBoxContainer-worldviewfaith" type="HBoxContainer" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="chrpworldviewlabel" type="Label" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-worldviewfaith"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "Humanist"
+
+[node name="divider2" type="Label" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-worldviewfaith"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "|"
+
+[node name="chrpfaithlabel" type="Label" parent="TopLeftCharInfoControl/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-worldviewfaith"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "Orthodox Dogmatist"
+
 [node name="chrp-levelvbox" type="VBoxContainer" parent="TopLeftCharInfoControl"]
 layout_mode = 0
 offset_left = 345.0
-offset_top = 258.0
+offset_top = 239.0
 offset_right = 1131.0
-offset_bottom = 367.0
+offset_bottom = 348.0
 
 [node name="chrp-levellabel" type="Label" parent="TopLeftCharInfoControl/chrp-levelvbox"]
 z_index = 2
 layout_mode = 2
-theme_override_font_sizes/font_size = 29
+theme_override_font_sizes/font_size = 38
 text = "Level 0"
 
 [node name="LvlXpVbox" type="Container" parent="TopLeftCharInfoControl/chrp-levelvbox"]
@@ -218,7 +199,6 @@ layout_mode = 2
 [node name="chrp-playerinfo-exp-meter-all" type="ProgressBar" parent="TopLeftCharInfoControl/chrp-levelvbox/LvlXpVbox"]
 z_index = 1
 clip_contents = true
-custom_minimum_size = Vector2(480, 47)
 layout_mode = 2
 size_flags_vertical = 1
 theme_override_styles/background = SubResource("StyleBoxFlat_jmosx")
@@ -233,7 +213,7 @@ layout_mode = 2
 offset_top = 2.0
 offset_right = 260.0
 offset_bottom = 41.0
-theme_override_font_sizes/font_size = 19
+theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_ljr05")
 text = "Current XP: 20"
 vertical_alignment = 1
@@ -242,11 +222,11 @@ vertical_alignment = 1
 unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
-offset_left = 208.0
+offset_left = 403.0
 offset_top = 2.0
-offset_right = 481.0
+offset_right = 676.0
 offset_bottom = 41.0
-theme_override_font_sizes/font_size = 19
+theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_bkyg1")
 text = "to next Level: 80"
 horizontal_alignment = 2
@@ -266,60 +246,53 @@ offset_top = 15.0
 offset_right = 307.0
 offset_bottom = 332.0
 
-[node name="AttributesLabel" type="Label" parent="BaseStats/chrp-VBoxContainer-attrib"]
+[node name="chrp-dmgresist-label2" type="Label" parent="BaseStats/chrp-VBoxContainer-attrib"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_6y5bm")
-text = "Attributes"
+text = "Base Stats"
 
 [node name="chrp-strength-label" type="Label" parent="BaseStats/chrp-VBoxContainer-attrib"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "Strength"
 
 [node name="chrp-perception-label" type="Label" parent="BaseStats/chrp-VBoxContainer-attrib"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "Perception"
 
 [node name="chrp-agility-label" type="Label" parent="BaseStats/chrp-VBoxContainer-attrib"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "Agility"
 
 [node name="chrp-endurance-label" type="Label" parent="BaseStats/chrp-VBoxContainer-attrib"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "Endurance"
 
 [node name="chrp-intelligence-label" type="Label" parent="BaseStats/chrp-VBoxContainer-attrib"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "Intelligence"
 
 [node name="chrp-charisma-label" type="Label" parent="BaseStats/chrp-VBoxContainer-attrib"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "Charisma"
 
 [node name="chrp-willpower-label" type="Label" parent="BaseStats/chrp-VBoxContainer-attrib"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "Willpower"
 
 [node name="chrp-VBoxContainer-activelvl" type="VBoxContainer" parent="BaseStats"]
@@ -334,7 +307,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "6"
 
 [node name="chrp-perception-lvl" type="Label" parent="BaseStats/chrp-VBoxContainer-activelvl"]
@@ -342,7 +314,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "6"
 
 [node name="chrp-agility-lvl" type="Label" parent="BaseStats/chrp-VBoxContainer-activelvl"]
@@ -350,7 +321,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "6"
 
 [node name="chrp-endurance-lvl" type="Label" parent="BaseStats/chrp-VBoxContainer-activelvl"]
@@ -358,7 +328,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "6"
 
 [node name="chrp-intelligence-lvl" type="Label" parent="BaseStats/chrp-VBoxContainer-activelvl"]
@@ -366,7 +335,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "6"
 
 [node name="chrp-charisma-lvl" type="Label" parent="BaseStats/chrp-VBoxContainer-activelvl"]
@@ -374,7 +342,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "6"
 
 [node name="chrp-willpower-lvl" type="Label" parent="BaseStats/chrp-VBoxContainer-activelvl"]
@@ -382,22 +349,19 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_yutwl")
 text = "6"
 
 [node name="ResistStats" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 521.0
-offset_top = 352.0
-offset_right = 899.0
-offset_bottom = 1050.0
+offset_right = 385.0
+offset_bottom = 690.0
 
 [node name="chrp-VBoxContainer-dmgresist" type="VBoxContainer" parent="ResistStats"]
 layout_mode = 0
-offset_left = 20.0
-offset_top = -5.0
-offset_right = 411.0
-offset_bottom = 684.0
+offset_left = 553.0
+offset_top = 346.0
+offset_right = 944.0
+offset_bottom = 975.0
 
 [node name="chrp-dmgresist-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
@@ -411,128 +375,105 @@ text = "Resistances"
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Fire"
 
 [node name="chrp-cold-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Ice"
 
 [node name="chrp-lightning-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Lightning "
 
 [node name="chrp-poi-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Poison"
 
 [node name="chrp-gla-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Glamour"
 
 [node name="chrp-mgk-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Magick"
 
 [node name="chrp-div-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Divine"
 
 [node name="chrp-dar-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Dark"
 
 [node name="chrp-voi-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Void"
 
 [node name="chrp-pierce-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Pierce"
 
 [node name="chrp-slash-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Slash
 "
 
-[node name="chrp-blunt-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
+[node name="chrp-pierce-label2" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Blunt"
 
-[node name="chrp-impale-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
+[node name="chrp-slash-label2" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Impaling"
 
-[node name="chrp-blackpower-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
+[node name="chrp-pierce-label3" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Blackpowder"
 
-[node name="chrp-ballistic-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
+[node name="chrp-slash-label3" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Ballistic"
-
-[node name="chrp-explosive-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
-z_index = 2
-layout_mode = 2
-theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
-text = "Explosive"
 
 [node name="chrp-VBoxContainer-dmgresist-lvl" type="VBoxContainer" parent="ResistStats"]
 layout_mode = 0
-offset_left = 271.0
-offset_top = 44.0
-offset_right = 340.0
-offset_bottom = 685.0
+offset_left = 804.0
+offset_top = 395.0
+offset_right = 873.0
+offset_bottom = 976.0
 
 [node name="chrp-fir-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
 unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "2%"
 
 [node name="chrp-cold-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
@@ -540,7 +481,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "2%"
 
 [node name="chrp-lightning-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
@@ -548,7 +488,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "2%"
 
 [node name="chrp-poi-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
@@ -556,7 +495,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "2%"
 
 [node name="chrp-gla-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
@@ -564,7 +502,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "10%"
 
 [node name="chrp-mgk-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
@@ -572,7 +509,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "10%"
 
 [node name="chrp-div-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
@@ -580,7 +516,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "10%"
 
 [node name="chrp-dar-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
@@ -588,7 +523,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "20%"
 
 [node name="chrp-voi-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
@@ -596,7 +530,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "10%"
 
 [node name="chrp-pierce-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
@@ -604,7 +537,6 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "0%"
 
 [node name="chrp-slash-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
@@ -612,47 +544,34 @@ unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "2%"
 
-[node name="chrp-blun-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
+[node name="chrp-pierce-lvl2" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
 unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "0%"
 
-[node name="chrp-impale-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
+[node name="chrp-slash-lvl2" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
 unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "2%"
 
-[node name="chrp-blackpower-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
+[node name="chrp-pierce-lvl3" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
 unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "0%"
 
-[node name="chrp-ballistic-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
+[node name="chrp-slash-lvl3" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
 unique_name_in_owner = true
 z_index = 2
 layout_mode = 2
 theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
-text = "2%"
-
-[node name="chrp-explosive-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
-unique_name_in_owner = true
-z_index = 2
-layout_mode = 2
-theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "2%"
 
 [node name="StatusEffectsPanel" type="Panel" parent="."]
@@ -664,18 +583,18 @@ anchor_left = 0.516
 anchor_top = 0.044
 anchor_right = 0.516
 anchor_bottom = 0.044
-offset_left = -91.72
-offset_top = 216.48
-offset_right = 393.28
-offset_bottom = 400.48
+offset_left = 418.28
+offset_top = 3.48
+offset_right = 901.28
+offset_bottom = 366.48
 theme_override_styles/panel = SubResource("StyleBoxFlat_3h0by")
 
 [node name="StatusEffectsHBoxContainer" type="VBoxContainer" parent="StatusEffectsPanel"]
 layout_mode = 0
 offset_left = 10.0
 offset_top = 9.0
-offset_right = 476.0
-offset_bottom = 353.0
+offset_right = 471.0
+offset_bottom = 367.0
 theme_override_constants/separation = 13
 
 [node name="StatusEffectsHeaderLabel" type="Label" parent="StatusEffectsPanel/StatusEffectsHBoxContainer"]
@@ -684,7 +603,7 @@ theme_override_font_sizes/font_size = 29
 text = "Status Effects"
 
 [node name="StatusEffectsScrollContainer" type="ScrollContainer" parent="StatusEffectsPanel/StatusEffectsHBoxContainer"]
-custom_minimum_size = Vector2(341, 123)
+custom_minimum_size = Vector2(461, 301)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ay5mk")
 horizontal_scroll_mode = 0
@@ -701,10 +620,10 @@ text = "Well Fed"
 
 [node name="CenterCurrentMeters" type="Control" parent="."]
 anchors_preset = 0
-offset_left = 1399.0
-offset_top = 236.0
-offset_right = 1766.0
-offset_bottom = 464.0
+offset_left = 1000.0
+offset_top = 32.0
+offset_right = 1367.0
+offset_bottom = 260.0
 
 [node name="chrp-VBoxContainer-meter-label" type="VBoxContainer" parent="CenterCurrentMeters"]
 custom_minimum_size = Vector2(120, 30)
@@ -804,9 +723,9 @@ anchor_top = 0.044
 anchor_right = 0.516
 anchor_bottom = 0.044
 offset_left = -939.72
-offset_top = 647.48
+offset_top = 648.48
 offset_right = -475.72
-offset_bottom = 982.48
+offset_bottom = 974.48
 theme_override_styles/panel = SubResource("StyleBoxFlat_3h0by")
 
 [node name="ConditionsHBoxContainer" type="VBoxContainer" parent="ConditionsPanel"]
@@ -823,7 +742,7 @@ theme_override_font_sizes/font_size = 29
 text = "Conditions & Injuries"
 
 [node name="ConditionsScrollContainer" type="ScrollContainer" parent="ConditionsPanel/ConditionsHBoxContainer"]
-custom_minimum_size = Vector2(241, 268)
+custom_minimum_size = Vector2(241, 254)
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ay5mk")
 horizontal_scroll_mode = 0
@@ -852,10 +771,10 @@ offset_bottom = 1084.0
 
 [node name="ArmorDodgeControl" type="Control" parent="RightPanelBottomGearControl"]
 anchors_preset = 0
-offset_left = 41.0
-offset_top = 8.0
-offset_right = 1033.0
-offset_bottom = 90.0
+offset_left = 50.0
+offset_top = 13.0
+offset_right = 1042.0
+offset_bottom = 95.0
 
 [node name="ArmorDodgeHbox" type="HBoxContainer" parent="RightPanelBottomGearControl/ArmorDodgeControl"]
 layout_mode = 2
@@ -937,14 +856,14 @@ text = "Unarmed"
 layout_mode = 0
 offset_left = 24.0
 offset_top = 50.0
-offset_right = 204.0
-offset_bottom = 230.0
+offset_right = 196.0
+offset_bottom = 222.0
 texture = ExtResource("3_yd4m8")
 
 [node name="Panel" type="Panel" parent="RightPanelBottomGearControl/LeftHandPanel/TextureRect"]
 layout_mode = 0
-offset_right = 180.0
-offset_bottom = 180.0
+offset_right = 172.0
+offset_bottom = 172.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_s4vbo")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="RightPanelBottomGearControl/LeftHandPanel"]
@@ -1020,14 +939,14 @@ text = "Unarmed"
 layout_mode = 0
 offset_left = 24.0
 offset_top = 50.0
-offset_right = 204.0
-offset_bottom = 230.0
+offset_right = 196.0
+offset_bottom = 222.0
 texture = ExtResource("3_gntvo")
 
 [node name="Panel" type="Panel" parent="RightPanelBottomGearControl/RightHandPanel/TextureRect"]
 layout_mode = 0
-offset_right = 180.0
-offset_bottom = 180.0
+offset_right = 172.0
+offset_bottom = 172.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_s4vbo")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="RightPanelBottomGearControl/RightHandPanel"]
@@ -1060,6 +979,75 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 23
 text = "Damage: 2-5
 "
+
+[node name="SpeedControl" type="Control" parent="."]
+anchors_preset = 0
+offset_left = 900.0
+offset_top = 344.0
+offset_right = 1386.0
+offset_bottom = 570.0
+
+[node name="SpeedHeaderLabel" type="Label" parent="SpeedControl"]
+z_index = 2
+layout_mode = 2
+offset_right = 490.0
+offset_bottom = 44.0
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_850ce")
+text = "Speed:"
+
+[node name="VBoxContainer" type="VBoxContainer" parent="SpeedControl"]
+layout_mode = 0
+offset_left = 160.0
+offset_top = -2.0
+offset_right = 650.0
+offset_bottom = 107.0
+theme_override_constants/separation = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="SpeedControl/VBoxContainer"]
+layout_mode = 2
+
+[node name="footspeedlabel" type="Label" parent="SpeedControl/VBoxContainer/HBoxContainer"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "On Foot:"
+
+[node name="footspeed" type="Label" parent="SpeedControl/VBoxContainer/HBoxContainer"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "1"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="SpeedControl/VBoxContainer"]
+layout_mode = 2
+
+[node name="travelspeedlabel" type="Label" parent="SpeedControl/VBoxContainer/HBoxContainer2"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "Travel:"
+
+[node name="travelspeed" type="Label" parent="SpeedControl/VBoxContainer/HBoxContainer2"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "Average"
+
+[node name="HBoxContainer3" type="HBoxContainer" parent="SpeedControl/VBoxContainer"]
+layout_mode = 2
+
+[node name="mountlabel" type="Label" parent="SpeedControl/VBoxContainer/HBoxContainer3"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "Mount:"
+
+[node name="mount" type="Label" parent="SpeedControl/VBoxContainer/HBoxContainer3"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 29
+text = "Horse"
 
 [node name="Background" type="TextureRect" parent="."]
 layout_mode = 2
