@@ -1,3 +1,4 @@
+# LightOverlay res://scenes/play/LocalMap.tscn res://scripts/localmapscripts/LightOverlay.gd
 extends Node2D
 
 @onready var light_mask_sprite: Sprite2D = $LightMask

@@ -1,3 +1,4 @@
+# res://scenes/SaveWorld.tscn Parent script - res://scripts/SaveWorld.gd
 extends Node2D
 
 # Variables to hold the button nodes

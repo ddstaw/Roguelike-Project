@@ -1,3 +1,4 @@
+#res://ui/scenes/PopupWorldtoLocal.tscn parent node script res://ui/scenes/PopupWorldtoLocal.gd
 extends Window
 
 signal explore_selected  # ✅ Signal to inform ProceedButton that Explore was chosen

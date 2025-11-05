@@ -1,3 +1,4 @@
+# UI/RaceInfo Script res://ui/scripts/raceHBoxContainer.gd
 extends Node
 
 var selected_button: TextureButton = null

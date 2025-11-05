@@ -1,0 +1,150 @@
+{
+	"chunk_0_0|z-1": [
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 11, "y": 4, "z": -1 },
+			"target_z": 0,
+			"type": "slum_brick_floor_stairs_up"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 2, "y": 26, "z": -1 },
+			"target_z": 0,
+			"type": "slum_brick_floor_stairs_up"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 2, "y": 34, "z": -1 },
+			"target_z": 0,
+			"type": "slum_brick_floor_stairs_up"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 28, "y": 7, "z": -1 },
+			"target_z": 0,
+			"type": "slum_brick_floor_stairs_up"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 34, "y": 23, "z": -1 },
+			"target_z": 0,
+			"type": "stone_stairs_up"
+		}
+	],
+
+	"chunk_0_0|z0": [
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 11, "y": 4, "z": 0 },
+			"target_z": -1,
+			"type": "slum_brick_floor_stairs_down"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 2, "y": 26, "z": 0 },
+			"target_z": -1,
+			"type": "slum_brick_floor_stairs_down"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 2, "y": 34, "z": 0 },
+			"target_z": -1,
+			"type": "slum_brick_floor_stairs_down"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 28, "y": 7, "z": 0 },
+			"target_z": -1,
+			"type": "slum_brick_floor_stairs_down"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 4, "y": 7, "z": 0 },
+			"target_z": 1,
+			"type": "slum_brick_floor_stairs_up"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 4, "y": 23, "z": 0 },
+			"target_z": 1,
+			"type": "slum_brick_floor_stairs_up"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 4, "y": 31, "z": 0 },
+			"target_z": 1,
+			"type": "slum_brick_floor_stairs_up"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 32, "y": 7, "z": 0 },
+			"target_z": 1,
+			"type": "slum_brick_floor_stairs_up"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 34, "y": 23, "z": 0 },
+			"target_z": -1,
+			"type": "stone_stairs_down"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 30, "y": 23, "z": 0 },
+			"target_z": 1,
+			"type": "stone_stairs_up"
+		}
+	],
+
+	"chunk_0_0|z1": [
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 4, "y": 7, "z": 1 },
+			"target_z": 0,
+			"type": "slum_brick_floor_stairs_down"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 4, "y": 23, "z": 1 },
+			"target_z": 0,
+			"type": "slum_brick_floor_stairs_down"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 4, "y": 31, "z": 1 },
+			"target_z": 0,
+			"type": "slum_brick_floor_stairs_down"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 32, "y": 7, "z": 1 },
+			"target_z": 0,
+			"type": "slum_brick_floor_stairs_down"
+		},
+		{
+			"biome": "tradepost",
+			"chunk": "chunk_0_0",
+			"position": { "x": 30, "y": 23, "z": 1 },
+			"target_z": 0,
+			"type": "stone_stairs_down"
+		}
+	]
+}

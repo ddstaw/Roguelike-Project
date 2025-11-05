@@ -1,3 +1,4 @@
+# res://ui/scenes/PopupWorldtoCity.tscn parent node script - res://ui/scenes/PopupWorldtoLocal.gd
 extends Window
 
 @onready var city_name_label = $citynamelabel
@@ -26,6 +27,7 @@ func _ready():
 	no_button.connect("pressed", Callable(self, "_on_No_Pressed"))
 	connect("close_requested", Callable(self, "_on_Close_Pressed"))
 
+
 func set_city_name(name: String):
 	if name == "":
 		name = "Unknown Settlement"  # ✅ Fallback name if city is not found
@@ -33,7 +35,6 @@ func set_city_name(name: String):
 	city_name = name
 	city_name_label.text = name.to_upper() # ✅ Update label
 
-# ✅ If "Approach Gates" is pressed, update JSON & signal entry
 func _on_Yes_Pressed():
 	update_worldmap_json()
 	LoadHandlerSingleton.trigger_map_reload()

@@ -6,6 +6,10 @@ extends Control
 @onready var chrp_race = get_node("TopLeftCharInfoControl/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-racesex/chrpracelabel")
 @onready var chrp_background = get_node("TopLeftCharInfoControl/chrp-VBoxContainer-charinfo/chrpbackground")
 @onready var chrp_faith = get_node("TopLeftCharInfoControl/chrp-VBoxContainer-charinfo/chrp-HBoxContainer-worldviewfaith/chrpfaithlabel")
+@onready var xp_bar = get_node("TopLeftCharInfoControl/chrp-levelvbox/LvlXpVbox/chrp-playerinfo-exp-meter-all")
+@onready var xp_label_left = get_node("TopLeftCharInfoControl/chrp-levelvbox/LvlXpVbox/chrp-playerinfo-exp-meter-all/chrp-xptolevelup")
+@onready var xp_label_right = get_node("TopLeftCharInfoControl/chrp-levelvbox/LvlXpVbox/chrp-playerinfo-exp-meter-all/chrp-xptolevelup2")
+
 
 func _ready():
 	print("📜 CharProfile UI initializing...")
@@ -73,15 +77,17 @@ func chrp_populate_character_data(character_data: Dictionary):
 		if data.has(key):
 			var node = get_node(mapping[key])
 			if node:
-				node.text = str(data[key])
+				var value = str(data[key])
+				
+				# 🧩 Capitalize Race & Sex labels
+				if key in ["race", "sex"]:
+					value = value.capitalize()
+				
+				node.text = value
 			else:
 				print("⚠️ Node not found for", key, "at", mapping[key])
 		else:
 			print("⚠️ Character data missing key:", key)
-
-	print("✅ Character info populated successfully.")
-
-
 
 		
 func chrp_populate_combat_stats(combat_stats_data: Dictionary):
@@ -111,27 +117,42 @@ func chrp_populate_combat_stats(combat_stats_data: Dictionary):
 	for key in meter_paths.keys():
 		if stats.has(key) and stats[key].has("current") and stats[key].has("max"):
 			var node = get_node(meter_paths[key])
-			node.text = str(stats[key]["current"]) + "/" + str(stats[key]["max"])
+			var current_val = round(stats[key]["current"])
+			var max_val = round(stats[key]["max"])
+			node.text = str(current_val) + "/" + str(max_val)
 
 	# --- Resistances ---
 	if stats.has("resistances"):
 		var res = stats["resistances"]
 		var res_paths = {
 			"fire_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-fir-lvl",
-			"ice_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-cold-lvl",
+			"cold_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-cold-lvl",
+			"lightning_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-lightning-lvl",
 			"poison_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-poi-lvl",
+			"acid_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-acid-lvl",
 			"glamour_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-gla-lvl",
 			"magic_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-mgk-lvl",
 			"divine_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-div-lvl",
 			"dark_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-dar-lvl",
-			"void_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-voi-lvl"
+			"void_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-voi-lvl",
+			"pierce_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-pierce-lvl",
+			"slash_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-slash-lvl",
+			"blunt_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-blun-lvl",
+			"impaling_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-impale-lvl",
+			"ballistic_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-ballistic-lvl",
+			"explosive_resistance": "ResistStats/chrp-VBoxContainer-dmgresist-lvl/chrp-explosive-lvl"
 		}
+
 		for r in res_paths.keys():
 			if res.has(r) and res[r].has("value"):
 				var res_node = get_node(res_paths[r])
-				res_node.text = str(res[r]["value"]) + "%"
+				if res_node:
+					res_node.text = str(res[r]["value"]) + "%"
+				else:
+					print("⚠️ Node not found for resistance:", r)
+			else:
+				print("⚠️ Resistance missing in data:", r)
 
-	
 func chrp_populate_base_attributes(base_attributes_data: Dictionary):
 	if not base_attributes_data.has("effective_attributes"):
 		print("⚠️ Missing 'effective_attributes' in base_attributes_data.")

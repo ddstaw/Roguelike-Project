@@ -1,3 +1,4 @@
+# res://scripts/localmapgenscripts/cavegen.gd
 extends Node
 
 func generate_cave_chunk(chunk_coords: Vector2i, biome_key: String, from_egress: Dictionary) -> void:

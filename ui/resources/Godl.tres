@@ -6,5 +6,5 @@
 script = ExtResource("1_xgvbp")
 faithname = "Godless"
 faithflavor = "Godlflav"
-faithdes = "Godldes"
+faithdes = "negation"
 faithbonus = "Godlbonus"

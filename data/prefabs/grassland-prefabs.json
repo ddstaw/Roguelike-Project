@@ -4,28 +4,35 @@
 	  "name": "stone_tower_1",
 	  "floors": {
 		"0": "stone_tower_variant_1",
-		"-1": "stone_tower_cellar_1"
+		"-1": "stone_tower_cellar_1",
+		"1a": "stone_tower_upper_1a",
+		"1b": "stone_tower_upper_1b",
+		"1c": "stone_tower_upper_1c",
+		"1roof": "stone_tower_upper_1roof"
 	  }
 	},
 	{
 	  "name": "stone_tower_2",
 	  "floors": {
 		"0": "stone_tower_variant_2",
-		"-1": "stone_tower_cellar_2"
+		"-1": "stone_tower_cellar_2",
+		"1roof": "stone_tower_upper_2roof"
 	  }
 	},
 	{
 	  "name": "stone_tower_3",
 	  "floors": {
 		"0": "stone_tower_variant_3",
-		"-1": "stone_tower_cellar_3"
+		"-1": "stone_tower_cellar_3",
+		"1roof": "stone_tower_upper_3roof"
 	  }
 	},
 	{
 	  "name": "stone_tower_4",
 	  "floors": {
 		"0": "stone_tower_variant_4",
-		"-1": "stone_tower_cellar_4"
+		"-1": "stone_tower_cellar_4",
+		"1roof": "stone_tower_upper_4roof"
 	  }
 	}
   ],
@@ -37,9 +44,9 @@
 	  "tiles": [
 		"GGWBBDBBWGG",
 		"GWBFFFFFBWG",
-		"WBFFFFFFFBW",
+		"WBLFFFFFFBW",
 		"WFFFFSFFFFW",
-		"WLFFFFFFFFW",
+		"WFFFFFFFFFW",
 		"WFFFFFFFFFW",
 		"BWFFFFFFFWB",
 		"GBBBDBDBBBG",
@@ -232,6 +239,161 @@
 		"L": "res://assets/localmap-graphics/stonefloor_stairs_up.png",
 		"A": "res://assets/localmap-graphics/cavewallside.png",
 		"G": "res://assets/localmap-graphics/grass.png"
+	  }
+	},
+		{
+	  "name": "stone_tower_upper_2roof",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF"
+	  ],
+	  "legend": {
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"A": "res://assets/localmap-graphics/openair.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_upper_3roof",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"FFFFFFFFAAA",
+		"FFFFFFFFAAA",
+		"FFFFFFFFAAA",
+		"FFFFFFFFAAA",
+		"FFFFFFFFFFA",
+		"FFFFFFFFFFA",
+		"FFFFFFFFFFA",
+		"FFFFFFFFFFA",
+		"FFFFFFFFFFA"
+	  ],
+	  "legend": {
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"A": "res://assets/localmap-graphics/openair.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_upper_4roof",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFA",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF"
+	  ],
+	  "legend": {
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"A": "res://assets/localmap-graphics/openair.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_upper_1a",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"AAWBBJBBWAA",
+		"AWBFFFFFBWA",
+		"WBFFFFFFFBW",
+		"SFFFFFFFFFS",
+		"WBBBBWFFFFW",
+		"WFFFFWFFFFS",
+		"BWFFFWFFFWB",
+		"ABBJBBBJBBA",
+		"AAAAAAAAAAA"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"S": "res://assets/localmap-graphics/stonewallsidewindow.png",
+		"J": "res://assets/localmap-graphics/stonewallbottomwindow.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"A": "res://assets/localmap-graphics/openair.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_upper_1b",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"AAWBJBWBWAA",
+		"AWBFFFWFBWA",
+		"WBFFFFWFFBW",
+		"WFFFFFWFFFW",
+		"SFFFFFDFFFS",
+		"WFFFFFWFFFW",
+		"BWFFFFWFFWB",
+		"ABBBBBBBJBA",
+		"AAAAAAAAAAA"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"S": "res://assets/localmap-graphics/stonewallsidewindow.png",
+		"J": "res://assets/localmap-graphics/stonewallbottomwindow.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"A": "res://assets/localmap-graphics/openair.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_upper_1c",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"AAWBBJBBWAA",
+		"AWBFFFFFBWA",
+		"WBFFFFFFFBW",
+		"WFFFFFFFFFW",
+		"SFFFFFFFFFS",
+		"WBBBBDBBBBW",
+		"BWFFFFFFFWB",
+		"ABBBBJBBBBA",
+		"AAAAAAAAAAA"
+	  ],
+	  "legend": {
+		"W": "res://assets/localmap-graphics/stonewallside.png",
+		"B": "res://assets/localmap-graphics/stonewallbottom.png",
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"S": "res://assets/localmap-graphics/stonewallsidewindow.png",
+		"J": "res://assets/localmap-graphics/stonewallbottomwindow.png",
+		"D": "res://assets/localmap-graphics/stonedoor.png",
+		"A": "res://assets/localmap-graphics/openair.png"
+	  }
+	},
+	{
+	  "name": "stone_tower_upper_1roof",
+	  "width": 11,
+	  "height": 9,
+	  "tiles": [
+		"AAFFFFFFFAA",
+		"AFFFFFFFFFA",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"FFFFFFFFFFF",
+		"AFFFFFFFFFA",
+		"AAAAAAAAAAA"
+	  ],
+	  "legend": {
+		"F": "res://assets/localmap-graphics/stonefloor.png",
+		"A": "res://assets/localmap-graphics/openair.png"
 	  }
 	}
   ]

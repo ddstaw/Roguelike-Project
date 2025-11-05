@@ -1,50 +1,90 @@
 extends Node2D
 
-# Variables to hold the button nodes
-var save_slot_button_1: Button
-var save_slot_button_2: Button
-var save_slot_button_3: Button
+@onready var slot_nodes := {
+	1: get_node("SaveSlot1"),
+	2: get_node("SaveSlot2"),
+	3: get_node("SaveSlot3")
+}
 
 func _ready():
-	# Directly assign the buttons using their node paths
-	save_slot_button_1 = get_node("SaveSlot1")
-	save_slot_button_2 = get_node("SaveSlot2")
-	save_slot_button_3 = get_node("SaveSlot3")
-	refresh_save_slot_info()
+	refresh_save_slots()
 
-	# Load and display information for each save slot
-	load_save_slot_info(save_slot_button_1, "user://saves/save1/world/basemapdata1.json")
-	load_save_slot_info(save_slot_button_2, "user://saves/save2/world/basemapdata2.json")
-	load_save_slot_info(save_slot_button_3, "user://saves/save3/world/basemapdata3.json")
 
-func refresh_save_slot_info():
-	# Load and update the save slot information
-	load_save_slot_info(get_node("SaveSlot1"), "user://saves/save1/world/basemapdata1.json")
-	load_save_slot_info(get_node("SaveSlot2"), "user://saves/save2/world/basemapdata2.json")
-	load_save_slot_info(get_node("SaveSlot3"), "user://saves/save3/world/basemapdata3.json")
+func refresh_save_slots():
+	for i in range(1, 4):
+		load_save_slot_info(i)
 
-func load_save_slot_info(button: Button, file_path: String) -> void:
-	# Load the JSON data for the save slot
-	var file = FileAccess.open(file_path, FileAccess.READ)
-	if file:
-		var json_data = file.get_as_text()
-		var json = JSON.new()  # Create an instance of the JSON class
-		var error = json.parse(json_data)
-		file.close()
 
-		# Check if parsing was successful
-		if error == OK:
-			var data = json.data
+func load_save_slot_info(slot_num: int):
+	var slot = slot_nodes[slot_num]
+	if slot == null:
+		return
+
+	var world_name := "No World Data"
+	var date_created := ""
+	var char_name := "(no active character)"
+	var char_persona := ""
+	var portrait_path := "res://ui/p/blank.png"
+	var is_active := false
+
+	# 🌍 Load World Info
+	var world_path = "user://saves/save%d/world/basemapdata%d.json" % [slot_num, slot_num]
+	if FileAccess.file_exists(world_path):
+		var f = FileAccess.open(world_path, FileAccess.READ)
+		var j = JSON.new()
+		if j.parse(f.get_as_text()) == OK:
+			var data = j.data
 			if data.size() > 0:
-				var world_info = data[0]  # Access the first element of the array
-				var world_name = world_info.get("world_name", "Unknown World")
-				var date_created = world_info.get("date_created", "Unknown Date")
+				world_name = data[0].get("world_name", "Unnamed World")
+				date_created = data[0].get("date_created", "")
+		f.close()
 
-				# Set the button text
-				button.text = world_name + "\n" + date_created
-			else:
-				button.text = "No Data Available"
-		else:
-			button.text = "Failed to Load (Parse Error)"
+	# 🧍 Load Character Active Status
+	var active_path = "user://saves/save%d/world/char_active%d.json" % [slot_num, slot_num]
+	if FileAccess.file_exists(active_path):
+		var f = FileAccess.open(active_path, FileAccess.READ)
+		var j = JSON.new()
+		if j.parse(f.get_as_text()) == OK:
+			is_active = j.data.get("is_active", false)
+		f.close()
+
+	# 💾 Load Character Info if active
+	if is_active:
+		var char_path = "user://saves/save%d/characterdata/character_creation-save%d.json" % [slot_num, slot_num]
+		if FileAccess.file_exists(char_path):
+			var f = FileAccess.open(char_path, FileAccess.READ)
+			var j = JSON.new()
+			if j.parse(f.get_as_text()) == OK:
+				var char_data = j.data.get("character", {})
+				char_name = char_data.get("name", "Unknown")
+				char_persona = char_data.get("personality", "")
+				portrait_path = char_data.get("portrait", "res://ui/p/blank.png")
+			f.close()
+
+	# 🎨 Update UI Elements for this slot
+	update_slot_ui(slot_num, world_name, date_created, char_name, char_persona, portrait_path, is_active)
+
+
+func update_slot_ui(slot_num: int, world_name: String, date_created: String, char_name: String, char_persona: String, portrait_path: String, is_active: bool):
+	var slot = slot_nodes[slot_num]
+	if slot == null:
+		return
+
+	var prefix = "SS" + str(slot_num)
+	slot.get_node("%sWorldName" % prefix).text = world_name
+	slot.get_node("%sWorldGenerated" % prefix).text = date_created
+	slot.get_node("%sName" % prefix).text = char_name
+	slot.get_node("%sPersona" % prefix).text = char_persona
+
+	# 🖼️ Portrait
+	var portrait_node = slot.get_node("TextureRect" + str(slot_num))
+	if portrait_path != "" and FileAccess.file_exists(portrait_path):
+		portrait_node.texture = load(portrait_path)
 	else:
-		button.text = "Failed to Load (File Access Error)"
+		portrait_node.texture = preload("res://ui/p/blank.png")
+
+	# 💡 Dim inactive slots
+	if not is_active:
+		slot.modulate = Color(0.6, 0.6, 0.6, 1.0)
+	else:
+		slot.modulate = Color(1, 1, 1, 1.0)

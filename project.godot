@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="DevSandboxnew"
-run/main_scene="res://scenes/play/CharProfile.tscn"
+run/main_scene="res://scenes/CharacterBackground.tscn"
 config/features=PackedStringArray("4.2", "GL Compatibility")
 config/icon="res://icon.svg"
 

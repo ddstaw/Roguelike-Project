@@ -1,15 +1,13 @@
+# res://ui/scripts/Raceslot.gd
 extends TextureButton
 
-@export var race: Race = null:
-	set(value):
-		race = value
+@export var race: Race
+@export var popups: Node  # Must be set in CharacterCreation scene
 
-func _on_mouse_entered():
-	if race == null:
+func _on_pressed() -> void:
+	if not popups:
+		push_warning("⚠️ popups reference missing in RaceSlot.gd")
 		return
-		
-	Popups.RacePopup(Rect2i( Vector2i(global_position) , Vector2i(size) ), race) #setups position
-	
-func _on_mouse_exited():
-	Popups.HideRacePopup
-
+	if race:
+		popups.set_value_race(race)
+		popups.show_popup("RacePopup")

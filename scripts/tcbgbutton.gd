@@ -1,3 +1,4 @@
+#Col4/To Character Background Script - res://scripts/tcbgbutton.gd
 extends Button
 
 # Path to the character template JSON file
@@ -32,15 +33,22 @@ func _on_button_pressed():
 
 		# Attempt to change the scene to CharacterBackground.tscn after saving the data
 		if ResourceLoader.exists(background_scene_path):
-			var scene_change_result = get_tree().change_scene_to_file(background_scene_path)
-			if scene_change_result != OK:
-				print("Error: Failed to change scene. Scene change result:", scene_change_result)
-			else:
-				print("Scene change successful.")
+			print("✅ Background scene found, scheduling scene change...")
+			call_deferred("_deferred_change_scene", background_scene_path)
 		else:
-			print("Error: Scene file does not exist at path:", background_scene_path)
+			print("❌ Scene file does not exist at path:", background_scene_path)
+
+# Add this helper function below your existing ones:
+func _deferred_change_scene(path: String) -> void:
+	var tree := get_tree()
+	if tree:
+		var result := tree.change_scene_to_file(path)
+		if result != OK:
+			push_warning("❌ Failed to change scene (code %s)" % result)
+		else:
+			print("✅ Scene change successful.")
 	else:
-		print("Error: Could not load character data.")
+		push_warning("⚠️ Scene tree not yet available for change_scene_to_file.")
 
 # Function to load the character template JSON file
 func load_character_template(file_path: String) -> Dictionary:

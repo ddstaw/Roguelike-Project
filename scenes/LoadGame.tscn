@@ -1,12 +1,14 @@
-[gd_scene load_steps=17 format=3 uid="uid://dy5ipabnje4gf"]
+[gd_scene load_steps=19 format=3 uid="uid://dy5ipabnje4gf"]
 
 [ext_resource type="Texture2D" uid="uid://dllqx48crjd2b" path="res://assets/graphics/NewWorldBackground.png" id="1_6iyy2"]
 [ext_resource type="Script" path="res://scripts/LoadGame.gd" id="1_ybki7"]
 [ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="2_1aetq"]
 [ext_resource type="Script" path="res://scripts/loadgamebackButton.gd" id="3_7asgb"]
 [ext_resource type="Script" path="res://ui/scripts/PlaySaveSlot1.gd" id="5_5xd26"]
+[ext_resource type="Texture2D" uid="uid://bphqbv1nd4315" path="res://ui/p/dead.png" id="6_2w68s"]
 [ext_resource type="Script" path="res://ui/scripts/PlaySaveSlot2.gd" id="6_nqgms"]
 [ext_resource type="Script" path="res://ui/scripts/PlaySaveSlot3.gd" id="7_ptl0d"]
+[ext_resource type="Texture2D" uid="uid://dac32wq1ral5" path="res://ui/p/blank.png" id="8_iyt3f"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tm31o"]
 bg_color = Color(0, 0, 0, 1)
@@ -63,36 +65,171 @@ script = ExtResource("3_7asgb")
 
 [node name="SaveSlot1" type="Button" parent="."]
 offset_left = 901.0
-offset_top = 195.0
+offset_top = 172.0
 offset_right = 1729.0
-offset_bottom = 400.0
+offset_bottom = 408.0
 theme_override_fonts/font = ExtResource("2_1aetq")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_s7les")
 theme_override_styles/hover = SubResource("StyleBoxFlat_ox7s2")
 script = ExtResource("5_5xd26")
 
+[node name="TextureRect1" type="TextureRect" parent="SaveSlot1"]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 0
+offset_left = 16.0
+offset_top = 48.0
+offset_right = 193.0
+offset_bottom = 225.0
+texture = ExtResource("6_2w68s")
+
+[node name="SS1Name" type="Label" parent="SaveSlot1"]
+layout_mode = 0
+offset_left = 224.0
+offset_top = 165.0
+offset_right = 513.0
+offset_bottom = 195.0
+theme_override_font_sizes/font_size = 29
+text = "George Washington"
+
+[node name="SS1Persona" type="Label" parent="SaveSlot1"]
+layout_mode = 0
+offset_left = 224.0
+offset_top = 197.0
+offset_right = 530.0
+offset_bottom = 227.0
+theme_override_font_sizes/font_size = 20
+text = "American President"
+
+[node name="SS1WorldName" type="Label" parent="SaveSlot1"]
+layout_mode = 0
+offset_left = 225.0
+offset_top = 68.0
+offset_right = 801.0
+offset_bottom = 100.0
+theme_override_font_sizes/font_size = 31
+text = "Darkdoomdark Kingdom"
+
+[node name="SS1WorldGenerated" type="Label" parent="SaveSlot1"]
+layout_mode = 0
+offset_left = 225.0
+offset_top = 99.0
+offset_right = 801.0
+offset_bottom = 131.0
+theme_override_font_sizes/font_size = 22
+text = "Darkdoomdark Kingdom"
+
 [node name="SaveSlot2" type="Button" parent="."]
 offset_left = 898.0
-offset_top = 440.0
+offset_top = 420.0
 offset_right = 1726.0
-offset_bottom = 645.0
+offset_bottom = 660.0
 theme_override_fonts/font = ExtResource("2_1aetq")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_b83ec")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3s7n6")
 script = ExtResource("6_nqgms")
 
+[node name="TextureRect2" type="TextureRect" parent="SaveSlot2"]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 0
+offset_left = 19.0
+offset_top = 51.0
+offset_right = 196.0
+offset_bottom = 228.0
+texture = ExtResource("8_iyt3f")
+
+[node name="SS2Name" type="Label" parent="SaveSlot2"]
+layout_mode = 0
+offset_left = 227.0
+offset_top = 166.0
+offset_right = 516.0
+offset_bottom = 196.0
+theme_override_font_sizes/font_size = 29
+text = "George Washington"
+
+[node name="SS2Persona" type="Label" parent="SaveSlot2"]
+layout_mode = 0
+offset_left = 227.0
+offset_top = 198.0
+offset_right = 533.0
+offset_bottom = 228.0
+theme_override_font_sizes/font_size = 20
+text = "American President"
+
+[node name="SS2WorldName" type="Label" parent="SaveSlot2"]
+layout_mode = 0
+offset_left = 228.0
+offset_top = 76.0
+offset_right = 804.0
+offset_bottom = 108.0
+theme_override_font_sizes/font_size = 31
+text = "Darkdoomdark Kingdom"
+
+[node name="SS2WorldGenerated" type="Label" parent="SaveSlot2"]
+layout_mode = 0
+offset_left = 228.0
+offset_top = 107.0
+offset_right = 804.0
+offset_bottom = 139.0
+theme_override_font_sizes/font_size = 22
+text = "Darkdoomdark Kingdom"
+
 [node name="SaveSlot3" type="Button" parent="."]
 offset_left = 897.0
-offset_top = 683.0
+offset_top = 671.0
 offset_right = 1725.0
-offset_bottom = 888.0
+offset_bottom = 912.0
 theme_override_fonts/font = ExtResource("2_1aetq")
 theme_override_font_sizes/font_size = 24
 theme_override_styles/normal = SubResource("StyleBoxFlat_1k2c1")
 theme_override_styles/hover = SubResource("StyleBoxFlat_aqay3")
 script = ExtResource("7_ptl0d")
+
+[node name="TextureRect3" type="TextureRect" parent="SaveSlot3"]
+custom_minimum_size = Vector2(110, 110)
+layout_mode = 0
+offset_left = 20.0
+offset_top = 49.0
+offset_right = 197.0
+offset_bottom = 226.0
+texture = ExtResource("8_iyt3f")
+
+[node name="SS3Name" type="Label" parent="SaveSlot3"]
+layout_mode = 0
+offset_left = 228.0
+offset_top = 164.0
+offset_right = 517.0
+offset_bottom = 194.0
+theme_override_font_sizes/font_size = 29
+text = "George Washington"
+
+[node name="SS3Persona" type="Label" parent="SaveSlot3"]
+layout_mode = 0
+offset_left = 228.0
+offset_top = 196.0
+offset_right = 534.0
+offset_bottom = 226.0
+theme_override_font_sizes/font_size = 20
+text = "American President"
+
+[node name="SS3WorldName" type="Label" parent="SaveSlot3"]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 69.0
+offset_right = 805.0
+offset_bottom = 101.0
+theme_override_font_sizes/font_size = 31
+text = "Darkdoomdark Kingdom"
+
+[node name="SS3WorldGenerated" type="Label" parent="SaveSlot3"]
+layout_mode = 0
+offset_left = 229.0
+offset_top = 100.0
+offset_right = 805.0
+offset_bottom = 132.0
+theme_override_font_sizes/font_size = 22
+text = "Darkdoomdark Kingdom"
 
 [node name="Label" type="Label" parent="."]
 offset_left = 188.0
@@ -104,47 +241,46 @@ theme_override_font_sizes/font_size = 96
 text = "PLAY"
 
 [node name="Label3" type="Label" parent="."]
-offset_left = 913.0
-offset_top = 201.0
-offset_right = 1287.0
-offset_bottom = 305.0
+offset_left = 920.0
+offset_top = 183.0
+offset_right = 1161.0
+offset_bottom = 219.0
 theme_override_fonts/font = ExtResource("2_1aetq")
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 25
 text = "Save Slot 1"
 
 [node name="Label3" type="Label" parent="Label3"]
 layout_mode = 0
 offset_left = -1.0
 offset_top = 246.0
-offset_right = 373.0
-offset_bottom = 350.0
+offset_right = 236.0
+offset_bottom = 283.0
 theme_override_fonts/font = ExtResource("2_1aetq")
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 25
 text = "Save Slot 2"
 
 [node name="Label3" type="Label" parent="Label3/Label3"]
 layout_mode = 0
 offset_left = -1.0
-offset_top = 241.0
-offset_right = 373.0
-offset_bottom = 345.0
+offset_top = 250.0
+offset_right = 230.0
+offset_bottom = 285.0
 theme_override_fonts/font = ExtResource("2_1aetq")
-theme_override_font_sizes/font_size = 35
+theme_override_font_sizes/font_size = 25
 text = "Save Slot 3"
 
 [node name="Label2" type="Label" parent="."]
 offset_left = 188.0
 offset_top = 300.0
-offset_right = 833.0
+offset_right = 830.0
 offset_bottom = 716.0
 theme_override_fonts/font = ExtResource("2_1aetq")
-theme_override_font_sizes/font_size = 38
-text = "Choose your Save Slot
-to begin playing.
-If you have not created
-a character, you will be
-brought to the character
-creation. If your character
-has died, you may continue
-playing in the same world
-with a new character"
+theme_override_font_sizes/font_size = 25
+text = "Choose your Save Slot to begin playing.
+
+If you have not created a character,
+you will be brought to character creation. 
+
+If your character has died, 
+you may continue playing in the 
+same world with a new character"

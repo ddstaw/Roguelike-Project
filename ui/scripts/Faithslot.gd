@@ -1,14 +1,13 @@
+# res://ui/scripts/Faithslot.gd
 extends TextureButton
 
-@export var faith: Faith = null:
-	set(value):
-		faith = value
+@export var faith: Faith
+@export var popups: Node  # Drag PopupAnchor here in the editor
 
-func _on_mouse_entered():
-	if faith == null:
+func _on_pressed() -> void:
+	if not is_instance_valid(popups):
+		push_warning("⚠️ popups reference missing in FaithSlot.gd")
 		return
-		
-	Popups.FaithPopup(Rect2i( Vector2i(global_position) , Vector2i(size) ), faith) #setups position
-
-func _on_mouse_exited():
-	Popups.HideFaithPopup
+	if faith:
+		popups.set_value_faith(faith)
+		popups.show_popup("FaithPopup")

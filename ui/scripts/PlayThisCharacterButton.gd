@@ -1,3 +1,4 @@
+# Play This Character Button res://scenes/CharacterBackground.tscn res://ui/scripts/PlayThisCharacterButton.gd
 extends Button
 
 # Paths for the load handler, character template, and race attributes
@@ -42,6 +43,14 @@ func _on_play_button_pressed():
 				
 				# Initialize the starting placement for the character on the world map
 				initialize_character_placement(save_file_path, load_data.get("selected_save_slot", 1))
+				
+				set_character_active(character_template["character"].get("name", "Unnamed Hero"))
+				
+				# ♻️ NEW: Refresh Tradepost Hub for the new character
+				print("🔄 Refreshing Tradepost hub data...")
+				var refresher := preload("res://ui/scripts/tradepost_refresh.gd").new()
+				refresher.refresh_tradepost_data()
+				print("✅ Tradepost hub refreshed successfully.")
 				
 				# Change to the WorldMapTravel scene
 				print("Attempting to change to WorldMapTravel scene...")
@@ -348,3 +357,20 @@ func load_grid_data(json_path: String) -> Dictionary:
 		print("Error loading JSON file.")
 	
 	return {}  # Return an empty dictionary if loading fails
+
+# 🧭 Marks the character as active in char_activeX.json
+func set_character_active(character_name: String):
+	var slot = LoadHandlerSingleton.get_save_slot()
+	var char_active_path = "user://saves/save" + str(slot) + "/world/char_active" + str(slot) + ".json"
+	var data = {
+		"is_active": true,
+		"character_name": character_name
+	}
+
+	var file = FileAccess.open(char_active_path, FileAccess.WRITE)
+	if file:
+		file.store_string(JSON.stringify(data, "\t", true))
+		file.close()
+		print("✅ Character marked as active for Save Slot " + str(slot))
+	else:
+		print("⚠️ Failed to write char_active file for Save Slot " + str(slot))

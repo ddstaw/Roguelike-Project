@@ -1,65 +1,69 @@
+# res://scenes/LoadGame.tscn - saveslot1 script
 extends Button
 
 func _ready():
-	# Connect the pressed signal to the button press function
 	connect("pressed", Callable(self, "_on_Button_pressed"))
 
 func _on_Button_pressed():
-	var save_slot = 1  # Example: SaveSlot1 (Update accordingly for other buttons)
-	var char_active_path = "user://saves/save" + str(save_slot) + "/world/char_active" + str(save_slot) + ".json"
+	var save_slot = 1  # change this for slot2 / slot3
+	var char_active_path = "user://saves/save%d/world/char_active%d.json" % [save_slot, save_slot]
 
-	# Check the is_active status in char_active1.json
-	var file_char_active = FileAccess.open(char_active_path, FileAccess.READ)
-	if file_char_active:
-		var json_data = file_char_active.get_as_text()
-		var json = JSON.new()
-		var error = json.parse(json_data)
-		file_char_active.close()
+	if not FileAccess.file_exists(char_active_path):
+		show_character_creation_prompt(save_slot)
+		return
 
-		if error == OK:
-			var is_active = json.data.get("is_active", false)
+	var file = FileAccess.open(char_active_path, FileAccess.READ)
+	var j = JSON.new()
+	if j.parse(file.get_as_text()) != OK:
+		file.close()
+		show_character_creation_prompt(save_slot)
+		return
+	file.close()
 
-			if is_active:
-				# Load directly into the game if character is active (commented out)
-				# load_game()
-				print("Character is active. Would load game here.")
-			else:
-				# Prompt to create a new character if not active
-				show_character_creation_prompt(save_slot)
-		else:
-			print("Error parsing char_active.json")
+	var is_active = j.data.get("is_active", false)
+	if not is_active:
+		show_character_creation_prompt(save_slot)
 	else:
-		print("Error opening char_active.json")
+		load_existing_game(save_slot)
 
-# Function to load directly into the game (commented out)
-# func load_game():
-#     get_tree().change_scene("res://path_to_your_game_scene.tscn")
 
-# Function to prompt the player to create a new character
+# 🧭 If an active character exists, load the correct scene
+func load_existing_game(save_slot: int):
+	var load_handler = LoadHandlerSingleton
+	load_handler.set_current_save_slot(save_slot)
+
+	var state_data = load_handler.load_char_state()
+	var char_state = state_data.get("character_state", {})
+
+	var in_localmap = char_state.get("inlocalmap", "N")
+	var in_worldmap = char_state.get("inworldmap", "N")
+	var in_city = char_state.get("incity", "N")
+
+	# 🧩 Logic: if localmap = Y → LocalMap; else → WorldMapTravel
+	var scene_path := ""
+	if in_localmap == "Y":
+		scene_path = "res://scenes/play/LocalMap.tscn"
+	else:
+		scene_path = "res://scenes/play/WorldMapTravel.tscn"
+
+	print("🧭 Loading save slot %d scene: %s" % [save_slot, scene_path])
+	get_tree().change_scene_to_file(scene_path)
+
+
+# 🪄 If no active character, prompt new creation
 func show_character_creation_prompt(save_slot):
-	# Create a confirmation dialog
 	var dialog = ConfirmationDialog.new()
 	dialog.dialog_text = "Create a new character?"
-	dialog.title = "No Character"  # Set the prompt text
+	dialog.title = "No Character"
 	add_child(dialog)
-
-	# Connect the confirmed signal to create a new character
 	dialog.connect("confirmed", Callable(self, "_on_create_new_character_confirmed").bind(save_slot))
 	dialog.connect("canceled", Callable(self, "_on_create_new_character_canceled"))
-	
-	# Show the dialog
 	dialog.popup_centered()
 
-	# Access the content container (VBoxContainer or similar) and set its min size
 
-	dialog.popup_centered()  # Re-center the dialog after resizing
-
-# Function to handle "Yes" in the dialog (Create a new character)
 func _on_create_new_character_confirmed(save_slot):
-	# Update the load_handler.json
 	var handler_file_path = "user://saves/load_handler.json"
 	var save_file_path = "user://saves/save" + str(save_slot) + "/"
-	
 	var file = FileAccess.open(handler_file_path, FileAccess.WRITE)
 	if file:
 		var json_data = {
@@ -69,10 +73,8 @@ func _on_create_new_character_confirmed(save_slot):
 		file.store_string(JSON.stringify(json_data))
 		file.close()
 
-	# Change to the character creation screen
 	get_tree().change_scene_to_file("res://scenes/CharacterCreation.tscn")
 
-# Function to handle "No" or cancel in the dialog
+
 func _on_create_new_character_canceled():
 	print("Character creation canceled.")
-	# Additional logic for handling "No" if needed

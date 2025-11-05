@@ -1,3 +1,4 @@
+#localmap.gd UILayer/LocalPlayUI/TravelLogControl - res://ui/scripts/LocalTravelLogControl.gd
 extends Control
 
 @onready var log_label: RichTextLabel = get_node_or_null("TravelLogPanel/TravelLogScrollContainer/TravelLogRichTextLabel") as RichTextLabel

@@ -1,3 +1,4 @@
+# res://ui/scenes/disembark-explore-popup.tscn parent node script - res://ui/scripts/disembark-explore-popup.gd
 extends Window
 
 @onready var findsome_label = $findsomelabel

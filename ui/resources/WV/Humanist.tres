@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Worldview" load_steps=2 format=3 uid="uid://d2f1kgyyt8kfm"]
+
+[ext_resource type="Script" path="res://ui/resources/WV/Worldview.gd" id="1_mfrih"]
+
+[resource]
+script = ExtResource("1_mfrih")
+Worldviewname = "Humanist"
+Worldviewflavor = "Humflav"
+Worldviewdes = "Humdes"

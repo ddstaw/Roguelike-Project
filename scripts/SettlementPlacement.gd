@@ -1,3 +1,4 @@
+# SettlementPlacementNode - SettlementPlacement.gd
 extends Node
 
 var culture_map: Node = null
@@ -13,6 +14,7 @@ const MAX_ELF_HAVENS = 2
 const MAX_DWARF_CITIES = 2
 const MAX_OLD_CITIES = 2
 const MAX_CAPITAL_CITIES = 1
+const MAX_TRADEPOSTS = 1
 const MAX_PASSES = 1  # Only one pass per direction
 
 # Pass tiles
@@ -20,6 +22,7 @@ const TILE_NORTHPASS = "res://assets/graphics/36x36-northpass.png"
 const TILE_SOUTHPASS = "res://assets/graphics/36x36-southpass.png"
 const TILE_WESTPASS = "res://assets/graphics/36x36-westpass.png"
 const TILE_EASTPASS = "res://assets/graphics/36x36-eastpass.png"
+const TILE_TRADEPOST = "res://assets/graphics/36x36-pilgrimsrest.png"
 
 # Track placement of each settlement type
 var village_count = 0
@@ -27,6 +30,7 @@ var elf_haven_count = 0
 var dwarf_city_count = 0
 var old_city_count = 0
 var capital_city_count = 0
+var tradepost_count = 0
 
 # Track placement of passes
 var northpass_count = 0
@@ -129,6 +133,9 @@ func create_settlement_map_data(original_data: Dictionary) -> Dictionary:
 	# Perform forced placement if needed
 		if village_count < 2:
 			force_village_placement(biomes, tiles)
+			
+		# Place Pilgrim’s Rest (tradepost) last
+		place_tradepost(biomes, tiles)
 
 	return settlement_data
 	
@@ -344,3 +351,71 @@ func reload_map_display():
 		print("WorldTextureRect node not found!")
 				
 	$"/root/CultureMap".show_map_generated_window()
+
+# Place Pilgrim's Junction (tradepost) near a road
+func place_tradepost(biomes, tiles):
+	var found_placement := false
+	var road_positions: Array = []
+
+	# Collect all road tiles
+	for y in range(GRID_SIZE):
+		for x in range(GRID_SIZE):
+			if biomes[y][x] == "road":
+				road_positions.append(Vector2(x, y))
+
+	# Shuffle for variety
+	road_positions.shuffle()
+
+	# Try to find a road with an empty adjacent tile
+	for road_pos in road_positions:
+		var neighbors = [
+			Vector2(-1, -1), Vector2(-1, 0), Vector2(-1, 1),
+			Vector2(0, -1),                Vector2(0, 1),
+			Vector2(1, -1),  Vector2(1, 0), Vector2(1, 1)
+		]
+		neighbors.shuffle()
+
+		for offset in neighbors:
+			var nx = int(road_pos.x + offset.x)
+			var ny = int(road_pos.y + offset.y)
+
+			if nx < 0 or ny < 0 or nx >= GRID_SIZE or ny >= GRID_SIZE:
+				continue
+
+			# Only place on natural tiles
+			if biomes[ny][nx] not in ["grass", "forest"]:
+				continue
+
+			# Ensure not too close to another settlement
+			var too_close := false
+			for pos in settlement_positions:
+				if calculate_distance(pos.x, pos.y, nx, ny) < 2.0:
+					too_close = true
+					break
+			if too_close:
+				continue
+
+			# ✅ Place Pilgrim's Rest
+			biomes[ny][nx] = "tradepost"
+			tiles[ny][nx] = "res://assets/graphics/36x36-pilgrimsrest.png"
+			settlement_positions.append(Vector2(nx, ny))
+			print("✅ Pilgrim's Junction placed near road at:", nx, ny)
+
+			# 🚧 Add 1-tile connector road
+			connect_two_points(biomes, tiles, Vector2(nx, ny), road_pos)
+			print("🛣️  Connected Pilgrim's Junction to nearest road at:", road_pos)
+
+			found_placement = true
+			break
+
+		if found_placement:
+			break
+
+	# 🧭 Fallback: place at map center if no valid roadside found
+	if not found_placement:
+		var cx = int(GRID_SIZE / 2)
+		var cy = int(GRID_SIZE / 2)
+		biomes[cy][cx] = "tradepost"
+		tiles[cy][cx] = "res://assets/graphics/36x36-pilgrimsrest.png"
+		settlement_positions.append(Vector2(cx, cy))
+		print("⚠️ No roadside found — Pilgrim's Junction placed at center:", cx, cy)

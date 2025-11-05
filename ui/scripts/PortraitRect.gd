@@ -3,7 +3,7 @@ extends TextureRect
 var portraits = []  # Array to store the paths of portraits
 var current_index = 0  # Current index of the portrait being displayed
 
-@onready var change_port_arrow = $UI/ChangePortArrow  # Update this path if necessary
+@onready var change_port_arrow = get_node("../../ChangePortArrow")
 
 # Function to load portraits based on race and sex
 func load_portraits(race: String, sex: String):

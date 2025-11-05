@@ -1,3 +1,4 @@
+# res://scripts/SaveSlot3.gd in SaveSlot3 res://scenes/SaveWorld.tscn
 extends Button
 
 func _ready():
@@ -103,17 +104,15 @@ func load_settlement_name_components(file_path: String) -> Dictionary:
 	return {}
 
 # Function to generate settlement names based on the grid and biome data
-# Function to generate settlement names based on the grid and biome data
+# 🏙️ Main naming generator (adds Pilgrim's Junction logic)
 func generate_settlement_names(grid: Dictionary, settlement_names: Dictionary) -> Array:
 	var settlements = []
-	var used_names = []  # Track used names to avoid duplicates
+	var used_names = []  # track used names globally to avoid repeats
 
 	for y in range(grid["biomes"].size()):
 		for x in range(grid["biomes"][y].size()):
 			var biome = grid["biomes"][y][x]
 			var name = ""
-
-			print("Processing biome at (", x, ", ", y, "): ", biome)  # Debugging
 
 			if biome == "capitalcity":
 				name = get_unique_name(settlement_names.get("capital_city_name", []), used_names)
@@ -125,18 +124,25 @@ func generate_settlement_names(grid: Dictionary, settlement_names: Dictionary) -
 				name = get_unique_name(settlement_names.get("old_city_name", []), used_names)
 			elif biome == "elfhaven":
 				name = get_unique_name(settlement_names.get("elf_haven_name", []), used_names)
+			elif biome == "tradepost":
+				name = "Pilgrim's Junction"
+				var tavern_name = generate_tavern_name(settlement_names, used_names)
+				settlements.append({
+					"grid_position": "(" + str(x) + ", " + str(y) + ")",
+					"biome": biome,
+					"settlement_name": name,
+					"tavern_name": tavern_name
+				})
+				continue
 
-			print("Assigned name: ", name)  # Debugging
-
+			# Add all other normal settlements
 			if name != "":
 				settlements.append({
-					"grid_position": Vector2(x, y),
+					"grid_position": "(" + str(x) + ", " + str(y) + ")",
 					"biome": biome,
 					"settlement_name": name
 				})
-				used_names.append(name)  # Add the name to the used list
 
-	print("Settlement generation complete. Settlements: ", settlements)  # Debugging
 	return settlements
 
 # Helper function to get a unique name from a list
@@ -160,3 +166,21 @@ func get_unique_name(name_list: Array, used_names: Array) -> String:
 func get_current_date() -> String:
 	var current_date = Time.get_datetime_string_from_system().split(" ")[0]
 	return current_date
+
+func generate_tavern_name(settlement_names: Dictionary, used_names: Array) -> String:
+	var adjectives = settlement_names.get("tavern_adjectives", [])
+	var animals = settlement_names.get("tavern_animals", [])
+
+	if adjectives.is_empty() or animals.is_empty():
+		return "The Lonely Mug"  # fallback
+
+	var adj = adjectives[randi() % adjectives.size()]
+	var ani = animals[randi() % animals.size()]
+	var name = "The " + adj + " " + ani
+
+	# Avoid duplicates
+	if used_names.has(name):
+		return generate_tavern_name(settlement_names, used_names)
+
+	used_names.append(name)
+	return name

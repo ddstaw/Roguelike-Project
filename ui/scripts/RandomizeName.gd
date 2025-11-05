@@ -1,3 +1,4 @@
+#RandomizeName Script - res://ui/scripts/RandomizeName.gd
 extends Button
 
 # Declare the signal properly

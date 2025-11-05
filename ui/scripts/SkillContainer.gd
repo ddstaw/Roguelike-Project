@@ -1,3 +1,4 @@
+# UI/SkillContainer Script res://ui/scripts/SkillContainer.gd
 extends Node
 
 # Array to track the selected buttons
@@ -55,7 +56,6 @@ func update_button_states():
 			else:
 				# Fade out unselected buttons only if the max selections are reached
 				child.modulate = Color(0.2, 0.2, 0.2) if selected_buttons.size() >= max_selections else Color(1, 1, 1)
-				child.disabled = selected_buttons.size() >= max_selections  # Disable unselected buttons if max selected
 
 # Function to update the selected skills in the JSON file without erasing other values
 func update_skills_in_json(selected_skills: Array):

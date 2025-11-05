@@ -1,11 +1,13 @@
-[gd_scene load_steps=115 format=3 uid="uid://dma22cv7aih86"]
+[gd_scene load_steps=127 format=3 uid="uid://dma22cv7aih86"]
 
 [ext_resource type="Script" path="res://ui/scripts/CharacterCreation.gd" id="1_4fp4n"]
 [ext_resource type="Texture2D" uid="uid://bfl3rd44mjfhg" path="res://ui/menus/bbg.png" id="1_jugts"]
 [ext_resource type="PackedScene" uid="uid://byin3iuj3vxqd" path="res://ui/scenes/Raceslot.tscn" id="2_ci21d"]
 [ext_resource type="FontFile" uid="uid://dbcudhplm1jri" path="res://ui/FreeMonoBold.ttf" id="2_ebm38"]
 [ext_resource type="Texture2D" uid="uid://kmm12pkjfyce" path="res://ui/p/h/m/hm1.png" id="2_grj4s"]
+[ext_resource type="Script" path="res://ui/scripts/PopupAnchor.gd" id="2_tx5qi"]
 [ext_resource type="Resource" uid="uid://c7j8tln4mu454" path="res://ui/resources/Human.tres" id="3_aqy0q"]
+[ext_resource type="PackedScene" uid="uid://c3ghtn33qyapq" path="res://ui/scenes/popups.tscn" id="3_qdsjf"]
 [ext_resource type="Script" path="res://ui/scripts/raceHBoxContainer.gd" id="3_uvsi6"]
 [ext_resource type="Texture2D" uid="uid://ce3j6xe785abo" path="res://ui/rac/h.png" id="4_hs6n5"]
 [ext_resource type="Resource" uid="uid://co8k60lhbp5w7" path="res://ui/resources/Dwarf.tres" id="4_j2lxi"]
@@ -48,36 +50,50 @@
 [ext_resource type="Texture2D" uid="uid://dgbsswssx3gnr" path="res://ui/gs/at.png" id="34_x86ps"]
 [ext_resource type="Texture2D" uid="uid://dqgaupvmoepki" path="res://ui/gs/sk.png" id="35_b7ssp"]
 [ext_resource type="Resource" uid="uid://cxfn24cqxdlga" path="res://ui/resources/Godl.tres" id="35_cfqtf"]
+[ext_resource type="Script" path="res://scripts/WorldviewContainer.gd" id="36_deirs"]
 [ext_resource type="Texture2D" uid="uid://du5dmo6amxkhp" path="res://ui/gs/ac.png" id="36_l62gr"]
 [ext_resource type="Script" path="res://ui/scripts/SkillContainer.gd" id="36_xlbl7"]
 [ext_resource type="Texture2D" uid="uid://2atl7gkpe41l" path="res://ui/gs/eu.png" id="37_kb1or"]
+[ext_resource type="PackedScene" uid="uid://bqpks3bxgv57d" path="res://ui/scenes/Worldviewslot.tscn" id="37_no3xh"]
+[ext_resource type="Texture2D" uid="uid://nfkylset28jc" path="res://ui/wv/dev.png" id="38_c4sjb"]
 [ext_resource type="Texture2D" uid="uid://4sl1rbtmgydq" path="res://ui/menus/skillbg.png" id="38_fx7sq"]
 [ext_resource type="Texture2D" uid="uid://c2hrokb4rnben" path="res://ui/gs/su.png" id="38_lf384"]
 [ext_resource type="Texture2D" uid="uid://cgyto3pt10tsw" path="res://ui/menus/skillbg-select.png" id="39_lfkbn"]
 [ext_resource type="Resource" uid="uid://bdsh1phmtrxo5" path="res://ui/resources/GSkills/Bruteforce.tres" id="39_mknb3"]
+[ext_resource type="Resource" uid="uid://c1k20psm8ht2o" path="res://ui/resources/WV/Devout.tres" id="39_mqhte"]
 [ext_resource type="Texture2D" uid="uid://bycu16io5w2he" path="res://ui/gs/co.png" id="39_q7ifb"]
 [ext_resource type="Resource" uid="uid://cgi4wo2rqgxgx" path="res://ui/resources/GSkills/Pug.tres" id="39_qxvse"]
 [ext_resource type="Resource" uid="uid://lg3hutt5hylp" path="res://ui/resources/GSkills/Deftstriking.tres" id="40_cucf2"]
+[ext_resource type="Texture2D" uid="uid://4ekrnqg0xmqm" path="res://ui/wv/hum.png" id="40_mb3gf"]
 [ext_resource type="Texture2D" uid="uid://bsmrh4oprntec" path="res://ui/gs/ta.png" id="40_y0tes"]
 [ext_resource type="Texture2D" uid="uid://co5j0yoxufm0v" path="res://ui/gs/bl.png" id="41_7uy2f"]
 [ext_resource type="Resource" uid="uid://brrmhb0vm02u" path="res://ui/resources/GSkills/Bowmanship.tres" id="41_eeboi"]
+[ext_resource type="Resource" uid="uid://d2f1kgyyt8kfm" path="res://ui/resources/WV/Humanist.tres" id="41_s370s"]
+[ext_resource type="Texture2D" uid="uid://bvjb5uytp7ouo" path="res://ui/wv/rat.png" id="42_128ye"]
 [ext_resource type="Resource" uid="uid://d36iubjj26bhl" path="res://ui/resources/GSkills/Firearms.tres" id="42_d5eco"]
 [ext_resource type="Texture2D" uid="uid://qrm0awpdmjv4" path="res://ui/gs/bo.png" id="42_nplb0"]
+[ext_resource type="Resource" uid="uid://bl00aw2vq6omt" path="res://ui/resources/WV/Rationalist.tres" id="43_cutoe"]
 [ext_resource type="Texture2D" uid="uid://f5jbp2cb2nmo" path="res://ui/gs/me.png" id="43_ukhwn"]
 [ext_resource type="Resource" uid="uid://cqsye5kh536g2" path="res://ui/resources/GSkills/Ath.tres" id="43_ykhp3"]
 [ext_resource type="Resource" uid="uid://e3ef0dxqdgoc" path="res://ui/resources/GSkills/Sku.tres" id="44_6ngb1"]
 [ext_resource type="Texture2D" uid="uid://cp3arfq2q2ovc" path="res://ui/gs/al.png" id="44_i0u53"]
+[ext_resource type="Texture2D" uid="uid://8gammrtgjusv" path="res://ui/wv/nil.png" id="44_jus8t"]
 [ext_resource type="Resource" uid="uid://kc444ldop6tp" path="res://ui/resources/GSkills/Acum.tres" id="45_1x0vr"]
+[ext_resource type="Resource" uid="uid://drqxd1nffecsi" path="res://ui/resources/WV/Nihilist.tres" id="45_3ft2g"]
 [ext_resource type="PackedScene" uid="uid://by3eoywpw3amh" path="res://ui/scenes/Specialskills.tscn" id="45_nw0k6"]
 [ext_resource type="Texture2D" uid="uid://73c4y0xi6n8r" path="res://ui/ss/gu.png" id="46_587ng"]
+[ext_resource type="Texture2D" uid="uid://doek3xgs0kcb" path="res://ui/wv/eso.png" id="46_arm5t"]
 [ext_resource type="Resource" uid="uid://bxs5n8r73dqw2" path="res://ui/resources/GSkills/Eru.tres" id="46_r133e"]
 [ext_resource type="Texture2D" uid="uid://cdlrnkpljchlr" path="res://ui/ss/py.png" id="46_rnvc7"]
 [ext_resource type="Resource" uid="uid://d3d3j20nwrk2w" path="res://ui/resources/GSkills/Front.tres" id="47_7dbwi"]
 [ext_resource type="Texture2D" uid="uid://y778jow1w83b" path="res://ui/ss/cy.png" id="47_e5qxs"]
+[ext_resource type="Resource" uid="uid://cmha6uulnttrk" path="res://ui/resources/WV/Occultist.tres" id="47_w6mtw"]
 [ext_resource type="Texture2D" uid="uid://buwuyi8npkecc" path="res://ui/ss/fu.png" id="48_k80gi"]
+[ext_resource type="Texture2D" uid="uid://dnho4egun6gfi" path="res://ui/wv/pro.png" id="48_kqwvj"]
 [ext_resource type="Resource" uid="uid://rlqguoxg1mr" path="res://ui/resources/GSkills/Construction.tres" id="48_p2wel"]
 [ext_resource type="Resource" uid="uid://cify1ciyreoiu" path="res://ui/resources/GSkills/Tailoring.tres" id="49_cek75"]
 [ext_resource type="Texture2D" uid="uid://cuih38jkllqe1" path="res://ui/ss/ve.png" id="49_q8o1t"]
+[ext_resource type="Resource" uid="uid://bmbtmerm204yp" path="res://ui/resources/WV/Profiteer.tres" id="49_t5bbb"]
 [ext_resource type="Resource" uid="uid://cmvllutf1d8ct" path="res://ui/resources/GSkills/Blacksmithing.tres" id="50_envdg"]
 [ext_resource type="Texture2D" uid="uid://cjtxwil5jmvlu" path="res://ui/ss/gl.png" id="50_o1pes"]
 [ext_resource type="Texture2D" uid="uid://dtsuuwxtkjrwo" path="res://ui/ss/ne.png" id="51_b3in6"]
@@ -86,8 +102,6 @@
 [ext_resource type="Texture2D" uid="uid://bcdtlr0h3xo6v" path="res://ui/ss/vi.png" id="52_ryfwl"]
 [ext_resource type="Resource" uid="uid://b4kl3ounlmntf" path="res://ui/resources/GSkills/Alc.tres" id="53_2mcfl"]
 [ext_resource type="Texture2D" uid="uid://c51v0mf7lek4d" path="res://ui/ss/en.png" id="53_ldkb7"]
-[ext_resource type="Texture2D" uid="uid://b4muy5xihaueb" path="res://ui/ss/th.png" id="54_qs31w"]
-[ext_resource type="Texture2D" uid="uid://c6fnh15yhacia" path="res://ui/ss/wc.png" id="55_8heqr"]
 [ext_resource type="Texture2D" uid="uid://bu4bwadui5glb" path="res://ui/ss/ex.png" id="56_lr8nk"]
 [ext_resource type="Texture2D" uid="uid://cu6ob6fq0t61n" path="res://ui/ss/ti.png" id="57_ol3eg"]
 [ext_resource type="Texture2D" uid="uid://dxdwdwxl2j1m6" path="res://ui/ss/ch.png" id="58_b7vna"]
@@ -101,8 +115,6 @@
 [ext_resource type="Resource" uid="uid://vskwg48hpe4y" path="res://ui/resources/Sskills/necro.tres" id="86_r34py"]
 [ext_resource type="Resource" uid="uid://bmspqjmrmhi04" path="res://ui/resources/Sskills/vito.tres" id="88_f6qxd"]
 [ext_resource type="Resource" uid="uid://b6jmv4llok22c" path="res://ui/resources/Sskills/ench.tres" id="90_hmb0d"]
-[ext_resource type="Resource" uid="uid://gyxixwuonse7" path="res://ui/resources/Sskills/tham.tres" id="92_3vtou"]
-[ext_resource type="Resource" uid="uid://cgxftu2ya1hy6" path="res://ui/resources/Sskills/wand.tres" id="94_yvf7x"]
 [ext_resource type="Resource" uid="uid://dqk63xud4dun0" path="res://ui/resources/Sskills/gunsmi.tres" id="96_j2iac"]
 [ext_resource type="Resource" uid="uid://byvwtp6xei8e2" path="res://ui/resources/Sskills/tink.tres" id="96_o5v87"]
 [ext_resource type="Resource" uid="uid://dbolloal238uv" path="res://ui/resources/Sskills/chem.tres" id="98_oxpfe"]
@@ -148,6 +160,29 @@ border_color = Color(1, 1, 1, 1)
 script = ExtResource("1_4fp4n")
 
 [node name="UI" type="CanvasLayer" parent="."]
+
+[node name="PopupContainer" type="Control" parent="UI"]
+z_index = 50
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+metadata/_edit_lock_ = true
+
+[node name="PopupAnchor" type="Control" parent="UI/PopupContainer"]
+z_index = 51
+layout_mode = 1
+anchors_preset = 0
+offset_left = 22.0
+offset_top = 550.0
+offset_right = 580.0
+offset_bottom = 1032.0
+script = ExtResource("2_tx5qi")
+
+[node name="Popups" parent="UI/PopupContainer/PopupAnchor" instance=ExtResource("3_qdsjf")]
 
 [node name="RaceInfo" type="HBoxContainer" parent="UI"]
 offset_left = 238.0
@@ -256,6 +291,44 @@ faith = ExtResource("33_r3qo2")
 layout_mode = 2
 texture_normal = ExtResource("26_volcs")
 faith = ExtResource("35_cfqtf")
+
+[node name="WorldviewContainer" type="HBoxContainer" parent="UI"]
+offset_left = 44.0
+offset_top = 466.0
+offset_right = 520.0
+offset_bottom = 522.0
+theme_override_constants/separation = 10
+script = ExtResource("36_deirs")
+
+[node name="Devslot" parent="UI/WorldviewContainer" instance=ExtResource("37_no3xh")]
+layout_mode = 2
+texture_normal = ExtResource("38_c4sjb")
+worldview = ExtResource("39_mqhte")
+
+[node name="Humslot" parent="UI/WorldviewContainer" instance=ExtResource("37_no3xh")]
+layout_mode = 2
+texture_normal = ExtResource("40_mb3gf")
+worldview = ExtResource("41_s370s")
+
+[node name="Ratslot" parent="UI/WorldviewContainer" instance=ExtResource("37_no3xh")]
+layout_mode = 2
+texture_normal = ExtResource("42_128ye")
+worldview = ExtResource("43_cutoe")
+
+[node name="Nilslot" parent="UI/WorldviewContainer" instance=ExtResource("37_no3xh")]
+layout_mode = 2
+texture_normal = ExtResource("44_jus8t")
+worldview = ExtResource("45_3ft2g")
+
+[node name="Occslot" parent="UI/WorldviewContainer" instance=ExtResource("37_no3xh")]
+layout_mode = 2
+texture_normal = ExtResource("46_arm5t")
+worldview = ExtResource("47_w6mtw")
+
+[node name="Proslot" parent="UI/WorldviewContainer" instance=ExtResource("37_no3xh")]
+layout_mode = 2
+texture_normal = ExtResource("48_kqwvj")
+worldview = ExtResource("49_t5bbb")
 
 [node name="SkillContainer" type="VBoxContainer" parent="UI"]
 custom_minimum_size = Vector2(0, 50)
@@ -616,7 +689,7 @@ mouse_filter = 2
 texture = ExtResource("44_i0u53")
 
 [node name="SpecialskillContainer" type="VBoxContainer" parent="UI"]
-offset_left = 1404.0
+offset_left = 1377.0
 offset_top = 120.0
 offset_right = 1895.0
 offset_bottom = 523.0
@@ -625,6 +698,7 @@ script = ExtResource("73_3xv3d")
 
 [node name="MagickContainer1" type="HBoxContainer" parent="UI/SpecialskillContainer"]
 layout_mode = 2
+alignment = 1
 
 [node name="Pyroslot" parent="UI/SpecialskillContainer/MagickContainer1" instance=ExtResource("45_nw0k6")]
 layout_mode = 2
@@ -646,13 +720,14 @@ layout_mode = 2
 texture_normal = ExtResource("49_q8o1t")
 sskill = ExtResource("82_sh3o4")
 
-[node name="Glamslot" parent="UI/SpecialskillContainer/MagickContainer1" instance=ExtResource("45_nw0k6")]
+[node name="MagickContainer2" type="HBoxContainer" parent="UI/SpecialskillContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="Glamslot" parent="UI/SpecialskillContainer/MagickContainer2" instance=ExtResource("45_nw0k6")]
 layout_mode = 2
 texture_normal = ExtResource("50_o1pes")
 sskill = ExtResource("84_m3xky")
-
-[node name="MagickContainer2" type="HBoxContainer" parent="UI/SpecialskillContainer"]
-layout_mode = 2
 
 [node name="Necslot" parent="UI/SpecialskillContainer/MagickContainer2" instance=ExtResource("45_nw0k6")]
 layout_mode = 2
@@ -669,22 +744,13 @@ layout_mode = 2
 texture_normal = ExtResource("53_ldkb7")
 sskill = ExtResource("90_hmb0d")
 
-[node name="Thaslot" parent="UI/SpecialskillContainer/MagickContainer2" instance=ExtResource("45_nw0k6")]
-layout_mode = 2
-texture_normal = ExtResource("54_qs31w")
-sskill = ExtResource("92_3vtou")
-
-[node name="Wandslot" parent="UI/SpecialskillContainer/MagickContainer2" instance=ExtResource("45_nw0k6")]
-layout_mode = 2
-texture_normal = ExtResource("55_8heqr")
-sskill = ExtResource("94_yvf7x")
-
 [node name="Spacer" type="Control" parent="UI/SpecialskillContainer"]
 custom_minimum_size = Vector2(0, 67)
 layout_mode = 2
 
 [node name="TechContainer" type="HBoxContainer" parent="UI/SpecialskillContainer"]
 layout_mode = 2
+alignment = 1
 
 [node name="Gunslot" parent="UI/SpecialskillContainer/TechContainer" instance=ExtResource("45_nw0k6")]
 layout_mode = 2
@@ -715,13 +781,15 @@ sskill = ExtResource("102_4xkai")
 offset_right = 1920.0
 offset_bottom = 1080.0
 texture = ExtResource("1_jugts")
+metadata/_edit_lock_ = true
 
 [node name="Col1" type="Panel" parent="."]
 offset_left = 22.0
 offset_top = 55.0
 offset_right = 580.0
-offset_bottom = 472.0
+offset_bottom = 534.0
 theme = SubResource("Theme_u05ui")
+metadata/_edit_lock_ = true
 
 [node name="Name_Label" type="Label" parent="Col1"]
 layout_mode = 0
@@ -738,11 +806,11 @@ text = "Name:"
 layout_mode = 0
 offset_left = 213.0
 offset_top = 98.0
-offset_right = 473.0
+offset_right = 537.0
 offset_bottom = 127.0
-theme_override_font_sizes/normal_font_size = 17
+theme_override_font_sizes/normal_font_size = 19
 bbcode_enabled = true
-text = "Press Enter to [color=green]Save Name[/color]"
+text = "Press Enter to [color=green]Confirm Name[/color]"
 
 [node name="Race_Label" type="Label" parent="Col1"]
 layout_mode = 0
@@ -766,12 +834,23 @@ theme_override_fonts/font = ExtResource("2_ebm38")
 theme_override_font_sizes/font_size = 28
 text = "Faith:"
 
+[node name="Faith_Label2" type="Label" parent="Col1"]
+layout_mode = 0
+offset_left = 25.0
+offset_top = 378.0
+offset_right = 127.0
+offset_bottom = 407.0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_fonts/font = ExtResource("2_ebm38")
+theme_override_font_sizes/font_size = 28
+text = "Worldview:"
+
 [node name="Magikc_Label" type="Label" parent="Col1"]
 z_index = 1
 layout_mode = 0
-offset_left = 1441.0
+offset_left = 1439.0
 offset_top = 21.0
-offset_right = 1781.0
+offset_right = 1779.0
 offset_bottom = 50.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_ebm38")
@@ -805,9 +884,9 @@ text = "Select 3 General Skills"
 [node name="Tech_Label" type="Label" parent="Col1"]
 z_index = 1
 layout_mode = 0
-offset_left = 1401.0
+offset_left = 1411.0
 offset_top = 285.0
-offset_right = 1826.0
+offset_right = 1836.0
 offset_bottom = 314.0
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 theme_override_fonts/font = ExtResource("2_ebm38")
@@ -815,7 +894,7 @@ theme_override_font_sizes/font_size = 28
 text = "Technological Disciplines"
 
 [node name="Randomize_Name_Label" type="Label" parent="Col1"]
-z_index = 3
+z_index = 23
 layout_mode = 0
 offset_left = 375.0
 offset_top = 21.0
@@ -832,6 +911,7 @@ offset_top = 57.0
 offset_right = 1907.0
 offset_bottom = 525.0
 theme = SubResource("Theme_u05ui")
+metadata/_edit_lock_ = true
 
 [node name="Col3" type="Panel" parent="."]
 anchors_preset = 8
@@ -845,7 +925,6 @@ offset_right = 1349.0
 offset_bottom = 950.0
 grow_horizontal = 2
 grow_vertical = 2
-theme = SubResource("Theme_u05ui")
 
 [node name="Col4" type="Panel" parent="."]
 anchors_preset = 8
@@ -853,20 +932,20 @@ anchor_left = 0.5
 anchor_top = 0.5
 anchor_right = 0.5
 anchor_bottom = 0.5
-offset_left = 1410.0
-offset_top = 615.0
-offset_right = 1857.0
-offset_bottom = 889.0
+offset_left = 1457.0
+offset_top = 670.0
+offset_right = 1820.0
+offset_bottom = 851.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = SubResource("Theme_u05ui")
 
-[node name="To Character Background" type="Button" parent="Col4"]
+[node name="ToCharacterBackground" type="Button" parent="Col4"]
 layout_mode = 0
-offset_left = 54.0
-offset_top = 55.0
-offset_right = 399.0
-offset_bottom = 216.0
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 355.0
+offset_bottom = 171.0
 theme_override_font_sizes/font_size = 51
 theme_override_styles/normal = SubResource("StyleBoxFlat_lykwr")
 theme_override_styles/hover = SubResource("StyleBoxFlat_0hhru")
@@ -884,7 +963,7 @@ theme_override_font_sizes/font_size = 21
 script = ExtResource("18_lynnh")
 
 [node name="RandomizeName" type="Button" parent="."]
-z_index = 2
+z_index = 13
 offset_left = 387.0
 offset_top = 68.0
 offset_right = 558.0
@@ -892,4 +971,5 @@ offset_bottom = 104.0
 theme = ExtResource("21_vibeh")
 script = ExtResource("22_rplw4")
 
-[connection signal="pressed" from="Col4/To Character Background" to="." method="_on_to_character_background_pressed"]
+[connection signal="pressed" from="UI/RaceInfo/elfslot" to="UI/RaceInfo/elfslot" method="_on_pressed"]
+[connection signal="pressed" from="Col4/ToCharacterBackground" to="." method="_on_to_character_background_pressed"]

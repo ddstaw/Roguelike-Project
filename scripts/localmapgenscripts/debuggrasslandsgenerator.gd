@@ -108,7 +108,13 @@ func generate_chunked_map(tile_container: Node) -> Array:
 	var allowed_chunks = ["chunk_0_1", "chunk_1_1", "chunk_2_1"]
 	var prefab_target_chunk = allowed_chunks[randi() % allowed_chunks.size()]
 	print("🌿 Starting chunk-based DebugGrasslandGenerator.generate_chunked_map()...")
-
+	
+	# 🧹 STEP 0: Clear old cached NPC data from previous biome
+	if "chunked_npc_data" in LoadHandlerSingleton:
+		LoadHandlerSingleton.chunked_npc_data.clear()
+	chunked_npc_data.clear()
+	print("🧹 Cleared old NPC cache for new biome: Grasslands")
+	
 	# 🔄 STEP 0: Reset any lingering state from previous generation
 	LoadHandlerSingleton.clear_egress_register_for_biome("grass")
 	LoadHandlerSingleton.clear_prefab_register_for_biome("grass")
@@ -204,14 +210,16 @@ func generate_chunked_map(tile_container: Node) -> Array:
 
 			if placed_at != Vector2i(-1, -1):
 				var global_coords := placed_at + origin
+				# 🧱 Store prefab data + floors in register
 				LoadHandlerSingleton.register_prefab_data_for_chunk(
 					"grassland_explore_fields",
 					chunk_key,
-					prefab_group["name"],
+					prefab_group.get("name", "unknown"),
 					global_coords,
-					0
+					0,
+					prefab_group.get("floors", {})
 				)
-
+				
 		# Inject cave hole tile (after prefab, before object layer is created)
 		if chunk_key == "chunk_1_1":
 			var valid := []
@@ -335,7 +343,15 @@ func generate_chunked_map(tile_container: Node) -> Array:
 	placement["local_map"]["biome_key"] = biome_folder
 	LoadHandlerSingleton.save_temp_placement(placement)
 	print("📍 Egress points collected:", LoadHandlerSingleton.get_egress_points())
-	ZLevelManager.process_z_down_egresses_for_biome("grassland_explore_fields")
+	# after register_prefab_data_for_chunk(...)
+	# 1) generate down (cellars/caves)
+	await get_tree().process_frame
+	ZLevelManager.process_z_down_egresses_for_biome(biome)
+	await get_tree().process_frame
+
+	# 4) generate up (upper floors)
+	ZLevelManager.process_z_up_prefabs_for_biome(biome)
+
 	return [chunked_tile_data, chunked_object_data, chunk_blueprints, biome_folder, chunked_npc_data]
 
 

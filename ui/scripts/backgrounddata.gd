@@ -1,3 +1,4 @@
+# HBoxContainer/backgrounddata script res://ui/scripts/backgrounddata.gd
 extends Control
 
 # Paths to the different background JSON files

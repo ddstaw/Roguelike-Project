@@ -9,7 +9,7 @@ func _on_pressed():
 	print("Button pressed!")  # Confirm the button reacts to clicks
 
 	# Navigate to the correct node where backgrounddata.gd is attached
-	var background_data = get_parent().get_node("HBoxContainer/backgrounddata")  # Adjusted to reflect the correct path
+	var background_data = get_parent().get_node("backgroundPanel/backgrounddata")  # Adjusted to reflect the correct path
 	if background_data != null:
 		print("backgrounddata node found:", background_data.name)
 		

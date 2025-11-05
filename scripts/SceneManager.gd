@@ -1,3 +1,4 @@
+# res://scripts/SceneManager.gd
 extends Node
 
 var current_chunk_coords: Vector2i

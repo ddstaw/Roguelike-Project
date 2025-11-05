@@ -1,29 +1,50 @@
-[gd_scene load_steps=4 format=3 uid="uid://c3ghtn33qyapq"]
+[gd_scene load_steps=7 format=3 uid="uid://c3ghtn33qyapq"]
 
 [ext_resource type="Script" path="res://ui/scripts/popups.gd" id="1_dvl2d"]
 [ext_resource type="StyleBox" uid="uid://drg01ieabsfmb" path="res://ui/character-creation-pop-up-theme.tres" id="2_np6cc"]
 [ext_resource type="Texture2D" uid="uid://bleag8l6yvwye" path="res://ui/ds/esoteric.png" id="3_uawag"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_awg7s"]
+content_margin_top = 19.0
+bg_color = Color(0.6, 0.6, 0.6, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_e2xj0"]
+content_margin_left = 19.0
+content_margin_top = 19.0
+content_margin_right = 9.0
+bg_color = Color(0, 0, 0, 0)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(1, 1, 1, 0)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5gh4g"]
+content_margin_top = 6.0
+bg_color = Color(1, 1, 1, 0)
 
 [node name="Popups" type="Control"]
 layout_mode = 3
 anchors_preset = 0
 script = ExtResource("1_dvl2d")
 
-[node name="UI" type="CanvasLayer" parent="."]
-
-[node name="RacePopup" type="PopupPanel" parent="UI"]
+[node name="RacePopup" type="Panel" parent="."]
 unique_name_in_owner = true
-position = Vector2i(171, 67)
-size = Vector2i(567, 193)
+visible = false
+custom_minimum_size = Vector2(558, 400)
+layout_mode = 0
+offset_right = 558.0
+offset_bottom = 343.0
 theme_override_styles/panel = ExtResource("2_np6cc")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/RacePopup"]
-offset_left = 53.0
-offset_top = 38.0
-offset_right = 599.0
-offset_bottom = 210.0
+[node name="VBoxContainer" type="VBoxContainer" parent="RacePopup"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 24.0
+offset_right = 502.0
+offset_bottom = 196.0
 
-[node name="Racename" type="Label" parent="UI/RacePopup/VBoxContainer"]
+[node name="Racename" type="Label" parent="RacePopup/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(90, 39)
 layout_mode = 2
@@ -31,7 +52,7 @@ theme_override_font_sizes/font_size = 33
 text = "RACE NAME"
 autowrap_mode = 3
 
-[node name="Raceflavor" type="RichTextLabel" parent="UI/RacePopup/VBoxContainer"]
+[node name="Raceflavor" type="RichTextLabel" parent="RacePopup/VBoxContainer"]
 unique_name_in_owner = true
 clip_contents = false
 custom_minimum_size = Vector2(90, 30)
@@ -41,9 +62,8 @@ bbcode_enabled = true
 text = "Lorem ipsum. retert ertsert ser"
 fit_content = true
 scroll_active = false
-autowrap_mode = 0
 
-[node name="Racebonus" type="RichTextLabel" parent="UI/RacePopup/VBoxContainer"]
+[node name="Racebonus" type="RichTextLabel" parent="RacePopup/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(40, 26)
 layout_mode = 2
@@ -52,23 +72,27 @@ bbcode_enabled = true
 text = "Racial Bonus: +2 to strength and endurance"
 fit_content = true
 scroll_active = false
-autowrap_mode = 0
 
-[node name="FaithPopup" type="PopupPanel" parent="UI"]
+[node name="FaithPopup" type="Panel" parent="."]
 unique_name_in_owner = true
-position = Vector2i(45, 446)
-size = Vector2i(631, 418)
+visible = false
+custom_minimum_size = Vector2(558, 0)
+layout_mode = 1
+anchors_preset = -1
+offset_right = 558.0
+offset_bottom = 484.0
 theme_override_styles/panel = ExtResource("2_np6cc")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/FaithPopup"]
+[node name="VBoxContainer" type="VBoxContainer" parent="FaithPopup"]
 z_index = 3
-custom_minimum_size = Vector2(600, 280)
-offset_left = 53.0
-offset_top = 38.0
-offset_right = 653.0
-offset_bottom = 355.0
+layout_mode = 1
+anchors_preset = -1
+offset_left = 26.0
+offset_top = 24.0
+offset_right = 556.0
+offset_bottom = 292.0
 
-[node name="Faithname" type="Label" parent="UI/FaithPopup/VBoxContainer"]
+[node name="Faithname" type="Label" parent="FaithPopup/VBoxContainer"]
 unique_name_in_owner = true
 z_index = 3
 custom_minimum_size = Vector2(360, 39)
@@ -77,9 +101,9 @@ theme_override_font_sizes/font_size = 33
 text = "eh6e56he5"
 autowrap_mode = 3
 
-[node name="Faithflavor" type="RichTextLabel" parent="UI/FaithPopup/VBoxContainer"]
+[node name="Faithflavor" type="RichTextLabel" parent="FaithPopup/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(90, 26)
+custom_minimum_size = Vector2(510, 26)
 layout_mode = 2
 theme_override_font_sizes/normal_font_size = 11
 theme_override_font_sizes/italics_font_size = 25
@@ -88,40 +112,100 @@ bbcode_enabled = true
 text = "56rr7jr67"
 scroll_active = false
 
-[node name="Faithdes" type="RichTextLabel" parent="UI/FaithPopup/VBoxContainer"]
+[node name="Faithdes" type="RichTextLabel" parent="FaithPopup/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(40, 180)
+custom_minimum_size = Vector2(525, 0)
 layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 19
 bbcode_enabled = true
 text = "yhe56ye5"
+fit_content = true
 scroll_active = false
 
-[node name="Faithbonus" type="RichTextLabel" parent="UI/FaithPopup/VBoxContainer"]
+[node name="Faithbonus" type="RichTextLabel" parent="FaithPopup/VBoxContainer"]
 unique_name_in_owner = true
 clip_contents = false
-custom_minimum_size = Vector2(30, 44)
+custom_minimum_size = Vector2(510, 154)
 layout_mode = 2
+size_flags_vertical = 3
 theme_override_font_sizes/normal_font_size = 21
+theme_override_styles/normal = SubResource("StyleBoxFlat_awg7s")
 bbcode_enabled = true
 text = "5t45t45"
 scroll_active = false
 
-[node name="SskillPopup" type="PopupPanel" parent="UI"]
+[node name="WVPopup" type="Panel" parent="."]
 unique_name_in_owner = true
-position = Vector2i(23, 486)
-size = Vector2i(557, 352)
-min_size = Vector2i(557, 255)
-max_size = Vector2i(32378, 32608)
+visible = false
+custom_minimum_size = Vector2(558, 0)
+layout_mode = 0
+offset_right = 558.0
+offset_bottom = 400.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_e2xj0")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="WVPopup"]
+z_index = 3
+clip_contents = true
+custom_minimum_size = Vector2(600, 240)
+layout_mode = 1
+anchors_preset = -1
+offset_left = 26.0
+offset_top = 24.0
+
+[node name="WVname" type="Label" parent="WVPopup/VBoxContainer"]
+unique_name_in_owner = true
+z_index = 3
+custom_minimum_size = Vector2(350, 39)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/font_size = 33
+text = "Materialistic "
+autowrap_mode = 3
+
+[node name="WVflavor" type="RichTextLabel" parent="WVPopup/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(490, 26)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/normal_font_size = 20
+theme_override_font_sizes/italics_font_size = 20
+theme_override_font_sizes/bold_italics_font_size = 21
+bbcode_enabled = true
+text = "My Resolve Comes From My Faith (or Lack Thereof)"
+fit_content = true
+scroll_active = false
+
+[node name="WVdes" type="RichTextLabel" parent="WVPopup/VBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(450, 180)
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_font_sizes/normal_font_size = 19
+theme_override_styles/normal = SubResource("StyleBoxFlat_5gh4g")
+bbcode_enabled = true
+text = "You are firm in your resolve that your chosen faith contains all the answers. Some may call you a zealot or blind follower, but it is they who are blind to the simple truth. "
+fit_content = true
+scroll_active = false
+
+[node name="SskillPopup" type="Panel" parent="."]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(558, 400)
+layout_mode = 0
+offset_right = 558.0
+offset_bottom = 400.0
 theme_override_styles/panel = ExtResource("2_np6cc")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/SskillPopup"]
-offset_left = 53.0
-offset_top = 38.0
-offset_right = 529.0
-offset_bottom = 498.0
+[node name="VBoxContainer" type="VBoxContainer" parent="SskillPopup"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 24.0
+offset_right = 489.0
+offset_bottom = 513.0
 
-[node name="Sskillname" type="Label" parent="UI/SskillPopup/VBoxContainer"]
+[node name="Sskillname" type="Label" parent="SskillPopup/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(90, 39)
 layout_mode = 2
@@ -129,39 +213,43 @@ theme_override_font_sizes/font_size = 39
 text = "Glamourmancy"
 autowrap_mode = 3
 
-[node name="Sskillflavor" type="RichTextLabel" parent="UI/SskillPopup/VBoxContainer"]
+[node name="Sskillflavor" type="RichTextLabel" parent="SskillPopup/VBoxContainer"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(90, 28)
+custom_minimum_size = Vector2(90, 0)
 layout_mode = 2
 theme_override_font_sizes/normal_font_size = 22
 bbcode_enabled = true
-text = "[color=fa14d7]The Tradition of Phantasmagoria[/color]"
+text = "[color=fa14d7]The Tradition of Phantasmagoria[/color] Phantasmagoria"
+fit_content = true
 scroll_active = false
 
-[node name="Sskilldes" type="RichTextLabel" parent="UI/SskillPopup/VBoxContainer"]
+[node name="Sskilldes" type="RichTextLabel" parent="SskillPopup/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(40, 255)
 layout_mode = 2
 theme_override_font_sizes/normal_font_size = 24
 bbcode_enabled = true
 text = "Magick fraud and deception. For weaving veils of invisibility, beguiling foes, creating diversions, misdirection, and sowing discord, it is the favored craft of the charlatan and conjurer alike."
+fit_content = true
 scroll_active = false
 
-[node name="GskillPopup" type="PopupPanel" parent="UI"]
+[node name="GskillPopup" type="Panel" parent="."]
 unique_name_in_owner = true
-position = Vector2i(23, 486)
-size = Vector2i(557, 505)
-min_size = Vector2i(557, 222)
-max_size = Vector2i(32378, 32608)
+visible = false
+custom_minimum_size = Vector2(558, 0)
+layout_mode = 0
+offset_right = 558.0
+offset_bottom = 400.0
 theme_override_styles/panel = ExtResource("2_np6cc")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/GskillPopup"]
-offset_left = 53.0
-offset_top = 38.0
-offset_right = 529.0
-offset_bottom = 461.0
+[node name="VBoxContainer" type="VBoxContainer" parent="GskillPopup"]
+layout_mode = 0
+offset_left = 26.0
+offset_top = 24.0
+offset_right = 530.0
+offset_bottom = 447.0
 
-[node name="Gskillname" type="Label" parent="UI/GskillPopup/VBoxContainer"]
+[node name="Gskillname" type="Label" parent="GskillPopup/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(110, 39)
 layout_mode = 2
@@ -169,7 +257,7 @@ theme_override_font_sizes/font_size = 39
 text = "Frontiersmanship"
 autowrap_mode = 3
 
-[node name="Gskillflavor" type="RichTextLabel" parent="UI/GskillPopup/VBoxContainer"]
+[node name="Gskillflavor" type="RichTextLabel" parent="GskillPopup/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(90, 28)
 layout_mode = 2
@@ -178,9 +266,10 @@ theme_override_font_sizes/italics_font_size = 25
 theme_override_font_sizes/bold_italics_font_size = 22
 bbcode_enabled = true
 text = "The Skill of Rugged Individualism "
+fit_content = true
 scroll_active = false
 
-[node name="Gskilldes" type="RichTextLabel" parent="UI/GskillPopup/VBoxContainer"]
+[node name="Gskilldes" type="RichTextLabel" parent="GskillPopup/VBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(40, 218)
 layout_mode = 2
@@ -189,13 +278,15 @@ bbcode_enabled = true
 text = "Living off the land, making campfires, waterskins, skinning beasts - the art of the pioneer, the peasant and the greatest heroes."
 scroll_active = false
 
-[node name="DskillPopup" type="PopupPanel" parent="UI"]
-position = Vector2i(45, 440)
-size = Vector2i(513, 183)
-max_size = Vector2i(32378, 32608)
+[node name="DskillPopup" type="Panel" parent="."]
+visible = false
+layout_mode = 0
+offset_right = 513.0
+offset_bottom = 246.0
 theme_override_styles/panel = ExtResource("2_np6cc")
 
-[node name="VBoxContainer" type="VBoxContainer" parent="UI/DskillPopup"]
+[node name="VBoxContainer" type="VBoxContainer" parent="DskillPopup"]
+layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.961
 anchor_top = 0.15
@@ -207,14 +298,15 @@ offset_right = 485.0
 offset_bottom = 183.0
 grow_vertical = 2
 
-[node name="Dskilltexture" type="TextureRect" parent="UI/DskillPopup/VBoxContainer"]
+[node name="Dskilltexture" type="TextureRect" parent="DskillPopup/VBoxContainer"]
 layout_mode = 2
 size_flags_horizontal = 4
 texture = ExtResource("3_uawag")
 stretch_mode = 4
 
-[node name="VBoxContainer2" type="VBoxContainer" parent="UI/DskillPopup"]
+[node name="VBoxContainer2" type="VBoxContainer" parent="DskillPopup"]
 custom_minimum_size = Vector2(20, 8)
+layout_mode = 1
 anchors_preset = -1
 anchor_left = 0.994
 anchor_top = 0.521
@@ -223,9 +315,9 @@ anchor_bottom = 0.521
 offset_left = 53.0
 offset_top = 38.0
 offset_right = 485.0
-offset_bottom = 165.0
+offset_bottom = 183.0
 
-[node name="Dskilltitle" type="RichTextLabel" parent="UI/DskillPopup/VBoxContainer2"]
+[node name="Dskilltitle" type="RichTextLabel" parent="DskillPopup/VBoxContainer2"]
 clip_contents = false
 custom_minimum_size = Vector2(10, 2)
 layout_mode = 2
@@ -235,7 +327,7 @@ bbcode_enabled = true
 text = "[color=34e8eb]Eldritch Invocations[/color]"
 scroll_active = false
 
-[node name="Dskilldes" type="RichTextLabel" parent="UI/DskillPopup/VBoxContainer2"]
+[node name="Dskilldes" type="RichTextLabel" parent="DskillPopup/VBoxContainer2"]
 clip_contents = false
 custom_minimum_size = Vector2(81, 121)
 layout_mode = 2

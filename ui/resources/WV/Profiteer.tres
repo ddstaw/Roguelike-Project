@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="Worldview" load_steps=2 format=3 uid="uid://bmbtmerm204yp"]
+
+[ext_resource type="Script" path="res://ui/resources/WV/Worldview.gd" id="1_8gy56"]
+
+[resource]
+script = ExtResource("1_8gy56")
+Worldviewname = "Profiteer"
+Worldviewflavor = "Proflav"
+Worldviewdes = "Prodes"

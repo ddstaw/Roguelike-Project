@@ -1,16 +1,28 @@
-#localmap.gd
+#localmap.gd - parent node script
 extends Control
 
 @onready var tile_container = $TileContainer  # A Node2D that holds all tile sprites
 @onready var world_map_button = $UILayer/DebugUI/WorldMap  # Adjust if needed
 @onready var generate_button = $UILayer/DebugUI/GenNewMapDebugButton
 @onready var toggle_free_pan_button = $UILayer/DebugUI/ToggleFreePan  # Free pan toggle button
-@onready var bottom_ui = $UIlayer/LocalPlayUI/BottomUI  # ✅ Reference the BottomUI node
+@onready var bottom_ui = $UILayer/LocalPlayUI/BottomUI  # ✅ Reference the BottomUI node
 @onready var dark_overlay = $UILayer/DarkOverlay
 @onready var light_overlay := $LightOverlay
 @onready var travel_log = $UILayer/LocalPlayUI/TravelLogControl
 @onready var buildables_overlay := preload("res://scenes/play/BuildablesOverlay.tscn").instantiate()
 
+@onready var pause_menu = preload("res://scenes/play/PauseMenu.tscn").instantiate()
+
+@onready var npc_container: Node2D = $NPCContainer
+@onready var npc_underlay_container: Node2D = $NPCUnderlayContainer
+
+@onready var turn_manager := get_node_or_null("/root/TurnManager")
+
+@onready var map_layers: Array[Node2D] = [
+	$TileContainer,
+	$NPCUnderlayContainer,
+	$NPCContainer
+]
 
 var light_map: Array = []  # 🌕 Stores per-tile light levels
 var tile_light_levels: Dictionary = {}
@@ -65,7 +77,18 @@ const TEXTURES = Constants.TILE_TEXTURES
 
 const TILE_SIZE = 88  # Each tile is 88x88 pixels
 
+const NPC_VISIBILITY_RADIUS := 6.0
+const NPC_UNDERLAY_ALPHA := 0.45
+const NPC_MIN_ALPHA := 0.1
+
 func _ready():
+	process_mode = Node.PROCESS_MODE_ALWAYS  # 👈 allows input while paused
+	if turn_manager:
+		turn_manager.local_map_ref = self
+		print("✅ LocalMap registered with TurnManager:", self)
+	$UILayer.add_child(pause_menu)
+	pause_menu.hide()
+	pause_menu.z_index = 999
 	#print("🔍 DEBUG: LocalMap.gd _ready() is running!")
 
 	await get_tree().process_frame  # Let scene tree settle
@@ -109,7 +132,8 @@ func _ready():
 
 	# 🗺️ Render map and objects
 	load_and_render_local_map()
-	
+	_precompute_fov_before_first_frame()
+
 	print("TargetingCursor position:", targeting_cursor.position)
 	if is_instance_valid(targeting_cursor):
 		tile_container.move_child(targeting_cursor, tile_container.get_child_count() - 1)
@@ -149,8 +173,13 @@ func _ready():
 	await get_tree().create_timer(0.3).timeout
 	_attempt_cursor_realignment()
 	
+	# 👇 Add this right below
+	call_deferred("_sync_fov_after_load")
 	
 func load_and_render_local_map():
+	# 🔒 Prevent first-frame NPC flash
+	_set_npc_layers_visible(false)
+	
 	for child in tile_container.get_children():
 		if child.name != "TargetingCursor":
 			child.queue_free()
@@ -176,8 +205,62 @@ func load_and_render_local_map():
 	var object_chunk = LoadHandlerSingleton.load_json_file(object_path)
 	var npc_chunk = LoadHandlerSingleton.load_json_file(npc_path)
 
+	# 🧱 Optional: below-layer loader for upper z-levels (non-destructive)
+	var below_tile_chunk: Dictionary = {}
+	var below_object_chunk: Dictionary = {}
+	var below_npc_chunk: Dictionary = {}
 	
-		# Only wrap if tile_chunk is valid
+	print("🔎 z_level raw value:", z_level)
+
+	if z_level != "0":
+		var below_z_int := int(z_level.trim_prefix("z"))
+		if below_z_int > 0:
+			var below_path := LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_id, biome_key, str(below_z_int - 1))
+			var below_object_path := LoadHandlerSingleton.get_chunked_object_chunk_path(chunk_id, biome_key, str(below_z_int - 1))
+			var below_npc_path := LoadHandlerSingleton.get_chunked_npc_chunk_path(chunk_id, biome_key, str(below_z_int - 1))
+
+			# 🕵️ Debug prints
+			print("🧭 Current z_level:", z_level)
+			print("📁 Expecting below z:", below_z_int - 1)
+			print("🧩 Built below path:", below_path)
+
+			# 🧩 Load below tiles
+			if FileAccess.file_exists(below_path):
+				below_tile_chunk = LoadHandlerSingleton.load_json_file(below_path)
+				print("⬇️ Loaded below layer for visual underlay:", below_path)
+				if below_tile_chunk.has("tile_grid"):
+					print("🧱 BELOW LAYER LOADED →", below_tile_chunk["tile_grid"].size(), "tiles available for underlay.")
+				else:
+					print("⚠️ BELOW LAYER EMPTY OR MISSING.")
+					
+				print("🧩 Built below paths:")
+				print("   ⬇️ Tile:", below_path)
+				print("   ⬇️ Object:", below_object_path)
+				print("   ⬇️ NPC:", below_npc_path)
+						# 🧩 Load below-layer OBJECTS
+			if FileAccess.file_exists(below_object_path):
+				below_object_chunk = LoadHandlerSingleton.load_json_file(below_object_path)
+				print("⬇️ Loaded below-layer objects:", below_object_path)
+
+			# 🧩 Load below-layer NPCs
+			if FileAccess.file_exists(below_npc_path):
+				below_npc_chunk = LoadHandlerSingleton.load_json_file(below_npc_path)
+				print("⬇️ Loaded below-layer NPCs:", below_npc_path)
+	
+	# ✅ Normalize below-layer data so MapRenderer can read it correctly
+	if typeof(below_object_chunk) == TYPE_DICTIONARY:
+		if not below_object_chunk.has("objects"):
+			below_object_chunk = { "objects": below_object_chunk }
+	else:
+		below_object_chunk = { "objects": {} }
+
+	if typeof(below_npc_chunk) == TYPE_DICTIONARY:
+		if not below_npc_chunk.has("npcs"):
+			below_npc_chunk = { "npcs": below_npc_chunk }
+	else:
+		below_npc_chunk = { "npcs": {} }
+	
+	# Only wrap if tile_chunk is valid
 	print("📂 Attempting to load tile chunk from:", tile_path)
 	if tile_chunk != null and tile_chunk.has("tile_grid"):
 		tile_chunk = { "tile_grid": tile_chunk["tile_grid"] }
@@ -204,9 +287,21 @@ func load_and_render_local_map():
 	if tile_chunk == null or object_chunk == null:
 		print("❌ ERROR: Failed to load chunk data!")
 		return
+	
+		# ✅ Reset transform origins before rendering
+	tile_container.set_global_position(Vector2.ZERO)
+	tile_container.set_position(Vector2.ZERO)
+	tile_container.scale = Vector2.ONE
 
-	# 🎨 Render map using chunks
-	MapRenderer.render_map(tile_chunk, object_chunk, npc_chunk, tile_container, chunk_id)
+	var map_parent = tile_container.get_parent()
+	if map_parent:
+		map_parent.set_global_position(Vector2.ZERO)
+		map_parent.set_position(Vector2.ZERO)
+		map_parent.scale = Vector2.ONE
+	
+	# 🎨 Render map using chunks (now supports optional underlay)
+	MapRenderer.render_map(tile_chunk, object_chunk, npc_chunk, tile_container, chunk_id, below_tile_chunk, below_object_chunk, below_npc_chunk)
+		
 	#print("✅ Chunked local map rendered.")
 	var coords = LoadHandlerSingleton.get_current_chunk_coords()
 	MapRenderer.render_chunk_transitions(coords, tile_container)
@@ -230,10 +325,16 @@ func load_and_render_local_map():
 	spawn_player_visual()
 	#print("✅ Player visual spawned at:", player.position)
 
-	# 👁️ Update FOV after frame delay
-	await get_tree().process_frame
+	# 👁️ Compute FOV *now*, still with NPC layers hidden
 	var grid_pos = Vector2i(player.position.x / TILE_SIZE, player.position.y / TILE_SIZE)
 	update_fov_from_player(grid_pos)
+
+	# 🚫 Ensure NPCs are masked *before* first visible frame
+	apply_fov_to_npc_layers()
+
+	# ✅ Now it’s safe to show them
+	_set_npc_layers_visible(true)
+
 	visible_chunks = [ current_chunk_id ]
 
 func spawn_player_visual():
@@ -276,6 +377,12 @@ func spawn_player_visual():
 	
 	self.player = player_instance
 	player_instance.connect("fov_updated", Callable(self, "_on_player_fov_updated"))
+	
+	# 👁️ When FOV is updated for the first time, apply visibility mask to NPC layers
+	player_instance.connect("fov_updated", func(_tiles):
+		if has_method("apply_fov_to_npc_layers"):
+			apply_fov_to_npc_layers()
+	)
 
 	# 🎨 Visuals
 	var looks = LoadHandlerSingleton.load_player_looks()
@@ -291,7 +398,6 @@ func spawn_player_visual():
 
 	#print("✅ Player visual spawned at (local):", player_pos, "→ World Pos:", Vector2(x, y))
 
-
 func _on_WorldMap_pressed():
 	#print("🌍 Returning to World Map...")
 
@@ -306,8 +412,8 @@ func _on_GenNewMapDebugButton_pressed():
 
 func center_tile_container():
 	if player == null:
-		#print("⚠️ Player not ready — can't center tile container yet.")
 		return
+	_center_on_anchor(player.position)
 
 	var player_pixel_pos: Vector2 = player.position
 
@@ -368,6 +474,27 @@ func _process(delta):
 		last_minute_seen = current_minute
 		calculate_sunlight_levels()
 
+func _set_map_scale(s: float) -> void:
+	zoom_factor = s
+	for n in map_layers:
+		if is_instance_valid(n):
+			n.scale = Vector2(s, s)
+
+func _set_map_position(p: Vector2) -> void:
+	for n in map_layers:
+		if is_instance_valid(n):
+			n.position = p
+
+func _get_map_position() -> Vector2:
+	# All layers share the same position; read from one.
+	return tile_container.position
+
+func _center_on_anchor(anchor_world_px: Vector2) -> void:
+	# Keep the given world pixel (e.g. player.position) centered in the view
+	var vp: Vector2 = get_viewport_rect().size
+	var pos: Vector2 = (vp * 0.5) - (anchor_world_px * zoom_factor)
+	_set_map_position(pos)
+
 func zoom_in():
 	if current_zoom_index > 0:
 		current_zoom_index -= 1
@@ -379,26 +506,18 @@ func zoom_out():
 		update_zoom()
 
 func update_zoom():
-	# ✅ Get the current center BEFORE zooming
-	var previous_center = tile_container.position + (get_viewport_rect().size / 2) / tile_container.scale
+	var new_zoom: float = zoom_levels[current_zoom_index]
 
-	# ✅ Apply the zoom factor
-	zoom_factor = zoom_levels[current_zoom_index]
-	tile_container.scale = Vector2(zoom_factor, zoom_factor)
+	# Anchor zoom on the player (fallback to current center if player isn’t ready)
+	var anchor: Vector2
+	if player != null:
+		anchor = player.position
+	else:
+		anchor = (get_viewport_rect().size * 0.5) / max(zoom_factor, 0.0001)
 
-	# ✅ Recalculate center AFTER zooming
-	var new_center = (previous_center * zoom_factor) - (get_viewport_rect().size / 2) / tile_container.scale
+	_set_map_scale(new_zoom)
+	_center_on_anchor(anchor)
 
-	# ✅ Clamp to prevent it from zooming into negative space
-	var map_width = 100 * TILE_SIZE * zoom_factor  # Adjust for zoom
-	var map_height = 100 * TILE_SIZE * zoom_factor
-
-	tile_container.position = Vector2(
-		clamp(new_center.x, -map_width / 2, map_width / 2),
-		clamp(new_center.y, -map_height / 2, map_height / 2)
-	)
-
-	#print("Zoom Updated. New TileContainer Position:", tile_container.position)
 
 func _unhandled_input(event):
 	if is_in_targeting_mode():
@@ -409,7 +528,18 @@ func _unhandled_input(event):
 			else:
 				print("⚠️ Viewport is null when trying to set input as handled.")
 			return
-
+	
+	# Toggle pause menu
+	if event.is_action_pressed("ui_cancel"):
+		if pause_menu.visible:
+			pause_menu.hide()
+			get_tree().paused = false
+		else:
+			pause_menu.show()
+			get_tree().paused = true
+		get_viewport().set_input_as_handled()
+		return
+		
 	# Zoom remains globally available
 	if event.is_action_pressed("local_zoom_in"):
 		zoom_in()
@@ -601,7 +731,12 @@ func update_play_scene_name():
 
 			var chunk_label = _get_chunk_direction_label(chunk_id)
 			label_node.text = "Exploring " + biome_label + chunk_label
-
+		
+		"tradepost":
+			# ✅ Use optional hub name, fallback to Tradepost
+			var hub_name = entry_context.get("hub_name", "Tradepost")
+			label_node.text = hub_name
+		
 		"remembered":
 			label_node.text = "Revisiting Familiar Grounds"
 
@@ -1005,6 +1140,9 @@ func update_object_visibility(player_grid_pos: Vector2i) -> void:
 	var visibility_radius: int = 2
 	var fade_radius: float = float(visibility_radius + 1)
 
+	# =====================================================
+	# 🎨 BASE TILE / OBJECT VISIBILITY
+	# =====================================================
 	for obj: Node in tile_container.get_children():
 		if not obj is Node2D or obj == player:
 			continue
@@ -1013,7 +1151,6 @@ func update_object_visibility(player_grid_pos: Vector2i) -> void:
 		var obj_grid_pos: Vector2i = Vector2i(obj_node.position.x / TILE_SIZE, obj_node.position.y / TILE_SIZE)
 
 		var dist: float = (player_grid_pos - obj_grid_pos).length()
-		var in_radius: bool = dist <= fade_radius
 		var can_see: bool = current_visible_tiles.has(obj_grid_pos)
 
 		if can_see:
@@ -1026,6 +1163,54 @@ func update_object_visibility(player_grid_pos: Vector2i) -> void:
 				obj_node.modulate.a = final_alpha
 		else:
 			obj_node.modulate.a = 0.0
+
+	# =====================================================
+	# 🧍 EXTEND VISIBILITY TO NPC LAYERS
+	# =====================================================
+	apply_fov_to_npc_layers()
+
+# ==========================================================
+# 👁️ NPC FOV / VISIBILITY EXTENSIONS
+# ==========================================================
+
+func _apply_fov_to_npc_layer(layer: Node2D, is_underlay: bool) -> void:
+	if layer == null or player == null:
+		return
+
+	var player_grid: Vector2i = Vector2i(int(round(player.position.x / TILE_SIZE)), int(round(player.position.y / TILE_SIZE)))
+	var fade_radius: float = float(NPC_VISIBILITY_RADIUS)
+
+	for c in layer.get_children():
+		if not (c is Sprite2D and c.has_meta("npc_id")):
+			continue
+
+		var spr: Sprite2D = c
+		var gpos: Vector2i = Vector2i(int(round(spr.position.x / TILE_SIZE)), int(round(spr.position.y / TILE_SIZE)))
+		var visible: bool = current_visible_tiles.has(gpos)
+
+		if not visible:
+			spr.visible = false
+			continue
+
+		spr.visible = true
+
+		# ✅ Vector2i has no .distance_to(), so use length() on the difference
+		var delta: Vector2i = gpos - player_grid
+		var dist: float = float(delta.length())
+
+		# Distance-based fade
+		var base_fade: float = clamp(1.0 - (dist / (fade_radius + 0.0001)), NPC_MIN_ALPHA, 1.0)
+
+		# Dimmer in darkness
+		var alpha: float = lerp(base_fade, 1.0, sunlight_level)
+
+		# Underlay (lower Z-level)
+		if is_underlay:
+			alpha *= NPC_UNDERLAY_ALPHA
+
+		var tint: Color = spr.modulate
+		tint.a = alpha
+		spr.modulate = tint
 
 func rebuild_walkability():
 	#print("🔁 Rebuilding walkability grid...")
@@ -1211,7 +1396,134 @@ func apply_static_light_to_visible_tiles() -> void:
 				if not visible_tiles.has(pos):
 					visible_tiles[pos] = 99999  # Special marker
 					light_overlay.dirty_tiles[pos] = true
+					
+	propagate_light_from_lower_z()
+	
+func propagate_light_from_lower_z() -> void:
+	var current_z: int = LoadHandlerSingleton.get_current_z_level()
+	print("[belowlighttest] 🔽 Entering propagate_light_from_lower_z() — current_z:", current_z)
 
+	var lower_z: int = current_z - 1
+	print("[belowlighttest] Calculated lower_z:", lower_z)
+	if lower_z < 0:
+		print("[belowlighttest] 🛑 No lower z-level (already at z0)")
+		return
+
+	var chunk_id: String = LoadHandlerSingleton.get_current_chunk_id()
+	var placement: Dictionary = LoadHandlerSingleton.load_temp_localmap_placement()
+	var biome_key: String = str(placement.get("local_map", {}).get("biome_key", ""))
+
+	print("[belowlighttest] ▶ Checking lower light propagation | current_z:", current_z, "| lower_z:", lower_z, "| biome:", biome_key, "| chunk_id:", chunk_id)
+
+	# 🔍 Build correct path
+	var lower_object_path: String = LoadHandlerSingleton.get_chunked_object_chunk_path(chunk_id, biome_key, str(lower_z))
+	print("[belowlighttest] 🔍 lower_object_path =", lower_object_path)
+	if not FileAccess.file_exists(lower_object_path):
+		print("[belowlighttest] ❌ No lower object chunk file exists at:", lower_object_path)
+		return
+
+	# 📦 Load and normalize object structure
+	var lower_object_chunk: Dictionary = LoadHandlerSingleton.load_json_file(lower_object_path)
+	var objs: Dictionary = lower_object_chunk["objects"] if lower_object_chunk.has("objects") else lower_object_chunk
+	print("[belowlighttest] 📦 Loaded lower object chunk with", objs.size(), "entries.")
+
+	if objs.is_empty():
+		print("[belowlighttest] ⚠️ lower objects dict empty, nothing to light")
+		return
+
+	# 🧱 Load object definitions
+	var object_defs = preload("res://constants/object_data.gd")
+	var lower_sources: Array = []
+
+	for obj_id in objs.keys():
+		var obj: Dictionary = objs[obj_id]
+		var obj_type: String = str(obj.get("type", ""))
+		var obj_state: Dictionary = obj.get("state", {}) as Dictionary
+		var props: Dictionary = object_defs.OBJECT_PROPERTIES.get(obj_type, {}) as Dictionary
+
+		if bool(props.get("lightable", false)) and bool(obj_state.get("is_lit", false)):
+			var pos_dict: Dictionary = obj.get("position", {}) as Dictionary
+			var center: Vector2i = Vector2i(int(pos_dict.get("x", 0)), int(pos_dict.get("y", 0)))
+			var radius: int = int(props.get("light_radius", 3))
+			var boost: float = float(props.get("boost", 1.0))
+			lower_sources.append({
+				"pos": center,
+				"radius": radius,
+				"boost": boost,
+				"type": obj_type
+			})
+			print("[belowlighttest] 💡 Found lit lower object:", obj_type, "at", center, "| radius:", radius)
+		elif bool(props.get("lightable", false)):
+			print("[belowlighttest] 🔕 Object", obj_type, "is lightable but not lit (is_lit:", obj_state.get("is_lit", false), ")")
+
+	if lower_sources.is_empty():
+		print("[belowlighttest] ⚠️ No active lit objects found in lower_z:", lower_z)
+		return
+
+	print("[belowlighttest] 🔦 Found", lower_sources.size(), "lower-z light sources, checking visibility...")
+
+	var player_pos: Vector2i = Vector2i(int(player.position.x / TILE_SIZE), int(player.position.y / TILE_SIZE))
+	print("[belowlighttest] 🧭 Player position:", player_pos)
+
+	var above_grid: Dictionary = current_tile_chunk.get("tile_grid", {})
+	if above_grid.is_empty():
+		print("[belowlighttest] ❌ current_tile_chunk.tile_grid is empty — cannot verify openair tiles")
+		return
+
+	var visible_count := 0
+
+	for source in lower_sources:
+		var center: Vector2i = source["pos"]
+		var radius: int = int(source["radius"])
+		var boost: float = float(source["boost"])
+		var obj_type: String = source["type"]
+
+		var dist := (center - player_pos).length()
+		if dist > 30:
+			print("[belowlighttest] ⏩ Skipping", obj_type, "at", center, "(too far from player:", dist, ")")
+			continue
+
+		var above_key: String = "%d_%d" % [center.x, center.y]
+		if not above_grid.has(above_key):
+			print("[belowlighttest] ❓ No above tile entry for", above_key)
+			continue
+
+		var above_info: Dictionary = above_grid[above_key]
+		var above_tile: String = str(above_info.get("tile", ""))
+		if above_tile != "openair":
+			print("[belowlighttest] 🚫 Blocked above:", above_tile, "at", above_key)
+			continue
+
+		print("[belowlighttest] ✅ Openair above source:", obj_type, "at", center, "| radius:", radius)
+
+		for y in range(-radius, radius + 1):
+			for x in range(-radius, radius + 1):
+				var offset: Vector2i = Vector2i(x, y)
+				var distf := offset.length()
+				if distf > float(radius):
+					continue
+
+				var pos: Vector2i = center + offset
+				if not is_in_bounds(pos):
+					continue
+				if not has_line_of_sight(center, pos, true, true):
+					continue
+
+				var intensity: float = clamp(1.0 - (distf / float(radius)), 0.0, 1.0)
+				if sunlight_level <= 0.3:
+					intensity *= boost
+
+				if light_map.has(pos.y) and pos.x < light_map[pos.y].size():
+					light_map[pos.y][pos.x] = max(light_map[pos.y][pos.x], intensity)
+
+				if not visible_tiles.has(pos):
+					visible_tiles[pos] = 88888
+					visible_count += 1
+					print("[belowlighttest] ✨ Lower light illuminated tile:", pos, "intensity:", intensity)
+				if is_instance_valid(light_overlay):
+					light_overlay.dirty_tiles[pos] = true
+
+	print("[belowlighttest] ✅ Finished propagation. Total new visible tiles:", visible_count)
 
 
 func get_tile_chunk() -> Dictionary:
@@ -1246,7 +1558,17 @@ func get_current_chunk_size() -> Vector2i:
 	
 func check_for_chunk_transition(target_tile: Vector2i) -> bool:
 	#print("🧭 Checking for chunk transition to:", target_tile)
-
+	# 🔒 Static hub override — single-chunk biomes exit directly to worldmap
+	var entry_type = LoadHandlerSingleton.load_entry_context().get("entry_type", "explore")
+	if entry_type in ["tradepost", "guildhall", "temple"]:
+		var current_chunk_size = get_current_chunk_size()
+		if target_tile.x < 0 or target_tile.x >= current_chunk_size.x or target_tile.y < 0 or target_tile.y >= current_chunk_size.y:
+			print("🚪 Leaving static hub (single-chunk biome) → area exit popup.")
+			spawn_area_exit_popup()
+			return true
+		# ✅ Inside hub bounds — normal movement, no transition
+		return false
+			
 	var current_chunk_id = LoadHandlerSingleton.get_current_chunk_id()
 	var current_chunk_size = LoadHandlerSingleton.get_chunk_size_for_chunk_id(current_chunk_id)
 
@@ -1302,6 +1624,7 @@ func check_for_chunk_transition(target_tile: Vector2i) -> bool:
 	return true
 
 
+
 func spawn_area_exit_popup():
 	# ✅ Prevent duplicate popups from stacking
 	if active_area_exit_popup != null and active_area_exit_popup.is_inside_tree():
@@ -1353,7 +1676,12 @@ func _deferred_spawn_player(spawn_tile: Vector2i) -> void:
 	update_fov_from_player(spawn_tile)
 	calculate_sunlight_levels()
 	update_object_visibility(spawn_tile)
+	
+	# 🧠 NEW: ensures NPC visibility syncs on first frame
+	if has_method("apply_fov_to_npc_layers"):
+		apply_fov_to_npc_layers()
 
+	print("🧭 Player spawned at:", spawn_tile)
 	#print("🧭 Player spawned at:", spawn_tile)
 
 func get_egress_for_current_position(player_pos: Vector2i) -> Dictionary:
@@ -1626,7 +1954,15 @@ func hard_refresh_chunk_on_build_mode_exit(chunk_id: String, biome_key: String, 
 	var object_data: Dictionary = LoadHandlerSingleton.load_json_file(object_path)
 	var npc_data: Dictionary = LoadHandlerSingleton.load_json_file(npc_path)
 
-	MapRenderer.render_map(tile_data, { "objects": object_data }, npc_data, tile_container, chunk_id)
+	# ✅ Optional below layer
+	var below_tile_data: Dictionary = {}
+	if z_level != "z0":
+		var below_z := int(z_level.trim_prefix("z")) - 1
+		var below_path := LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_id, biome_key, "z%d" % below_z)
+		if FileAccess.file_exists(below_path):
+			below_tile_data = LoadHandlerSingleton.load_json_file(below_path)
+
+	MapRenderer.render_map(tile_data, { "objects": object_data }, npc_data, tile_container, chunk_id, below_tile_data)
 
 	if force_reload:
 		print("🔁 Forcing full chunk reload to initialize tile behavior.")
@@ -1837,8 +2173,16 @@ func refresh_chunk_after_build(chunk_id: String, biome_key: String, z_level: Str
 	var object_data: Dictionary = LoadHandlerSingleton.load_json_file(object_path)
 	var npc_data: Dictionary = LoadHandlerSingleton.load_json_file(npc_path)
 
-	MapRenderer.render_map(tile_data, { "objects": object_data }, npc_data, tile_container, chunk_id)
+	# ✅ Optional below layer
+	var below_tile_data: Dictionary = {}
+	if z_level != "z0":
+		var below_z := int(z_level.trim_prefix("z")) - 1
+		var below_path := LoadHandlerSingleton.get_chunked_tile_chunk_path(chunk_id, biome_key, "z%d" % below_z)
+		if FileAccess.file_exists(below_path):
+			below_tile_data = LoadHandlerSingleton.load_json_file(below_path)
 
+	MapRenderer.render_map(tile_data, { "objects": object_data }, npc_data, tile_container, chunk_id, below_tile_data)
+	
 	# ✅ Refresh walkability + FOV
 	if player:
 		var grid_pos = Vector2i(player.position / TILE_SIZE)
@@ -1858,3 +2202,63 @@ func _attempt_cursor_realignment():
 			targeting_cursor.set_grid_position(grid_pos, TILE_SIZE)
 			cursor_realigned = true
 			print("🛠️ Failsafe realignment triggered at:", grid_pos)
+
+func _exit_tree() -> void:
+	if turn_manager and turn_manager.local_map_ref == self:
+		turn_manager.local_map_ref = null
+		print("🧹 LocalMap unregistered from TurnManager.")
+
+func _draw():
+	# Draw transparent rect over screen to clear previous NPC frame artifacts
+	draw_rect(Rect2(Vector2.ZERO, get_viewport_rect().size), Color(0, 0, 0, 0), false)
+
+func _sync_fov_after_load() -> void:
+
+	if player == null:
+		print("⚠️ No player yet — skipping sync.")
+		return
+
+	var grid_pos := Vector2i(round(player.position.x / TILE_SIZE), round(player.position.y / TILE_SIZE))
+	update_fov_from_player(grid_pos)
+
+	if has_method("apply_fov_to_npc_layers"):
+		apply_fov_to_npc_layers()
+
+	print("🕶️ Post-Turn deferred FOV sync complete — xray NPCs cleaned up.")
+
+func _precompute_fov_before_first_frame() -> void:
+	if player == null:
+		return
+
+	# Compute FOV once before screen draws
+	var grid_pos := Vector2i(round(player.position.x / TILE_SIZE), round(player.position.y / TILE_SIZE))
+	update_fov_from_player(grid_pos)
+
+	if has_method("apply_fov_to_npc_layers"):
+		apply_fov_to_npc_layers()
+
+	print("🕶️ FOV pre-pass complete before first frame.")
+
+# Put near other helpers
+func _set_npc_layers_visible(v: bool) -> void:
+	if is_instance_valid(npc_container):
+		npc_container.visible = v
+	if is_instance_valid(npc_underlay_container):
+		npc_underlay_container.visible = v
+
+func apply_fov_to_npc_layers() -> void:
+	if current_visible_tiles.is_empty():
+		return
+	# Current Z
+	if is_instance_valid(npc_container):
+		for c in npc_container.get_children():
+			if c is Sprite2D:
+				var g := Vector2i(int(c.position.x / TILE_SIZE), int(c.position.y / TILE_SIZE))
+				c.modulate.a = 1.0 if current_visible_tiles.has(g) else 0.0
+	# Underlay Z
+	if is_instance_valid(npc_underlay_container):
+		for c in npc_underlay_container.get_children():
+			if c is Sprite2D:
+				var g := Vector2i(int(c.position.x / TILE_SIZE), int(c.position.y / TILE_SIZE))
+				# Slightly visible if both FOV and underlay; otherwise 0
+				c.modulate.a = 0.18 if current_visible_tiles.has(g) else 0.0

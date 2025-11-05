@@ -7,6 +7,8 @@ extends Control
 @onready var fatigue_bar = get_node("MetersContainer/HBoxfatigue/fatiguebar")
 @onready var hunger_bar = get_node("MetersContainer/HBoxhunger/hungerbar")
 
+@onready var pause_menu = preload("res://scenes/play/PauseMenu.tscn").instantiate()
+
 
 # Declare current_position and last_position variables globally
 var current_position: Vector2 = Vector2(-1, -1)  # Track current position
@@ -14,6 +16,11 @@ var last_position: Vector2 = Vector2(-1, -1)  # Initialize with an invalid posit
 var position_initialized = false
 
 func _ready() -> void:
+	process_mode = Node.PROCESS_MODE_ALWAYS  # ✅ ensures ESC still works while paused
+	add_child(pause_menu)
+	pause_menu.hide()
+	pause_menu.z_index = 999
+	
 	#print("Parent script is ready. Attempting to load the map...")
 	
 	# ✅ Connect LoadHandlerSingleton's signal to reload the map
@@ -53,17 +60,24 @@ func _ready() -> void:
 	call_deferred("place_map_markers")
 		# Start the timer to delay setting the play scene
 	call_deferred("set_play_scene_after_idle")
-	
+
+func _unhandled_input(event):
+	if event.is_action_pressed("ui_cancel"):
+		if pause_menu.visible:
+			pause_menu.hide()
+			get_tree().paused = false
+		else:
+			pause_menu.show()
+			get_tree().paused = true
+		get_viewport().set_input_as_handled()
+		return
+
 func place_map_markers():
 	await get_tree().process_frame  # 🔥 Wait 1 frame to avoid instant removal
 	var world_texture_rect = get_node("MapControl/SubViewportContainer/SubViewport/WorldTextureRect")
 	if world_texture_rect:
 		world_texture_rect.update_map_markers()  # ✅ Place the markers AFTER loading
 	
-	# Function to handle input events
-func _input(event):
-	# Handle input events if necessary for future extensions
-	pass
 
 func load_map():
 	position_initialized = false  # Reset to allow initialization on new map load
@@ -196,6 +210,11 @@ func update_biome_label():
 	#print("📍 Current Position:", current_position)
 	#print("🌍 Biome Name Before Check:", biome_name)
 
+	if biome_name == "tradepost":
+		biome_label.text = "Pilgrim's Junction"
+		print("🏕️ Tradepost name set to Pilgrim's Junction")
+		return
+	
 	# ✅ Use village proper name if available
 	if biome_name == "village" and LoadHandlerSingleton.villages.has(current_position):
 		var village_name = LoadHandlerSingleton.villages[current_position]

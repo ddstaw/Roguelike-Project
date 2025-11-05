@@ -1,0 +1,77 @@
+Project: Anima Mundi
+Engine: Godot 4.2.2
+Core Script: res://scripts/LoadHandlerSingleton.gd
+Author: David Stawar
+Last Updated: 2025-10-15
+
+🧠 PROJECT DNA — RE-PRIME BLOCK
+PROJECT: Anima Mundi (Godot 4.2.2 roguelike)
+
+The LoadHandlerSingleton.gd handles all global persistence, chunk I/O, and world-state logic.
+
+STRUCTURE OVERVIEW:
+- World and City Systems: manages cities, realms, z-levels, and placement.
+- Chunked Local Map System: chunked save/load for tiles, objects, npcs, terrain, z-levels.
+- Registers & Loot Systems: node, loot, pile, storage, vendor, egress, prefab, npc pools.
+- Inventory Systems: player, mount, vendor, and storage inventories with normalization and weight tracking.
+- Build System Integration: verifies materials and hammer tool for constructing objects.
+- Time & Date Integration: relies on TimeManager for reset cycles and datetime tracking.
+- Constants, ItemData, NodeTable, and BuildData are global definitions feeding all subsystems.
+
+ALL JSON FILES follow this structure:
+user://saves/saveX/localchunks/<biome_folder>/<register>.json  
+or user://saves/saveX/characterdata/<file>.json
+
+Common utilities: save_json_file(), load_json_file(), normalize_stack_stats(), roll_node_loot(), expand_loot_to_inventory().  
+Signal: "inventory_changed" emitted on item transfers.
+
+When adding new systems (rumors, quests, journals, factions, etc.), follow the REGISTER pattern:
+get_<register>_path()  
+load_<register>()  
+save_<register>()  
+ensure_<register>_entry_with_data()  
+clear_<register>_for_biome() (optional)
+
+Each register lives under localchunks/<biome>/<register>_register.json
+
+⚙️ CURRENT DEV STATUS
+[2025-10-15]  Completed ingestion of LoadHandlerSingleton.gd (lines 1–3315).  
+Next task: Design Journal Scene → rumors_register.json system using LoadHandlerSingleton pattern.  
+Upcoming goal: Integrate rumors into NPC dialog and exploration events.
+
+🗂️ KEY FILE PATHS
+res://scripts/LoadHandlerSingleton.gd
+res://scripts/CityGenScripts/VillageGenerator.gd
+res://constants/ItemData.gd
+res://constants/BuildData.gd
+res://constants/NodeTable.gd
+res://singletons/TimeManager.gd
+
+🔤 ANCHOR PHRASES / KEYWORDS
+
+Paste or mention any of these in a new session to immediately restore context:
+
+"Anima Mundi LoadHandler architecture"
+"DAVESRULES" (signals Godot 4 syntax)
+"chunked register pattern"
+"rumors_register.json following vendor/storage pattern"
+"TimeManager + placement JSON loop"
+
+🧱 REGISTER FUNCTION PATTERN
+get_<register>_path()
+load_<register>()
+save_<register>()
+ensure_<register>_entry_with_data()
+clear_<register>_for_biome()
+
+🗓️ SESSION HISTORY
+[2025-10-15] LoadHandlerSingleton.gd fully ingested.
+
+📄 OPTIONAL DEV REFERENCE SNAPSHOT (HEADER)
+LOADHANDLERSINGLETON.GD — Core Manager  
+Purpose: Central persistence & data management for all world systems, inventories, and chunked maps.  
+Subsystems: World Placement, Chunk Management, Terrain, Egress, Prefabs, NPCs, Loot, Storage, Vendor,  
+Inventory, Weight, Mounts, Build, Time Reset, Hotbar.  
+External Dependencies: Constants.gd, ItemData.gd, BuildData.gd, NodeTable.gd, TimeManager.gd.  
+Signal: inventory_changed (global).  
+JSON Convention: { z_level → chunk_key → biome_key → entity_id → data }.  

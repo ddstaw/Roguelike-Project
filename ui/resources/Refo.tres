@@ -6,5 +6,5 @@
 script = ExtResource("1_62dm7")
 faithname = "Pious Reformationist"
 faithflavor = "Refoflav"
-faithdes = "Refodes"
+faithdes = "devotionals"
 faithbonus = "Refobonus"

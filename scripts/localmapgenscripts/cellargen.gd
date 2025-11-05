@@ -1,3 +1,4 @@
+# res://scripts/localmapgenscripts/cellargen.gd
 extends Node
 
 func generate_cellar_chunk(chunk_coords: Vector2i, biome_key: String, from_egress: Dictionary, structure_map: Dictionary) -> void:

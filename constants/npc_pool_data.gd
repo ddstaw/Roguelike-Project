@@ -24,5 +24,14 @@ const NPC_POOLS := {
 			"max_per_chunk": 1,
 			"initial_spawn": true
 		}
+	}, 
+	"tradepost": {
+		"wizards": {
+			"types": ["NPC0001"],  # same wizard archetype
+			"spawn_chance": 0.3,
+			"min_per_chunk": 1,
+			"max_per_chunk": 1,
+			"initial_spawn": true
+		}
 	}
 }

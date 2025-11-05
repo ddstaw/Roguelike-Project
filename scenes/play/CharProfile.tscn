@@ -201,7 +201,7 @@ text = "Male"
 layout_mode = 0
 offset_left = 345.0
 offset_top = 258.0
-offset_right = 1131.0
+offset_right = 827.0
 offset_bottom = 367.0
 
 [node name="chrp-levellabel" type="Label" parent="TopLeftCharInfoControl/chrp-levelvbox"]
@@ -435,6 +435,13 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Poison"
 
+[node name="chrp-acid-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
+text = "Acid"
+
 [node name="chrp-gla-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
@@ -499,13 +506,6 @@ theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "Impaling"
 
-[node name="chrp-blackpower-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
-z_index = 2
-layout_mode = 2
-theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
-text = "Blackpowder"
-
 [node name="chrp-ballistic-label" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist"]
 z_index = 2
 layout_mode = 2
@@ -558,6 +558,14 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "2%"
+
+[node name="chrp-acid-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
+unique_name_in_owner = true
+z_index = 2
+layout_mode = 2
+theme_override_font_sizes/font_size = 35
+theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
+text = "0%"
 
 [node name="chrp-gla-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
 unique_name_in_owner = true
@@ -630,14 +638,6 @@ layout_mode = 2
 theme_override_font_sizes/font_size = 35
 theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
 text = "2%"
-
-[node name="chrp-blackpower-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
-unique_name_in_owner = true
-z_index = 2
-layout_mode = 2
-theme_override_font_sizes/font_size = 35
-theme_override_styles/normal = SubResource("StyleBoxFlat_i2vvx")
-text = "0%"
 
 [node name="chrp-ballistic-lvl" type="Label" parent="ResistStats/chrp-VBoxContainer-dmgresist-lvl"]
 unique_name_in_owner = true

@@ -1,0 +1,85 @@
+[gd_scene load_steps=6 format=3 uid="uid://3cjls3nwj7ax"]
+
+[ext_resource type="Script" path="res://ui/scripts/PauseMenu.gd" id="1_cvan4"]
+[ext_resource type="StyleBox" uid="uid://bdoswh4ix8l71" path="res://ui/Pause-Menu-Unpressed-Normal.tres" id="1_ubpub"]
+[ext_resource type="StyleBox" uid="uid://dndxa1tx83uol" path="res://ui/Pause-Menu-Unpressed-Hover.tres" id="2_h7civ"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_015lq"]
+bg_color = Color(0, 0, 0, 0.701961)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v1kb1"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+
+[node name="PauseMenu" type="Control"]
+visible = false
+z_index = 999
+z_as_relative = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_cvan4")
+
+[node name="Panel" type="Panel" parent="."]
+custom_minimum_size = Vector2(1920, 1080)
+layout_mode = 0
+offset_right = 40.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_015lq")
+
+[node name="Panel" type="Panel" parent="Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -228.5
+offset_top = -136.5
+offset_right = 228.5
+offset_bottom = 136.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_v1kb1")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Panel/Panel"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -119.5
+offset_top = -41.5
+offset_right = 119.5
+offset_bottom = 41.5
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 12
+
+[node name="ResumeButton" type="Button" parent="Panel/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = ExtResource("1_ubpub")
+theme_override_styles/hover = ExtResource("2_h7civ")
+text = "Resume"
+
+[node name="MainMenuButton" type="Button" parent="Panel/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = ExtResource("1_ubpub")
+theme_override_styles/hover = ExtResource("2_h7civ")
+text = "Save & Quit to Main Menu"
+
+[node name="QuitButton" type="Button" parent="Panel/Panel/VBoxContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+theme_override_styles/normal = ExtResource("1_ubpub")
+theme_override_styles/hover = ExtResource("2_h7civ")
+text = "Save & Quit Game"

@@ -6,5 +6,5 @@
 script = ExtResource("1_wm8ot")
 faithname = "Fundamentalist Zealot"
 faithflavor = "Fundflav"
-faithdes = "Funddes"
+faithdes = "holy_ghost_power"
 faithbonus = "Fundbonus"

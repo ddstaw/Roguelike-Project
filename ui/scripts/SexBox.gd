@@ -1,3 +1,4 @@
+#UI/SexBox Script res://ui/scripts/SexBox.gd
 extends Node
 
 var selected_button: TextureButton = null

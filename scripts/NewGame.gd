@@ -1,3 +1,4 @@
+# res://scenes/NewGame.tscn parent node script NewGame.gd
 extends Control
 
 # Preload resources
@@ -7,18 +8,17 @@ var tile_grass = preload("res://assets/graphics/36x36-grass.png")
 var tile_ocean = preload("res://assets/graphics/36x36-ocean.png")
 var loaded_tiles = {}
 
-# Size constants
 const TILE_SIZE = 36
-const GRID_SIZE = 12  # 12x12 grid
-const VIEWPORT_SIZE = 216  # 216x216 pixels viewbox
-const GRID_TOTAL_SIZE = GRID_SIZE * TILE_SIZE  # 432x432 pixels for the full grid
+const GRID_SIZE = 12
+const GRID_TOTAL_SIZE = GRID_SIZE * TILE_SIZE  # 432x432 pixels total
+const VIEWPORT_SIZE = GRID_TOTAL_SIZE  # Match viewport to full grid
 
 # Movement speed
-const MOVE_SPEED = 10  # Pixels per keypress
+# const MOVE_SPEED = 10  # Pixels per keypress
 
 # Variable to hold the grid data
 var grid_data = []
-var grid_position = Vector2(0, 0)  # Track the position of the grid
+# var grid_position = Vector2(0, 0)  # Track the position of the grid
 
 # Variable to hold the reference to RandomizerNode
 var randomizer = null
@@ -32,8 +32,8 @@ func _ready():
 	create_grid()
 	world_name_generator.update_world_name_label()
 
-func _process(delta):
-	handle_input()
+# func _process(delta):
+# 	handle_input()
 
 # Lazy load a tile
 func lazy_load_tile(tile_path: String) -> Texture:
@@ -114,34 +114,34 @@ func create_grid():
 			
 			viewport.add_child(texture_rect)
 
-	update_grid_position()
+	# update_grid_position()
 
 # Function to update the grid's position
-func update_grid_position():
-	var viewport = get_node("Control/SubViewportContainer/SubViewport/GridTextureRect")
-	viewport.position = grid_position
+# func update_grid_position():
+#	var viewport = get_node("Control/SubViewportContainer/SubViewport/GridTextureRect")
+#	viewport.position = grid_position
 
 # Function to handle input for panning
-func handle_input():
-	var moved = false
+# func handle_input():
+#	var moved = false
 	
-	if Input.is_action_pressed("ui_left"):
-		grid_position.x += MOVE_SPEED
-		moved = true
-	if Input.is_action_pressed("ui_right"):
-		grid_position.x -= MOVE_SPEED
-		moved = true
-	if Input.is_action_pressed("ui_up"):
-		grid_position.y += MOVE_SPEED
-		moved = true
-	if Input.is_action_pressed("ui_down"):
-		grid_position.y -= MOVE_SPEED
-		moved = true
+#	if Input.is_action_pressed("ui_left"):
+#		grid_position.x += MOVE_SPEED
+#		moved = true
+#	if Input.is_action_pressed("ui_right"):
+#		grid_position.x -= MOVE_SPEED
+#		moved = true
+#	if Input.is_action_pressed("ui_up"):
+#		grid_position.y += MOVE_SPEED
+#		moved = true
+#	if Input.is_action_pressed("ui_down"):
+#		grid_position.y -= MOVE_SPEED
+#		moved = true
 	
-	# Clamp the grid position to prevent moving out of bounds
-	grid_position.x = clamp(grid_position.x, VIEWPORT_SIZE - GRID_TOTAL_SIZE, 0)
-	grid_position.y = clamp(grid_position.y, VIEWPORT_SIZE - GRID_TOTAL_SIZE, 0)
+#	# Clamp the grid position to prevent moving out of bounds
+#	grid_position.x = clamp(grid_position.x, VIEWPORT_SIZE - GRID_TOTAL_SIZE, 0)
+#	grid_position.y = clamp(grid_position.y, VIEWPORT_SIZE - GRID_TOTAL_SIZE, 0)
 	
-	if moved:
-		update_grid_position()
+#	if moved:
+#		update_grid_position()
 

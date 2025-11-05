@@ -1,3 +1,4 @@
+# res://scenes/LoadGame.tscn - saveslot3 script
 extends Button
 
 func _ready():

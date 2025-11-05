@@ -1,3 +1,4 @@
+#UI/SkillContainer Script res://scripts/SpecialskillContainer.gd
 extends Node
 
 # Array to track the selected buttons
@@ -11,12 +12,10 @@ func _ready():
 	$MagickContainer1/Cyroslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($MagickContainer1/Cyroslot, "Cyroskill"))
 	$MagickContainer1/Fulslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($MagickContainer1/Fulslot, "Fulskill"))
 	$MagickContainer1/Venslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($MagickContainer1/Venslot, "Venskill"))
-	$MagickContainer1/Glamslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($MagickContainer1/Glamslot, "Glamskill"))
+	$MagickContainer2/Glamslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($MagickContainer2/Glamslot, "Glamskill"))
 	$MagickContainer2/Necslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($MagickContainer2/Necslot, "Necskill"))
 	$MagickContainer2/Vitoslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($MagickContainer2/Vitoslot, "Vitoskill"))
 	$MagickContainer2/Enslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($MagickContainer2/Enslot, "Enskill"))
-	$MagickContainer2/Thaslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($MagickContainer2/Thaslot, "Thasskill"))
-	$MagickContainer2/Wandslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($MagickContainer2/Wandslot, "Wandskill"))
 	$TechContainer/Gunslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($TechContainer/Gunslot, "Gunskill"))
 	$TechContainer/Tinkslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($TechContainer/Tinkslot, "Tinkskill"))
 	$TechContainer/Chemslot.connect("pressed", Callable(self, "_on_skill_button_pressed").bind($TechContainer/Chemslot, "Chemskill"))
@@ -47,8 +46,8 @@ func _on_skill_button_pressed(button: TextureButton, skill: String):
 func update_button_states():
 	# Iterate over all relevant children to update their states
 	var buttons = [
-		$MagickContainer1/Pyroslot, $MagickContainer1/Cyroslot, $MagickContainer1/Fulslot, $MagickContainer1/Venslot, $MagickContainer1/Glamslot,
-		$MagickContainer2/Necslot, $MagickContainer2/Vitoslot, $MagickContainer2/Enslot, $MagickContainer2/Thaslot, $MagickContainer2/Wandslot,
+		$MagickContainer1/Pyroslot, $MagickContainer1/Cyroslot, $MagickContainer1/Fulslot, $MagickContainer1/Venslot,
+		$MagickContainer2/Glamslot, $MagickContainer2/Necslot, $MagickContainer2/Vitoslot, $MagickContainer2/Enslot,
 		$TechContainer/Gunslot, $TechContainer/Tinkslot, $TechContainer/Chemslot, $TechContainer/Expslot, $TechContainer/Robslot
 	]
 

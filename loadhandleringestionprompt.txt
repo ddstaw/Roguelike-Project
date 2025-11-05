@@ -1,0 +1,27 @@
+PROJECT: Anima Mundi (Godot 4.2.2 roguelike)
+
+The LoadHandlerSingleton.gd handles all global persistence, chunk I/O, and world-state logic.
+
+STRUCTURE OVERVIEW:
+- World and City Systems: manages cities, realms, z-levels, and placement (Ingestion Tests 1–2).
+- Chunked Local Map System: chunked save/load for tiles, objects, npcs, terrain, z-levels (Tests 3–4).
+- Registers & Loot Systems: node, loot, pile, storage, vendor, egress, prefab, and npc pools (Tests 4–6).
+- Inventory Systems: player, mount, vendor, and storage inventories with normalization and weight tracking.
+- Build System Integration: verifies materials and hammer tool for constructing objects.
+- Time & Date Integration: relies on TimeManager for reset cycles and datetime tracking.
+- Constants, ItemData, NodeTable, and BuildData are global definitions feeding all subsystems.
+
+ALL JSON FILES follow this structure:
+user://saves/saveX/localchunks/<biome_folder>/<register>.json
+or user://saves/saveX/characterdata/<file>.json
+
+Common utilities: save_json_file(), load_json_file(), normalize_stack_stats(), roll_node_loot(), expand_loot_to_inventory().
+Signals: "inventory_changed" emitted on item transfers.
+
+When adding new systems (like rumors, quests, journal entries, etc.), follow the REGISTER pattern:
+- get_<register>_path()
+- load_<register>()
+- save_<register>()
+- ensure_<register>_entry_with_data()
+- clear_<register>_for_biome() [optional]
+Each register lives under localchunks/<biome>/rumors_register.json or similar.

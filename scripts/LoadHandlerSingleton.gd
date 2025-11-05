@@ -40,29 +40,30 @@ func load_json_file(path: String) -> Variant:
 	if not FileAccess.file_exists(path):
 		print("Error: File does not exist at path:", path)
 		return null
-	
-	var file = FileAccess.open(path, FileAccess.READ)
+
+	var file := FileAccess.open(path, FileAccess.READ)
 	if file == null:
 		print("Error: Failed to open file at path:", path)
 		return null
-	
-	var json_data = file.get_as_text()
+
+	var json_text := file.get_as_text()
 	file.close()
-	
-	var json = JSON.new()
-	var parse_error = json.parse(json_data)
-	
-	if parse_error == OK and json.data != null:
-		if json.data is Dictionary:
-			return json.data  # Return as Dictionary
-		elif json.data is Array:
-			return json.data  # Return as Array
-		else:
-			print("Error: Parsed JSON is neither Dictionary nor Array.")
-			return null
+
+	var result: Variant = null
+
+	# Prefer static parse_string if available (Godot 4.x)
+	if ClassDB.class_has_method("JSON", "parse_string"):
+		result = JSON.parse_string(json_text)
 	else:
+		# Fallback to instance parser (older syntax or compatibility)
+		var parser := JSON.new()
+		var err := parser.parse(json_text)
+		if err == OK:
+			result = parser.data
+
+	if result == null:
 		print("Error parsing JSON at path:", path)
-		return null
+	return result
 
 # Retrieve the correct save slot number
 func get_save_slot() -> int:
@@ -77,6 +78,19 @@ func get_save_file_path() -> String:
 # Centralized function to retrieve load_handler.json data
 func load_handler_data() -> Dictionary:
 	return load_json_file("user://saves/load_handler.json")
+
+# Sets the currently selected save slot and updates load_handler.json
+func set_current_save_slot(slot: int) -> void:
+	var handler_file_path = "user://saves/load_handler.json"
+	var save_file_path = "user://saves/save" + str(slot) + "/"
+	var file = FileAccess.open(handler_file_path, FileAccess.WRITE)
+	if file:
+		var json_data = {
+			"selected_save_slot": slot,
+			"save_file_path": save_file_path
+		}
+		file.store_string(JSON.stringify(json_data))
+		file.close()
 
 
 # -------------------------------------------------------------------
@@ -158,6 +172,8 @@ func get_player_looks_path() -> String:
 
 func get_player_effects_path() -> String:
 	return get_save_file_path() + "characterdata/player_effects" + str(get_save_slot()) + ".json"
+
+
 
 
 func _charstate_default() -> Dictionary:
@@ -1871,6 +1887,37 @@ func save_chunked_npc_chunk(chunk_id: String, npc_chunk: Dictionary) -> void:
 	save_json_file(path, npc_chunk)
 	print("💾 Saved NPC chunk:", chunk_id, "→", path)
 
+# --- New variant for explicit Z-level saves ---
+func save_chunked_npc_chunk_z(chunk_id: String, npc_chunk: Dictionary, z_str: String) -> void:
+	var placement = load_temp_localmap_placement()
+	if placement == null:
+		push_warning("⚠️ No placement data found when saving NPC chunk (explicit Z).")
+		return
+
+	var lm = placement.get("local_map", {})
+	var stored_biome = str(lm.get("biome_key", ""))
+	if stored_biome == "":
+		push_error("❌ Missing biome_key in placement when saving NPC chunk (explicit Z): " + str(chunk_id))
+		return
+
+	# normalize biome key
+	var biome_key_for_path = stored_biome
+	if stored_biome.contains("_"):
+		biome_key_for_path = Constants.get_biome_chunk_key(stored_biome)
+
+	# 👇 use the explicit Z string instead of player's current z_level
+	var z_level = z_str
+	var path = get_chunked_npc_chunk_path(chunk_id, biome_key_for_path, z_level)
+
+	# ensure directory exists
+	var dir_path = path.get_base_dir()
+	if not DirAccess.dir_exists_absolute(dir_path):
+		DirAccess.make_dir_recursive_absolute(dir_path)
+
+	save_json_file(path, npc_chunk)
+	print("💾 [Z=", z_level, "] Saved NPC chunk:", chunk_id, "→", path)
+
+
 func chunk_exists(chunk_coords: Vector2i) -> bool:
 	var chunk_str = "%d_%d" % [chunk_coords.x, chunk_coords.y]
 	var placement = load_temp_localmap_placement()
@@ -2158,15 +2205,49 @@ static func load_egress_register(biome_folder: String) -> Dictionary:
 	return {}
 
 static func load_prefab_data(biome_key: String = "gef") -> Array:
-	var prefab_path = get_prefab_json_path_for_biome(biome_key)
-	var instance = LoadHandlerSingleton  # reference to autoload singleton instance
-	var json = instance.load_json_file(prefab_path)
+	var instance = LoadHandlerSingleton
 
-	if json and json.has("prefabs") and json.has("blueprints"):
-		return [json["prefabs"], get_blueprint_map(json["blueprints"])]
-	else:
-		#print("⚠️ Failed to load prefab data from:", prefab_path)
+	# --- 1️⃣  Try standard resolved path first
+	var prefab_path = get_prefab_json_path_for_biome(biome_key)
+	if FileAccess.file_exists(prefab_path):
+		var json = instance.load_json_file(prefab_path)
+		if json and typeof(json) == TYPE_DICTIONARY and json.has("prefabs") and json.has("blueprints"):
+			return [json["prefabs"], get_blueprint_map(json["blueprints"])]
+
+	# --- 2️⃣  Try to gracefully fall back to fuzzy matching
+	var prefab_dir = "res://data/prefabs/"
+	if not DirAccess.dir_exists_absolute(prefab_dir):
+		print("❌ [LoadHandler] Prefab directory missing:", prefab_dir)
 		return []
+
+	var dir = DirAccess.open(prefab_dir)
+	if dir == null:
+		print("❌ [LoadHandler] Could not open prefab directory:", prefab_dir)
+		return []
+
+	var normalized_key = biome_key.to_lower()
+	var best_match_path = ""
+
+	dir.list_dir_begin()
+	var file_name = dir.get_next()
+	while file_name != "":
+		if file_name.ends_with("-prefabs.json"):
+			var base_name = file_name.replace("-prefabs.json", "").to_lower()
+			# check partial match or normalized substring (e.g. "grass" in "grassland_explore_fields")
+			if normalized_key in base_name or base_name in normalized_key:
+				best_match_path = prefab_dir + file_name
+				break
+		file_name = dir.get_next()
+	dir.list_dir_end()
+
+	if best_match_path != "":
+		print("📦 [LoadHandler] Fuzzy-matched prefab file:", best_match_path)
+		var json = instance.load_json_file(best_match_path)
+		if json and json.has("prefabs") and json.has("blueprints"):
+			return [json["prefabs"], get_blueprint_map(json["blueprints"])]
+
+	print("⚠️ [LoadHandler] No prefab data found for biome:", biome_key)
+	return []
 
 static func get_blueprint_map(blueprints: Array) -> Dictionary:
 	var result := {}
@@ -2272,14 +2353,37 @@ static func clear_prefab_register_for_biome(biome: String) -> void:
 	else:
 		print("⚠️ Failed to open prefab register file for clearing:", path)
 
-static func register_prefab_data_for_chunk(biome_folder: String, chunk_key: String, prefab_id: String, coords: Vector2i, z_level: int = 0) -> void:
+static func register_prefab_data_for_chunk(
+	biome_folder: String,
+	chunk_key: String,
+	prefab_id: String,
+	coords: Vector2i,
+	z_level: int = 0,
+	floors: Dictionary = {}
+) -> void:
+	# 🔍 Load current prefab register for this biome
 	var current := load_prefab_register(biome_folder)
-	current[chunk_key] = {
+	if typeof(current) != TYPE_DICTIONARY:
+		current = {}
+
+	# 🧩 Build new entry with optional floors data
+	var entry := {
 		"prefab_id": prefab_id,
 		"coords": { "x": coords.x, "y": coords.y },
 		"z_level": z_level
 	}
+
+	# ✅ Only include floors if passed and nonempty
+	if floors.size() > 0:
+		entry["floors"] = floors
+
+	current[chunk_key] = entry
+
+	# 💾 Save back to disk immediately
 	save_prefab_register(biome_folder, current)
+
+	print("💾 [LoadHandler] Registered prefab:", prefab_id, "at", coords, "z:", z_level, "→ biome:", biome_folder)
+
 	
 static func save_prefab_register(biome_folder: String, data: Dictionary) -> void:
 	var path := LoadHandlerSingleton.get_save_file_path() + "localchunks/%s/prefab_register.json" % biome_folder
@@ -2309,15 +2413,17 @@ static func load_prefab_register(biome_folder: String) -> Dictionary:
 
 static func get_blueprint_from_register_entry(prefab_entry: Dictionary, biome_key_short: String) -> Dictionary:
 	if not prefab_entry.has("prefab_id"):
-		#print("⚠️ Prefab entry missing 'prefab_id':", prefab_entry)
 		return {}
 
 	var prefab_id = prefab_entry["prefab_id"]
 	var z_level = str(prefab_entry.get("z_level", "-1"))  # Default to -1 if not provided
 
-	var prefab_data = load_prefab_data(biome_key_short)
+	# 🧠 Normalize biome key — ensures consistency with universal loader
+	var normalized_key = biome_key_short.to_lower()
+
+	var prefab_data = load_prefab_data(normalized_key)
 	if prefab_data.size() != 2:
-		#print("⚠️ Invalid prefab data structure for biome:", biome_key_short)
+		print("⚠️ [LoadHandler] Invalid prefab data structure for biome:", normalized_key)
 		return {}
 
 	var all_prefabs = prefab_data[0]
@@ -2327,14 +2433,14 @@ static func get_blueprint_from_register_entry(prefab_entry: Dictionary, biome_ke
 		if prefab.get("name", "") == prefab_id:
 			var blueprint_name = prefab.get("floors", {}).get(z_level, "")
 			if blueprint_name != "" and all_blueprints.has(blueprint_name):
-				#print("📦 Blueprint found for prefab:", prefab_id, "Z:", z_level, "→", blueprint_name)
 				return all_blueprints[blueprint_name]
 			else:
-				#print("⚠️ No blueprint found for", prefab_id, "at Z:", z_level)
+				print("⚠️ [LoadHandler] No blueprint found for prefab:", prefab_id, "at Z:", z_level)
 				return {}
 
-	#print("⚠️ No matching prefab_id in list:", prefab_id)
+	print("⚠️ [LoadHandler] No matching prefab_id found for biome:", normalized_key, "→", prefab_id)
 	return {}
+
 
 static func load_global_egress_data(force_refresh := false) -> Dictionary:
 	if not force_refresh and _cached_egress_data.has("data"):
@@ -3093,6 +3199,30 @@ func get_npcs_in_chunk(chunk_id: String) -> Dictionary:
 		return data["npcs"]
 	return {}
 
+func get_npcs_in_chunk_z(chunk_id: String, z_override: String) -> Dictionary:
+	var placement = load_temp_localmap_placement()
+	if placement == null:
+		return {}
+
+	var lm = placement.get("local_map", {})
+	var stored_biome = str(lm.get("biome_key", ""))
+	if stored_biome == "":
+		return {}
+
+	# normalize: folder → short key if needed
+	var biome_key_for_path = stored_biome
+	if stored_biome.contains("_"):
+		biome_key_for_path = Constants.get_biome_chunk_key(stored_biome)
+
+	# use explicit z_override instead of current z_level
+	var z_level = z_override
+	var path = get_chunked_npc_chunk_path(chunk_id, biome_key_for_path, z_level)
+
+	var data = load_json_file(path)
+	if typeof(data) == TYPE_DICTIONARY and data.has("npcs"):
+		return data["npcs"]
+	return {}
+
 
 func get_walkability_bounds(walkability_grid: Array) -> Dictionary:
 	if walkability_grid.is_empty():
@@ -3421,3 +3551,84 @@ func get_xp_progress_ratio_for_faith(faith_key: String) -> float:
 	if next_xp <= 0:
 		return 0.0
 	return clamp(current_xp / next_xp, 0.0, 1.0)
+
+func clear_upper_z_for_biome(biome_key: String, max_z: int = 5) -> void:
+	print("🌤 [LoadHandler] Resetting upper z-levels for biome:", biome_key)
+	
+	var short_key = Constants.get_biome_chunk_key(biome_key)
+	if short_key == "":
+		push_warning("[LoadHandler] clear_upper_z_for_biome aborted — invalid biome key")
+		return
+
+	var folder = Constants.get_chunk_folder_for_key(short_key)
+	if folder == "":
+		push_warning("[LoadHandler] clear_upper_z_for_biome aborted — invalid folder for biome")
+		return
+
+	# Pull biome configuration (chunk and grid size)
+	var biome_cfg = Constants.get_biome_config(short_key)
+	var chunk_size: Vector2i = biome_cfg.get("chunk_size", Vector2i(40, 40))
+	var grid_size: Vector2i = biome_cfg.get("grid_size", Vector2i(3, 3))
+
+	# Build a generic openair tile grid
+	var flat_openair := {}
+	for y in range(chunk_size.y):
+		for x in range(chunk_size.x):
+			flat_openair["%d_%d" % [x, y]] = {
+				"tile": "openair",
+				"state": {}
+			}
+
+	# Stage every z-level from 1..max_z
+	for z in range(1, max_z + 1):
+		var z_dir = get_save_file_path() + "localchunks/%s/z%d/" % [folder, z]
+		DirAccess.make_dir_recursive_absolute(z_dir)
+
+		for gx in range(grid_size.x):
+			for gy in range(grid_size.y):
+				var chunk_key = "chunk_%d_%d" % [gx, gy]
+
+				# --- TILE FILE ---
+				var tile_path = z_dir + "chunk_tile_%s.json" % chunk_key
+				LoadHandlerSingleton.save_json_file(tile_path, {
+					"chunk_coords": "%d_%d" % [gx, gy],
+					"chunk_origin": {"x": gx * chunk_size.x, "y": gy * chunk_size.y},
+					"tile_grid": flat_openair
+				})
+
+				# --- OBJECT FILE ---
+				var obj_path = z_dir + "chunk_object_%s.json" % chunk_key
+				LoadHandlerSingleton.save_json_file(obj_path, {})
+
+				# --- NPC FILE ---
+				var npc_path = z_dir + "chunk_npc_%s.json" % chunk_key
+				LoadHandlerSingleton.save_json_file(npc_path, {})
+
+		print("🌫 [LoadHandler] Cleaned z%d for %s (openair, empty objects/npcs)" % [z, biome_key])
+
+	print("✅ [LoadHandler] Upper z-level reset complete for biome:", biome_key)
+
+
+func write_zlevel_chunk(biome_key: String, short_key: String, chunk_key: String, z_level: int, data: Dictionary) -> void:
+	var biome_folder := Constants.get_chunk_folder_for_key(short_key)
+	if biome_folder == "":
+		push_warning("[LoadHandler] write_zlevel_chunk aborted — invalid biome folder for " + biome_key)
+		return
+
+	# ✅ Generic save path for any z-level
+	var base_path := get_save_file_path() + "localchunks/%s/z%d/" % [biome_folder, z_level]
+	var save_path := base_path + "chunk_tile_%s.json" % chunk_key
+
+	# Ensure directory exists
+	if not DirAccess.dir_exists_absolute(base_path):
+		var d := DirAccess.open("user://")
+		if d:
+			d.make_dir_recursive(base_path.replace("user://", ""))
+
+	# Overwrite safely
+	save_json_file(save_path, data)
+
+func get_active_biome_key() -> String:
+	var placement: Dictionary = load_temp_localmap_placement()
+	var biome_folder: String = placement.get("local_map", {}).get("biome_key", "grassland_explore_fields")
+	return Constants.get_biome_chunk_key(biome_folder)

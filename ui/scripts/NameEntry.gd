@@ -1,3 +1,4 @@
+# NameInput Script res://ui/scripts/NameEntry.gd
 extends LineEdit
 
 # Path to the JSON file

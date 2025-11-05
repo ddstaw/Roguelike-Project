@@ -6,5 +6,5 @@
 script = ExtResource("1_t8835")
 faithname = "Follower of The Old Ways"
 faithflavor = "Oldwflav"
-faithdes = "Oldwdes"
+faithdes = "druidic_rituals"
 faithbonus = "Oldwbonus"

@@ -1,3 +1,4 @@
+# res://scripts/Constants.gd
 extends Node
 class_name Constants
 
@@ -58,6 +59,7 @@ const TILE_TEXTURES := {
 	"caverock": preload("res://assets/localmap-graphics/caverock.png"),
 	"cavewallbottom": preload("res://assets/localmap-graphics/cavewallbottom.png"),
 	"cavewallside": preload("res://assets/localmap-graphics/cavewallside.png"),
+	"openair": preload("res://assets/localmap-graphics/openair.png"),
 	"campfire": preload("res://assets/localmap-graphics/objects/campfire.png"),
 	"workbench": preload("res://assets/localmap-graphics/objects/workbench.png"),
 	"orangecat": preload("res://assets/localmap-graphics/npcs/orange_cat.png"),
@@ -125,6 +127,7 @@ const TEXTURE_TO_NAME := {
 	TILE_TEXTURES["candelabra_lit"]: "candelabra_lit",
 	TILE_TEXTURES["caverock"]: "caverock",
 	TILE_TEXTURES["cavewallbottom"]: "cavewallbottom",
+	TILE_TEXTURES["openair"]: "openair",
 	TILE_TEXTURES["cavewallside"]: "cavewallside",
 	TILE_TEXTURES["campfire"]: "campfire",
 	TILE_TEXTURES["workbench"]: "workbench",
@@ -357,13 +360,15 @@ static func get_spawn_chunk_for_biome(biome: String) -> String:
 		"grass": return "chunk_1_1"
 		"village-slums": return "chunk_0_0"
 		"forest": return "chunk_0_0"  # 🆕 Start at the leftmost forest chunk
+		"tradepost": return "chunk_0_0" 
 		_: return "chunk_1_1"  # Default fallback
 
 static func get_spawn_offset_for_biome(biome: String) -> Vector2i:
 	match biome:
 		"grass": return Vector2i(25, 25)
-		"forest": return Vector2i(5, 3)  # Near western edge, but not hard corner
-		"village-slums": return Vector2i(5, 10)  # Near western edge, but not hard corner
+		"forest": return Vector2i(5, 3)  # Near western edge
+		"village-slums": return Vector2i(5, 10)
+		"tradepost": return Vector2i(20, 35)  # Near south border, not dead edge
 		_: return Vector2i(25, 25)  # Fallback
 
 static func get_chunk_folder_for_key(key: String) -> String:
@@ -371,6 +376,7 @@ static func get_chunk_folder_for_key(key: String) -> String:
 		"gef", "grassland_explore_fields": return "grassland_explore_fields"
 		"fep", "forest_explore_path": return "forest_explore_path"
 		"vses", "village_slums_explore_slumblock": return "village_slums_explore_slumblock"
+		"trd", "tradepost": return "tradepost"
 		_: return "default_chunk_folder"
 
 static func get_biome_chunk_key(biome: String) -> String:
@@ -378,6 +384,7 @@ static func get_biome_chunk_key(biome: String) -> String:
 		"grass": return "gef"
 		"forest": return "fep"
 		"village-slums": return "vses"
+		"tradepost": return "trd"
 		_: return "gef"  # default fallback
 
 static func get_biome_folder_from_key(key: String) -> String:
@@ -385,6 +392,7 @@ static func get_biome_folder_from_key(key: String) -> String:
 		"gef": return "grassland_explore_fields"
 		"fep": return "forest_explore_path"
 		"vses": return "village_slums_explore_slumblock"
+		"trd": return "tradepost"
 		_: return "grassland_explore_fields"
 
 static func get_chunk_key_from_folder(folder: String) -> String:
@@ -392,14 +400,17 @@ static func get_chunk_key_from_folder(folder: String) -> String:
 		"grassland_explore_fields": return "gef"
 		"forest_explore_path": return "fep"
 		"village_slums_explore_slumblock": return "vses"
+		"tradepost": return "trd"
 		_: return "gef"  # fallback
 
 static func get_biome_name_from_key(key: String) -> String:
 	match key:
-		"gef": return "grass"
-		"fep": return "forest"
-		"vses": return "village-slums"
-		_: return "grass"  # fallback
+		"gef", "grassland_explore_fields": return "grass"
+		"fep", "forest_explore_plain": return "forest"
+		"vses", "village_slums": return "village-slums"
+		"trd", "tradepost": return "tradepost"
+		_: return key  # fallback to literal, not "grass"
+
 
 static var BIOME_CONFIGS = {
 	"gef": {
@@ -416,6 +427,11 @@ static var BIOME_CONFIGS = {
 		"folder": "village_slums_explore_slumblock",
 		"chunk_size": Vector2i(48, 48),
 		"grid_size": Vector2i(4, 3)
+	},
+	"trd": {
+		"folder": "tradepost",
+		"chunk_size": Vector2i(40, 40),
+		"grid_size": Vector2i(1, 1)
 	}
 }
 

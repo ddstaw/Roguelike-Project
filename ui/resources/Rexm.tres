@@ -6,5 +6,5 @@
 script = ExtResource("1_a7mce")
 faithname = "Disciple of Rex Mundi"
 faithflavor = "Rexmflav"
-faithdes = "Rexmdes"
+faithdes = "the_rites_of_rex"
 faithbonus = "Rexmbonus"

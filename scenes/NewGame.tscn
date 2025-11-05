@@ -118,22 +118,22 @@ offset_bottom = 465.0
 [node name="WorldNameLabel" type="Label" parent="Control"]
 z_index = 2
 layout_mode = 0
-offset_left = 479.0
-offset_top = 61.0
-offset_right = 1073.0
-offset_bottom = 177.0
+offset_left = 533.0
+offset_top = -11.0
+offset_right = 1127.0
+offset_bottom = 105.0
 horizontal_alignment = 1
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="Control"]
 layout_mode = 0
-offset_left = 670.0
-offset_top = 178.0
-offset_right = 886.0
-offset_bottom = 394.0
+offset_left = 624.0
+offset_top = 166.0
+offset_right = 1056.0
+offset_bottom = 598.0
 
 [node name="SubViewport" type="SubViewport" parent="Control/SubViewportContainer"]
 handle_input_locally = false
-size = Vector2i(216, 216)
+size = Vector2i(432, 432)
 render_target_update_mode = 4
 
 [node name="GridTextureRect" type="TextureRect" parent="Control/SubViewportContainer/SubViewport"]

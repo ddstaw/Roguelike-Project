@@ -6,5 +6,5 @@
 script = ExtResource("1_eip41")
 faithname = "Guided By The Void"
 faithflavor = "Esotflav"
-faithdes = "Esotdes"
+faithdes = "eldritch_invocations"
 faithbonus = "Esotbonus"

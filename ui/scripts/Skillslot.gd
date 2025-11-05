@@ -1,14 +1,11 @@
+# res://ui/scripts/Skillslot.gd
 extends TextureButton
 
-@export var gskill: GSkill = null:
-	set(value):
-		gskill = value
+@export var gskill: GSkill
+@export var popups: Node  # Assigned in CharacterCreation or via editor
 
-func _on_mouse_entered():
-	if gskill == null:
+func _pressed() -> void:
+	if gskill == null or not is_instance_valid(popups):
 		return
-		
-	Popups.GskillPopup(Rect2i( Vector2i(global_position) , Vector2i(size) ), gskill) #setups position
-
-func _on_mouse_exited():
-	Popups.HideGskillPopup
+	popups.set_value_gskill(gskill)
+	popups.show_popup("GskillPopup")

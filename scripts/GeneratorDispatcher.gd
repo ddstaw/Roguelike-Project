@@ -1,9 +1,11 @@
+# res://scripts/GeneratorDispatcher.gd
 extends Node
 
 # Register map generators (add more as needed)
 var local_map_generators = {}
 
 const Consts = preload("res://scripts/Constants.gd")  # adjust path as needed
+const StaticHubEntry = preload("res://scripts/localmapgenscripts/statichubentry.gd")
 
 
 # Function to dispatch the city generator based on the biome
@@ -165,3 +167,53 @@ func get_generator_for_biome(biome: String) -> Node:
 			return null
 
 	return local_map_generators[biome]
+
+func load_static_hub(hub_key: String):
+	print("🏪 Loading static hub data for:", hub_key)
+
+	# 🗺️ Define the source folder name and pretty label per hub
+	var biome_folder := ""
+	var hub_name := ""
+
+	match hub_key:
+		"tradepost":
+			biome_folder = "tradepost"
+			hub_name = "Pilgrim’s Junction Tradepost"
+		"guildhall":
+			biome_folder = "guildhall"
+			hub_name = "Guildhall of the Free Cities"
+		"temple":
+			biome_folder = "temple"
+			hub_name = "Shrine of the Seven"
+		_:
+			biome_folder = hub_key  # fallback folder uses same name
+			hub_name = hub_key.capitalize()
+
+	# 💾 Define save folder for this hub
+	var dest_path = "user://saves/save%d/localchunks/%s/" % [LoadHandlerSingleton.get_save_slot(), biome_folder]
+	DirAccess.make_dir_recursive_absolute(dest_path + "z0")
+
+	# 🧭 Placement: treat like a single-chunk map (hub z0)
+	var placement := LoadHandlerSingleton.load_temp_localmap_placement()
+	if not placement.has("local_map"):
+		placement["local_map"] = {}
+
+	placement["local_map"]["valid_chunks"] = ["0_0"]
+	placement["local_map"]["chunk_blueprints"] = {}
+	placement["local_map"]["biome_key"] = biome_folder
+	placement["local_map"]["spawn_chunk"] = "chunk_0_0"
+	placement["local_map"]["current_chunk_id"] = "chunk_0_0"
+	placement["local_map"]["__chunk_id_set_by"] = "load_static_hub"
+	LoadHandlerSingleton.save_temp_placement(placement)
+
+	# 🧾 Entry context seed for the LocalMap
+	var entry_ctx := LoadHandlerSingleton.load_entry_context()
+	if typeof(entry_ctx) != TYPE_DICTIONARY:
+		entry_ctx = {}
+	entry_ctx["entry_type"] = hub_key
+	entry_ctx["hub_name"] = hub_name
+	entry_ctx["local_map"] = { "explored_chunks": {"0": ["0_0"]} }
+	LoadHandlerSingleton.save_entry_context(entry_ctx)
+
+	print("✅ Static hub '%s' initialized (%s)" % [hub_key, hub_name])
+
