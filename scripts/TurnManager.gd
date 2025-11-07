@@ -3,6 +3,8 @@ extends Node
 
 ## Holds the live LocalMap instance when one exists
 var local_map_ref: Node = null
+var _last_chunk := ""
+var _last_z := ""
 
 func end_player_turn(time_cost_minutes: int = 1) -> void:
 # ⚙️ DEV NOTE — TURN ORDER CRITICAL
@@ -46,31 +48,47 @@ func end_player_turn(time_cost_minutes: int = 1) -> void:
 	NpcBehaviorManager.process_visible_npc_turns(visible_chunks, walkability_grid)
 
 	# ✅ Clean out NPC containers *before* any await, so ghosts are removed now
-	var underlay := local_map.get_node_or_null("NPCUnderlayContainer")
-	var main := local_map.get_node_or_null("NPCContainer")
+		# ✅ Clean out NPC containers *before* any await, so ghosts are removed now
+	var underlay: Node = null
+	var main: Node = null
+
+	var world_view := local_map.get_node_or_null("WorldView")
+	if world_view:
+		underlay = world_view.get_node_or_null("NPCUnderlayContainer")
+		main = world_view.get_node_or_null("NPCContainer")
+	else:
+		underlay = local_map.get_node_or_null("NPCUnderlayContainer")
+		main = local_map.get_node_or_null("NPCContainer")
+
 	if underlay == null or main == null:
 		print("⚠️ Could not find NPC containers — skipping redraw.")
 		return
 
-		print("🧱 Underlay container:", underlay)
-		print("🧱 Main container:", main)
+	print("🧱 Underlay container:", underlay)
+	print("🧱 Main container:", main)
 
-	# 🧹 Clean both containers before we await — prevents stale or ghost sprites
+	# 🧹 Only clear NPCs if player changed chunk or z-level
+	var player_chunk: String = local_map.get_current_chunk_id()
+	var player_z := str(LoadHandlerSingleton.get_current_z_level())
+
+	if player_chunk != _last_chunk or player_z != _last_z:
 		for child in main.get_children():
 			if child and child.is_inside_tree():
 				child.queue_free()
-
 		for child in underlay.get_children():
 			if child and child.is_inside_tree():
 				child.queue_free()
+		_last_chunk = player_chunk
+		_last_z = player_z
 
-		print("🧹 Pre-redraw cleanup complete for both containers, now redrawing NPCs.")
+	print("🧹 Pre-redraw cleanup complete for both containers, now redrawing NPCs.")
+
+
 	
 	# 2️⃣ Allow save I/O to finish before redrawing
 	await get_tree().process_frame
 	print("✅ Frame flush complete, beginning redraw phase")
 
-	var player_z := str(LoadHandlerSingleton.get_current_z_level())
 
 	# 3️⃣ Redraw visible NPCs for current Z (sync version)
 	var total_drawn := 0

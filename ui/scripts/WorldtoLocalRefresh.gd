@@ -4,6 +4,9 @@ extends Control
 @onready var travel_label = $TravelLabel  # ✅ Make sure this matches the actual node
 
 func _ready():
+	if LoadHandlerSingleton.has_method("reset_all_runtime_caches"):
+		LoadHandlerSingleton.reset_all_runtime_caches()
+		
 	if travel_label == null:
 		print("❌ ERROR: TravelLabel is missing!")
 		return

@@ -2,6 +2,7 @@ extends Panel
 #inv_chest
 #Container_control/Storage_Panel
 
+const IconBuilder := preload("res://ui/scripts/IconBuilder.gd")
 const ITEM_DATA := preload("res://constants/item_data.gd")
 const SLOT_SCENE := preload("res://scenes/play/ItemSlot.tscn")
 
@@ -145,7 +146,7 @@ func _refresh_grid() -> void:
 		slot.mouse_filter = Control.MOUSE_FILTER_STOP
 		inv_grid.add_child(slot)
 
-		var tex := _icon_for(str(s.get("item_ID", "")))
+		var tex := IconBuilder.get_icon_for_item(s)
 		slot.call_deferred("set_data", s, tex)
 
 		# ✅ Wire slot click → appraisal
@@ -349,7 +350,7 @@ func _update_sort_visuals() -> void:
 		slot.mouse_filter = Control.MOUSE_FILTER_STOP
 		inv_grid.add_child(slot)
 
-		var tex := _icon_for(str(s.get("item_ID", "")))
+		var tex := IconBuilder.get_icon_for_item(s)
 		slot.call_deferred("set_data", s, tex)
 
 		var ok := slot.item_clicked.connect(self._on_slot_clicked)

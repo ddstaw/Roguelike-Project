@@ -81,7 +81,7 @@ const EMPTY_GEAR_ICONS := {
 }
 
 
-
+const IconBuilder := preload("res://ui/scripts/IconBuilder.gd")
 const TAG_INFO = preload("res://constants/tag_info.gd")
 const ITEM_DATA := preload("res://constants/item_data.gd")
 const WORLD_SCENE := "res://scenes/play/WorldMapTravel.tscn"
@@ -117,20 +117,55 @@ func _return_to_current_realm_scene() -> void:
 	var data: Dictionary = LoadHandlerSingleton.load_char_state()
 	var cs: Dictionary = (data.get("character_state", {}) as Dictionary)
 
-	# Explicit types + cast values to String before comparison
 	var in_city: bool = (cs.get("incity", "N") as String) == "Y"
 	var in_local: bool = (cs.get("inlocalmap", "N") as String) == "Y"
 	var in_world: bool = (cs.get("inworldmap", "N") as String) == "Y"
 
-	var target: String = LOCAL_SCENE
-	if in_local:
-		target = LOCAL_SCENE
-	else:
-		# Both incity:Y and inworldmap:Y route to the world travel scene
-		target = WORLD_SCENE
+	var target: String = LOCAL_SCENE if in_local else WORLD_SCENE
 
-	print("⬅️ Returning to: ", target)
+	if in_local:
+		# ✅ 1. Try to get live in-memory values first
+		var mem_grid := Vector2i(-1, -1)
+		var mem_z := 0
+		if LoadHandlerSingleton.has_method("get_current_local_grid_pos"):
+			mem_grid = LoadHandlerSingleton.get_current_local_grid_pos()
+		if LoadHandlerSingleton.has_method("get_current_z_level_mem"):
+			mem_z = LoadHandlerSingleton.get_current_z_level_mem()
+
+		# ✅ 2. Fallback to JSON if memory is uninitialized
+		if mem_grid == Vector2i(-1, -1):
+			var lm_place := LoadHandlerSingleton.load_temp_localmap_placement()
+			var lm_dict: Dictionary = lm_place.get("local_map", {}) as Dictionary
+			var grid_dict: Dictionary = lm_dict.get("grid_position_local", {}) as Dictionary
+			mem_grid = Vector2i(int(grid_dict.get("x", 0)), int(grid_dict.get("y", 0)))
+			mem_z = int(str(lm_dict.get("z_level", "0")))
+
+		# ✅ 3. Now write those confirmed values back into both placement files
+		var lm_place := LoadHandlerSingleton.load_temp_localmap_placement()
+		if not lm_place.has("local_map"):
+			lm_place["local_map"] = {}
+		lm_place["local_map"]["grid_position_local"] = {"x": mem_grid.x, "y": mem_grid.y}
+		lm_place["local_map"]["z_level"] = str(mem_z)
+		lm_place["local_map"]["spawn_pos"] = {"x": mem_grid.x, "y": mem_grid.y}
+		LoadHandlerSingleton.save_temp_placement(lm_place)
+
+		var gen_place := LoadHandlerSingleton.load_temp_placement()
+		if not gen_place.has("local_map"):
+			gen_place["local_map"] = {}
+		gen_place["local_map"]["grid_position_local"] = {"x": mem_grid.x, "y": mem_grid.y}
+		gen_place["local_map"]["z_level"] = str(mem_z)
+		gen_place["local_map"]["spawn_pos"] = {"x": mem_grid.x, "y": mem_grid.y}
+		LoadHandlerSingleton.save_temp_placement(gen_place)
+
+		# ✅ 4. Make sure memory cache matches (safety sync)
+		LoadHandlerSingleton.set_current_local_grid_pos(mem_grid)
+		LoadHandlerSingleton.set_current_z_level(mem_z)
+
+		print("💾 Synced live grid:", mem_grid, "z:", mem_z)
+
+	print("⬅️ Returning to:", target)
 	get_tree().paused = false
+	_closing = true
 	get_tree().change_scene_to_file(target)
 
 func _update_weight_label() -> void:
@@ -162,21 +197,8 @@ func show_appraisal(s: Dictionary) -> void:
 	_currently_appraised_id = new_id
 	appraisal_panel.visible = true
 
-	# ✅ Declare tex once outside conditionals
-	var tex: Texture2D = null  
-
-	if s.has("img_layers") and s["img_layers"] is Array:
-		var layers_raw = s["img_layers"]
-		var layer_paths: Array[String] = []
-		for path in layers_raw:
-			layer_paths.append(str(path))
-		layer_paths.reverse()
-		tex = _generate_layered_icon(layer_paths)
-
-	elif s.has("img_path") and ResourceLoader.exists(s["img_path"]):
-		tex = ResourceLoader.load(s["img_path"]) as Texture2D
-
-	# ✅ Always safe to assign now
+		# unified icon generation
+	var tex: Texture2D = IconBuilder.get_icon_for_item(s)
 	appraisal_icon.texture = tex
 
 	# ✅ Basic stats
@@ -358,45 +380,6 @@ func show_appraisal(s: Dictionary) -> void:
 func hide_appraisal() -> void:
 	appraisal_panel.visible = false
 
-func _generate_layered_icon(layer_paths: Array) -> Texture2D:
-	if layer_paths.is_empty():
-		return null
-
-	# Sort overlays last
-	layer_paths.sort_custom(func(a, b):
-		var is_overlay_a := String(a).to_lower().find("overlay") != -1
-		var is_overlay_b := String(b).to_lower().find("overlay") != -1
-		return is_overlay_a < is_overlay_b
-	)
-
-	var base_image: Image = null
-
-	for path in layer_paths:
-		if !ResourceLoader.exists(path):
-			continue
-
-		var tex := ResourceLoader.load(path) as Texture2D
-		if tex == null:
-			continue
-
-		var img := tex.get_image()
-
-		if base_image == null:
-			base_image = img.duplicate()
-			continue
-
-		var is_overlay: bool = path.to_lower().find("overlay") != -1
-
-		for y in range(img.get_height()):
-			for x in range(img.get_width()):
-				var base_col := base_image.get_pixel(x, y)
-				var layer_col := img.get_pixel(x, y)
-				var final_col := base_col
-				final_col = layer_col.blend(base_col)
-				base_image.set_pixel(x, y, final_col)
-
-	var final_tex := ImageTexture.create_from_image(base_image)
-	return final_tex
 
 func _update_gear_slots():
 	for slot_name in gear_slots.keys():
@@ -405,7 +388,7 @@ func _update_gear_slots():
 
 		if uid != "empty" and player_inventory.has(uid):
 			var item_data: Dictionary = player_inventory[uid]
-			var icon: Texture2D = _get_icon_for(item_data)
+			var icon: Texture2D = IconBuilder.get_icon_for_item(item_data)
 			slot.set_data(item_data, icon)
 		else:
 			var empty_icon = EMPTY_GEAR_ICONS.get(slot_name, null)
@@ -426,21 +409,6 @@ func handle_gear_slot_drop(target_slot: ItemSlot, data: Dictionary) -> void:
 
 	equipped_data[slot_name] = uid
 	_update_gear_slots()
-
-func _get_icon_for(item_data: Dictionary) -> Texture2D:
-	var path = item_data.get("img_path", "")
-	if path != "" and ResourceLoader.exists(path):
-		return ResourceLoader.load(path) as Texture2D
-	elif item_data.has("img_layers") and item_data["img_layers"] is Array:
-		var layers = item_data["img_layers"]
-		var paths: Array[String] = []
-		for p in layers:
-			paths.append(str(p))
-		paths.reverse()
-		return _generate_layered_icon(paths)
-	else:
-		print("❌ No valid icon path found in item_data")
-	return null
 
 func handle_gear_slot_right_click(target_slot: GearSlot) -> void:
 	var slot_name = gear_slots.find_key(target_slot)

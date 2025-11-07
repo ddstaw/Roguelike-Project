@@ -29,8 +29,20 @@ func render_map(
 	below_npc_chunk: Dictionary = {}
 ) -> void:
 	var local_map = tile_container.get_parent()
-	var npc_container = local_map.get_node_or_null("NPCContainer")
-	var npc_underlay = local_map.get_node_or_null("NPCUnderlayContainer")
+	
+	# ✅ Declare first so they’re visible everywhere in the function
+	var npc_container: Node = null
+	var npc_underlay: Node = null
+
+	# ✅ Updated to find containers under world_view
+	var world_view = local_map.get_node_or_null("WorldView")
+	if world_view:
+		npc_container = world_view.get_node_or_null("NPCContainer")
+		npc_underlay = world_view.get_node_or_null("NPCUnderlayContainer")
+	else:
+		print("⚠️ world_view missing, falling back to local_map root")
+		npc_container = local_map.get_node_or_null("NPCContainer")
+		npc_underlay = local_map.get_node_or_null("NPCUnderlayContainer")
 	
 	
 	if tile_container == null:

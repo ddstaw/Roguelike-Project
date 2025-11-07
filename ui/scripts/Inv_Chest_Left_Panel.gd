@@ -1,6 +1,7 @@
 extends Panel
 #Player_Panel
 
+const IconBuilder := preload("res://ui/scripts/IconBuilder.gd")
 const ITEM_DATA := preload("res://constants/item_data.gd")
 const SLOT_SCENE := preload("res://scenes/play/ItemSlot.tscn")
 
@@ -290,7 +291,7 @@ func _refresh_grid() -> void:
 		slot.mouse_filter = Control.MOUSE_FILTER_STOP
 		inv_grid.add_child(slot)
 
-		var tex := _icon_for(str(s.get("item_ID", "")))
+		var tex := IconBuilder.get_icon_for_item(s)
 		slot.call_deferred("set_data", s, tex)
 
 		# ✅ Wire slot click → appraisal
@@ -435,34 +436,6 @@ func _pass_filter(s: Dictionary) -> bool:
 		_:
 			return true
 
-func _icon_for(item_id: String) -> Texture2D:
-	if _icon_cache.has(item_id):
-		return _icon_cache[item_id]
-
-	var def := (ITEM_DATA.ITEM_PROPERTIES.get(item_id, {}) as Dictionary)
-	if def.is_empty():
-		push_warning("[Icon] No item def for id: " + item_id)
-		_icon_cache[item_id] = null
-		return null
-
-	var path: String = str(def.get("img_path", ""))
-	if path == "":
-		push_warning("[Icon] No img_path for id: " + item_id)
-		_icon_cache[item_id] = null
-		return null
-
-	# Verify the resource actually exists (helps catch typos)
-	if !ResourceLoader.exists(path):
-		push_warning("[Icon] Resource not found: " + path + " (id=" + item_id + ")")
-		_icon_cache[item_id] = null
-		return null
-
-	var tex := ResourceLoader.load(path) as Texture2D
-	if tex == null:
-		push_warning("[Icon] Failed to load Texture2D at: " + path + " (id=" + item_id + ")")
-
-	_icon_cache[item_id] = tex
-	return tex
 
 # Build YYYYMMDDHHMM as an integer. Bigger = newer.
 func _stack_sort_key(s: Dictionary) -> int:

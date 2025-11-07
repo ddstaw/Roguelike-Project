@@ -19,6 +19,7 @@ extends Control  # or whatever the root node is
 @onready var appraisal_special: RichTextLabel = appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/SpecialLabel")
 @onready var appraisal_dismantletitle := appraisal_panel.get_node("MarginContainer/ScrollContainer/VBoxContainer/MarginContainer/VBoxContainer/DismantleTitle")
 
+const IconBuilder := preload("res://ui/scripts/IconBuilder.gd")
 const TAG_INFO = preload("res://constants/tag_info.gd")
 const ITEM_DATA := preload("res://constants/item_data.gd")
 
@@ -110,12 +111,8 @@ func show_appraisal(s: Dictionary) -> void:
 
 	appraisal_panel.visible = true
 
-	# ✅ Set icon
-	var tex: Texture2D = null
-	if s.has("img_path"):
-		var img_path: String = s["img_path"]
-		if img_path != "" and ResourceLoader.exists(img_path):
-			tex = ResourceLoader.load(img_path) as Texture2D
+	# ✅ Set icon (supports layered items)
+	var tex: Texture2D = IconBuilder.get_icon_for_item(s)
 	appraisal_icon.texture = tex
 
 	# ✅ Basic stats

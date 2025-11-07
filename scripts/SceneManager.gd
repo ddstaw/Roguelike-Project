@@ -64,7 +64,14 @@ func transition_to_chunk(new_chunk_id: String, new_tile_pos: Vector2i):
 	LoadHandlerSingleton.save_temp_placement(placement)
 
 	current_play_scene_path = "res://scenes/play/LocalMap.tscn"
-	change_scene_to_file("res://scenes/play/ChunkToChunkRefresh.tscn")
+	call_deferred("_deferred_chunk_reload")
+
+func _deferred_chunk_reload() -> void:
+	# Give the current frame time to finish all awaits before nuking the tree
+	await get_tree().process_frame
+
+	get_tree().change_scene_to_file("res://scenes/play/ChunkToChunkRefresh.tscn")
+
 
 func transition_to_world_map():
 	# Save whatever you need first

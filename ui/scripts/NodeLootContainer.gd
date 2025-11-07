@@ -1,7 +1,7 @@
 extends Panel
 #nodelootcontainer
 #this script is attached to NodeTransferWindow/PanelContainer, child of parent NodeTransferWindow (control), 
-#which itself is a child of parent Inventory_mini
+#which itself is a child of parent Inventory_mini res://ui/scripts/NodeLootContainer.gd
 
 @onready var loot_grid: GridContainer = get_node("ScrollContainer/MarginContainer/VBoxContainer/GridContainer")
 @onready var header_label: Label = get_parent().get_node("Label")
@@ -13,7 +13,7 @@ extends Panel
 @onready var inv_root := get_tree().root.get_node_or_null("LocalMap/UILayer/Inventory_mini")
 
 
-
+const IconBuilder := preload("res://ui/scripts/IconBuilder.gd")
 const SLOT_SCENE := preload("res://scenes/play/ItemSlot.tscn")
 const ITEM_DATA := preload("res://constants/item_data.gd")
 
@@ -91,17 +91,11 @@ func _render_loot() -> void:
 	for key in node_inventory.keys():
 		var item: Dictionary = node_inventory[key]
 		var slot = SLOT_SCENE.instantiate()
-		var tex = _icon_for(str(item.get("item_ID","")))
+		var tex = IconBuilder.get_icon_for_item(item)
 		slot.set_data(item, tex)
 		loot_grid.add_child(slot)
 		slot.item_clicked.connect(self._on_slot_clicked)
 		
-func _icon_for(item_id: String) -> Texture2D:
-	var def: Dictionary = ITEM_DATA.ITEM_PROPERTIES.get(item_id, {}) as Dictionary
-	var path: String = def.get("img_path", "")
-	if path == "" or !ResourceLoader.exists(path):
-		return null
-	return load(path) as Texture2D
 
 func _on_slot_clicked(slot: ItemSlot, shift: bool) -> void:
 	if not shift:
@@ -156,6 +150,8 @@ func _save_node_inventory() -> void:
 
 	_print_ctx("_save_node_inventory (after)")
 
+
+
 func _print_ctx(where: String) -> void:
 	print("📌", where, "| biome:", biome_id, " z:", z_key, " chunk:", chunk_key, " biome_key:", biome_key, " node_id:", node_id)
 
@@ -197,7 +193,7 @@ func _refresh_grid() -> void:
 	for key in node_inventory.keys():
 		var item: Dictionary = node_inventory[key]
 		var slot = SLOT_SCENE.instantiate()
-		var tex = _icon_for(str(item.get("item_ID","")))
+		var tex = IconBuilder.get_icon_for_item(item)
 		slot.set_data(item, tex)
 		loot_grid.add_child(slot)
 

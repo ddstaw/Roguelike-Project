@@ -1,3 +1,4 @@
+#res://scripts/LoadHandlerSingleton.gd
 extends Node
 
 var current_chunk_id: String = ""
@@ -6,6 +7,10 @@ var loaded_tile_chunks := {}
 var loaded_object_chunks := {}
 var loaded_npc_chunks := {}
 var chunked_npc_data: Dictionary = {}
+
+# 🧭 Live in-memory player state tracking
+var current_local_grid_pos: Vector2i = Vector2i(-1, -1)
+var current_z_level_mem: int = 0  # memory-only version to avoid JSON desync
 
 static var _chunk_structure_map: Dictionary = {}
 static var _cached_egress_data := {}
@@ -24,6 +29,8 @@ var dwarfcity_proper: String = "sample dwarf city"
 var capitalcity_proper: String = "sample cap city"
 var villages: Dictionary = {}
 
+var _json_cache: Dictionary = {}
+
 # ✅ Add the signal and function HERE:
 signal request_map_reload
 signal inventory_changed
@@ -37,6 +44,11 @@ func trigger_map_reload():
 	request_map_reload.emit()
 
 func load_json_file(path: String) -> Variant:
+
+	if _json_cache.has(path):
+		return _json_cache[path]
+
+	# ✅ Step 2: Normal file checks (your original logic)
 	if not FileAccess.file_exists(path):
 		print("Error: File does not exist at path:", path)
 		return null
@@ -51,11 +63,10 @@ func load_json_file(path: String) -> Variant:
 
 	var result: Variant = null
 
-	# Prefer static parse_string if available (Godot 4.x)
+	# ✅ Step 3: Parse JSON (unchanged)
 	if ClassDB.class_has_method("JSON", "parse_string"):
 		result = JSON.parse_string(json_text)
 	else:
-		# Fallback to instance parser (older syntax or compatibility)
 		var parser := JSON.new()
 		var err := parser.parse(json_text)
 		if err == OK:
@@ -63,7 +74,32 @@ func load_json_file(path: String) -> Variant:
 
 	if result == null:
 		print("Error parsing JSON at path:", path)
+		return null
+
+	# ✅ Step 4: Cache result
+	_json_cache[path] = result
 	return result
+
+func clear_json_cache() -> void:
+	_json_cache.clear()
+	print("🧹 JSON cache cleared.")
+
+func reset_all_runtime_caches() -> void:
+	loaded_tile_chunks.clear()
+	loaded_object_chunks.clear()
+	loaded_npc_chunks.clear()
+	chunked_npc_data.clear()
+	_chunk_structure_map.clear()
+	_cached_egress_data.clear()
+	_json_cache.clear()
+
+	current_chunk_id = ""
+	current_chunk_coords = Vector2i.ZERO
+	current_local_grid_pos = Vector2i(-1, -1)
+	current_z_level_mem = 0
+
+	print("🧹 All LoadHandler runtime caches flushed.")
+
 
 # Retrieve the correct save slot number
 func get_save_slot() -> int:
@@ -1241,7 +1277,7 @@ func get_player_light_color() -> Color:
 
 func is_underground() -> bool:
 	var placement = LoadHandlerSingleton.load_temp_localmap_placement()
-	return placement.get("local_map", {}).get("z_level", 0) < 0
+	return int(placement.get("local_map", {}).get("z_level", 0)) < 0
 
 func save_all_chunked_localmap_files( 
 	grid_chunks: Dictionary,
@@ -2066,7 +2102,8 @@ func get_current_chunk_id() -> String:
 
 func get_current_z_level() -> int:
 	var placement := load_temp_placement()
-	return placement.get("local_map", {}).get("z_level", 0)
+	var raw_val = placement.get("local_map", {}).get("z_level", 0)
+	return int(raw_val)
 
 func get_chunk_blueprints() -> Dictionary:
 	var placement := load_temp_placement()
@@ -2446,27 +2483,59 @@ static func load_global_egress_data(force_refresh := false) -> Dictionary:
 	if not force_refresh and _cached_egress_data.has("data"):
 		return _cached_egress_data["data"]
 
-	var placement = LoadHandlerSingleton.load_temp_placement()
-	var biome_key = placement.get("local_map", {}).get("biome_key", "")
-	if biome_key == "":
+	# 🗺 Load from the active localmap placement
+	var placement: Dictionary = LoadHandlerSingleton.load_temp_localmap_placement()
+	var biome_ref: String = placement.get("local_map", {}).get("biome_key", "")
+	if biome_ref == "":
 		push_error("❌ [load_global_egress_data] Missing biome_key in temp placement.")
 		return {}
 
-	# 🔁 Convert long-form → short-form
-	biome_key = Constants.get_biome_chunk_key(biome_key)
+	# 🧩 Normalize to folder name if needed
+	var biome_folder: String = ""
+	if biome_ref.contains("_"):  # already a folder path like 'grassland_explore_fields'
+		biome_folder = biome_ref
+	elif biome_ref.length() <= 3:  # short key like 'trd'
+		biome_folder = Constants.get_biome_folder_from_key(biome_ref)
+	else:  # plain biome name like 'tradepost'
+		biome_folder = biome_ref
 
-	# 🔁 Now convert short-form → folder path
-	var biome_folder = Constants.get_chunk_folder_for_key(biome_key)
-	var path = get_egress_register_path(biome_folder)
-
+	# 🔎 Build path and load
+	var path := get_egress_register_path(biome_folder)
 	if not FileAccess.file_exists(path):
 		push_warning("⚠️ [load_global_egress_data] Egress register file does not exist at path: " + path)
 		return {}
 
-	var contents = FileAccess.open(path, FileAccess.READ).get_as_text()
-	var parsed = JSON.parse_string(contents)
+	var file := FileAccess.open(path, FileAccess.READ)
+	if file == null:
+		push_error("❌ [load_global_egress_data] Could not open egress register file: " + path)
+		return {}
+
+	var contents := file.get_as_text()
+	file.close()
+
+	var parsed := JSON.parse_string(contents)
 	_cached_egress_data["data"] = parsed
 	return parsed
+
+# --- Z helpers ---
+static func z_to_int(z: Variant) -> int:
+	if typeof(z) == TYPE_INT:
+		return int(z)
+
+	if typeof(z) == TYPE_STRING:
+		var s: String = (z as String).strip_edges()  # 👈 explicit type
+		if s.begins_with("z"):
+			s = s.substr(1)
+		return int(s)
+
+	# Fallback: stringify then parse
+	var s2: String = str(z).strip_edges()
+	if s2.begins_with("z"):
+		s2 = s2.substr(1)
+	return int(s2)
+
+static func z_key(z) -> String:
+	return "z%d" % z_to_int(z)
 
 
 static func reload_from_temp_placement():
@@ -3632,3 +3701,15 @@ func get_active_biome_key() -> String:
 	var placement: Dictionary = load_temp_localmap_placement()
 	var biome_folder: String = placement.get("local_map", {}).get("biome_key", "grassland_explore_fields")
 	return Constants.get_biome_chunk_key(biome_folder)
+
+func set_current_local_grid_pos(pos: Vector2i) -> void:
+	current_local_grid_pos = pos
+
+func set_current_z_level(z: int) -> void:
+	current_z_level_mem = z
+
+func get_current_local_grid_pos() -> Vector2i:
+	return current_local_grid_pos
+
+func get_current_z_level_mem() -> int:
+	return current_z_level_mem

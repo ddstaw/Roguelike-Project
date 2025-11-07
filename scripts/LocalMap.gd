@@ -1,27 +1,28 @@
 #localmap.gd - parent node script
 extends Control
 
-@onready var tile_container = $TileContainer  # A Node2D that holds all tile sprites
+@onready var world_view: Node2D = $WorldView
+@onready var tile_container: Node2D = $WorldView/TileContainer
 @onready var world_map_button = $UILayer/DebugUI/WorldMap  # Adjust if needed
 @onready var generate_button = $UILayer/DebugUI/GenNewMapDebugButton
 @onready var toggle_free_pan_button = $UILayer/DebugUI/ToggleFreePan  # Free pan toggle button
 @onready var bottom_ui = $UILayer/LocalPlayUI/BottomUI  # ✅ Reference the BottomUI node
 @onready var dark_overlay = $UILayer/DarkOverlay
-@onready var light_overlay := $LightOverlay
+@onready var light_overlay: Node2D = $WorldView/LightOverlay
 @onready var travel_log = $UILayer/LocalPlayUI/TravelLogControl
 @onready var buildables_overlay := preload("res://scenes/play/BuildablesOverlay.tscn").instantiate()
 
 @onready var pause_menu = preload("res://scenes/play/PauseMenu.tscn").instantiate()
 
-@onready var npc_container: Node2D = $NPCContainer
-@onready var npc_underlay_container: Node2D = $NPCUnderlayContainer
+@onready var npc_container: Node2D = $WorldView/NPCContainer
+@onready var npc_underlay_container: Node2D = $WorldView/NPCUnderlayContainer
 
 @onready var turn_manager := get_node_or_null("/root/TurnManager")
 
 @onready var map_layers: Array[Node2D] = [
-	$TileContainer,
-	$NPCUnderlayContainer,
-	$NPCContainer
+	$WorldView/TileContainer,
+	$WorldView/NPCUnderlayContainer,
+	$WorldView/NPCContainer
 ]
 
 var light_map: Array = []  # 🌕 Stores per-tile light levels
@@ -32,7 +33,7 @@ var last_minute_seen: int = -1  # Add this at the top of localmap.gd
 var player: Node = null  # 👤 Store player instance globally in this script
 var visible_tiles := {}  # Stores tiles currently in vision
 var current_visible_tiles: Dictionary = {}
-var free_pan_enabled = false  # Default: OFF
+var free_pan_enabled = true  # Default: OFF
 var pan_speed = 500  # Adjust as needed
 var zoom_factor = 1.0  # Keep track of current zoom level
 var zoom_levels =  [1.0, 0.75, 0.5, 0.35, 0.2]  # Zoom factors
@@ -58,11 +59,27 @@ var target_cursor_grid_pos: Vector2i = Vector2i.ZERO
 var retry_attempts := 0
 var cursor_realigned := false  # Global flag to avoid loops
 
+var _last_world_view_pos: Vector2 = Vector2.ZERO
+var _wvpos_initialized: bool = false
 
 var chunk_id: String = LoadHandlerSingleton.get_current_chunk_id()
 var placement: Dictionary = LoadHandlerSingleton.load_temp_localmap_placement()
 var biome_key: String = placement.get("local_map", {}).get("biome_key", "")
 var z_level: String = str(LoadHandlerSingleton.get_current_z_level())
+
+var target_map_position: Vector2 = Vector2.ZERO
+var is_sliding: bool = false
+const SLIDE_SPEED := 6.0  # tweak: higher = faster snap
+
+var _last_fov_grid: Vector2i = Vector2i(-999, -999)
+var _last_fov_update_time: float = 0.0
+var _los_cache: Dictionary = {}
+
+var camera_tween: Tween
+var camera_follow_speed := 6.0
+
+var is_dragging := false
+var last_mouse_pos: Vector2 = Vector2.ZERO
 
 
 const MAX_RETRIES := 10
@@ -81,7 +98,11 @@ const NPC_VISIBILITY_RADIUS := 6.0
 const NPC_UNDERLAY_ALPHA := 0.45
 const NPC_MIN_ALPHA := 0.1
 
+const CAMERA_SLIDE_DURATION := 0.12  # seconds
+const CAMERA_EASING := 0.25          # softer easing for turn feel
+
 func _ready():
+	set_process_unhandled_input(true)
 	process_mode = Node.PROCESS_MODE_ALWAYS  # 👈 allows input while paused
 	if turn_manager:
 		turn_manager.local_map_ref = self
@@ -175,6 +196,10 @@ func _ready():
 	
 	# 👇 Add this right below
 	call_deferred("_sync_fov_after_load")
+	
+	var weather_canvas = $WeatherCanvas
+	if weather_canvas:
+		weather_canvas.process_mode = Node.PROCESS_MODE_ALWAYS
 	
 func load_and_render_local_map():
 	# 🔒 Prevent first-frame NPC flash
@@ -395,6 +420,14 @@ func spawn_player_visual():
 
 	update_fov_from_player(Vector2i(player_pos["x"], player_pos["y"]))
 	#call_deferred("center_tile_container")
+	# 🎥 Center camera on player once when map loads
+	await get_tree().process_frame
+	var vp: Vector2 = get_viewport_rect().size
+	var target_pos: Vector2 = (vp * 0.5) - (player_instance.position * zoom_factor)
+	var tween := create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(world_view, "position", target_pos, 0.25)
 
 	#print("✅ Player visual spawned at (local):", player_pos, "→ World Pos:", Vector2(x, y))
 
@@ -409,28 +442,27 @@ func _on_GenNewMapDebugButton_pressed():
 	#print("🛠 DEBUG: Generate New Map button pressed!")
 	generate_local_map()
 
-
 func center_tile_container():
+	print("🌀 SMARTCAM center_tile_container called from:", get_stack())
 	if player == null:
 		return
 	_center_on_anchor(player.position)
+	
+func _center_on_anchor(anchor_world_px: Vector2) -> void:
+	print("🌀 SMARTCAM center_on_anchor called from:", get_stack())
+	# 🧩 Prevent camera spam: ignore new calls if a tween is already in motion
+	if camera_tween and camera_tween.is_running():
+		print("🧩 SMARTCAM skip — tween still running")
+		return
 
-	var player_pixel_pos: Vector2 = player.position
+	var vp := get_viewport_rect().size
+	var desired_pos: Vector2 = (vp * 0.5) - (anchor_world_px * zoom_factor)
 
-	var viewport_size: Vector2 = get_viewport().get_visible_rect().size
-	var zoom: float = tile_container.scale.x  # Assuming uniform scaling
+	camera_tween = create_tween()
+	camera_tween.set_ease(Tween.EASE_OUT)
+	camera_tween.set_trans(Tween.TRANS_CUBIC)
+	camera_tween.tween_property(world_view, "position", desired_pos, CAMERA_SLIDE_DURATION)
 
-	var offset: Vector2 = viewport_size / (2.0 * zoom)
-
-	var new_position = -player_pixel_pos + offset
-	tile_container.position = new_position
-
-	#print("🎯 Centering on player:")
-	#print("   ↪ Grid Pos:", Vector2i(player_pixel_pos / TILE_SIZE))
-	#print("   ↪ Pixel Pos:", player_pixel_pos)
-	#print("📐 Viewport Size:", viewport_size)
-	#print("🔍 Zoom Level:", zoom)
-	#print("📍 New TileContainer Pos:", new_position)
 
 func _toggle_free_pan():
 	var previous_position = tile_container.position  # ✅ Store current position before toggling
@@ -474,49 +506,90 @@ func _process(delta):
 		last_minute_seen = current_minute
 		calculate_sunlight_levels()
 
-func _set_map_scale(s: float) -> void:
-	zoom_factor = s
-	for n in map_layers:
-		if is_instance_valid(n):
-			n.scale = Vector2(s, s)
+	if is_sliding:
+			var current_pos: Vector2 = _get_map_position()
+	#		
+			# 🧭 Smooth damp: approach target at fixed speed (pixels/sec)
+			var direction: Vector2 = target_map_position - current_pos
+			var distance: float = direction.length()
+			
+			if distance < 0.5:
+				_set_map_position(target_map_position)
+				is_sliding = false
+			else:
+				var max_step: float = SLIDE_SPEED * delta * 88.0  # roughly 1 tile per speed unit
+				var step: float = min(distance, max_step)
+				var new_pos: Vector2 = current_pos + direction.normalized() * step
+				_set_map_position(new_pos)
+	
+	if player and not free_pan_enabled and not is_sliding:
+		var vp: Vector2 = get_viewport_rect().size
+		var target: Vector2 = ((vp * 0.5) - (player.position * zoom_factor)).round()
 
+		var camera_follow_speed := 6.0
+		world_view.position = world_view.position.lerp(target, camera_follow_speed * delta)
+				
+func _set_map_scale(s: float) -> void:
+	world_view.scale = Vector2(s, s)
+	zoom_factor = s
+		
 func _set_map_position(p: Vector2) -> void:
-	for n in map_layers:
-		if is_instance_valid(n):
-			n.position = p
+	# Move the entire world
+	world_view.position = p
 
 func _get_map_position() -> Vector2:
-	# All layers share the same position; read from one.
-	return tile_container.position
+	return world_view.position
 
-func _center_on_anchor(anchor_world_px: Vector2) -> void:
+# old center on anchor func
+#func _center_on_anchor(anchor_world_px: Vector2) -> void:
 	# Keep the given world pixel (e.g. player.position) centered in the view
-	var vp: Vector2 = get_viewport_rect().size
-	var pos: Vector2 = (vp * 0.5) - (anchor_world_px * zoom_factor)
-	_set_map_position(pos)
+#	var vp: Vector2 = get_viewport_rect().size
+#	var pos: Vector2 = (vp * 0.5) - (anchor_world_px * zoom_factor)
+#	_set_map_position(pos)
 
-func zoom_in():
+func zoom_in() -> void:
 	if current_zoom_index > 0:
 		current_zoom_index -= 1
 		update_zoom()
 
-func zoom_out():
+func zoom_out() -> void:
 	if current_zoom_index < zoom_levels.size() - 1:
 		current_zoom_index += 1
 		update_zoom()
 
-func update_zoom():
+func update_zoom() -> void:
+	if world_view == null:
+		return
+
 	var new_zoom: float = zoom_levels[current_zoom_index]
+	var old_zoom: float = zoom_factor
+	if new_zoom == old_zoom:
+		return
 
-	# Anchor zoom on the player (fallback to current center if player isn’t ready)
-	var anchor: Vector2
-	if player != null:
-		anchor = player.position
-	else:
-		anchor = (get_viewport_rect().size * 0.5) / max(zoom_factor, 0.0001)
+	var vp_size: Vector2 = get_viewport_rect().size
+	var mouse_pos: Vector2 = get_viewport().get_mouse_position().clamp(Vector2.ZERO, vp_size)
 
-	_set_map_scale(new_zoom)
-	_center_on_anchor(anchor)
+	# 🧭 Lock pivot world-space point *before* zoom changes
+	var pivot_world_before: Vector2 = (mouse_pos - world_view.position) / old_zoom
+
+	# 🧱 Compute final position target *once*, before any tweening
+	var target_pos: Vector2 = mouse_pos - pivot_world_before * new_zoom
+
+	# 🧩 Immediately apply scale target but don’t tween both independently
+	# Instead, tween them in a grouped, atomic way
+	var tween := create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.set_parallel(true)
+	tween.tween_property(world_view, "scale", Vector2(new_zoom, new_zoom), 0.2)
+	tween.tween_property(world_view, "position", target_pos, 0.2)
+	tween.set_parallel(false)
+
+	zoom_factor = new_zoom
+
+
+func _apply_zoom_step(val: float) -> void:
+	_set_map_scale(val)
 
 
 func _unhandled_input(event):
@@ -529,6 +602,32 @@ func _unhandled_input(event):
 				print("⚠️ Viewport is null when trying to set input as handled.")
 			return
 	
+	# 🟡 Give ESC key to exit popup first
+	if event.is_action_pressed("ui_cancel"):
+		if active_area_exit_popup and is_instance_valid(active_area_exit_popup):
+			active_area_exit_popup.queue_free()
+			active_area_exit_popup = null
+			get_viewport().set_input_as_handled()
+			return
+
+		# 🟢 Close any active inventory / trade / loot windows before showing pause menu
+	if event.is_action_pressed("ui_cancel"):
+		var ui_layer := get_node_or_null("UILayer")
+		if ui_layer:
+			for child in ui_layer.get_children():
+				# Match all dynamic inventory or trade UIs
+				var n := child.name
+				if (
+					(n.begins_with("Inventory_mini") or
+					n.begins_with("ChestInventoryUI") or
+					n.begins_with("TradeInventoryUI"))
+					and child.visible
+				):
+					print("🧭 Closing UI window:", n)
+					child.queue_free()
+					get_viewport().set_input_as_handled()
+					return
+
 	# Toggle pause menu
 	if event.is_action_pressed("ui_cancel"):
 		if pause_menu.visible:
@@ -546,6 +645,17 @@ func _unhandled_input(event):
 	elif event.is_action_pressed("local_zoom_out"):
 		zoom_out()
 
+	# 🖱️ Click-and-drag camera panning
+	if event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_MIDDLE and event.pressed:
+			is_dragging = true
+			last_mouse_pos = get_viewport().get_mouse_position()
+		elif event.button_index == MOUSE_BUTTON_MIDDLE and not event.pressed:
+			is_dragging = false
+
+	elif event is InputEventMouseMotion and is_dragging:
+		var mouse_delta: Vector2 = event.relative
+		world_view.position += mouse_delta
 
 func _on_generate_pressed():
 	generate_local_map()
@@ -608,32 +718,38 @@ func generate_local_map():
 
 var last_logged_position = Vector2.ZERO  # Stores the last printed position
 
-func handle_panning(delta):
-	if tile_container == null:
-		print("❌ ERROR: `tile_container` is NULL in `handle_panning()`! Aborting.")
-		return  # 🔥 Prevent crashes
+func handle_panning(delta: float) -> void:
+	if world_view == null:
+		return
 
-	var move_vector = Vector2.ZERO
+	# 1) Try the compact vector first
+	var move_vector := Input.get_vector("pan_left", "pan_right", "pan_up", "pan_down")
 
-	# ✅ Basic movement controls
-	if Input.is_action_pressed("up_move"):
-		move_vector.y += 1
-	if Input.is_action_pressed("down_move"):
-		move_vector.y -= 1
-	if Input.is_action_pressed("left_move"):
-		move_vector.x += 1
-	if Input.is_action_pressed("right_move"):
-		move_vector.x -= 1
+	# 2) Fallback: manual sampling (covers mis-bound actions)
+	if move_vector == Vector2.ZERO:
+		if Input.is_action_pressed("pan_up"):
+			move_vector.y -= 1   # up is negative Y
+		if Input.is_action_pressed("pan_down"):
+			move_vector.y += 1
+		if Input.is_action_pressed("pan_left"):
+			move_vector.x -= 1
+		if Input.is_action_pressed("pan_right"):
+			move_vector.x += 1
 
-	# ✅ Normalize to prevent diagonal speed increase
-	if move_vector.length() > 0:
-		move_vector = move_vector.normalized()
+	# If still nothing, bail
+	if move_vector == Vector2.ZERO:
+		return
 
-	# ✅ Adjust movement speed based on zoom level
-	var adjusted_speed = pan_speed / zoom_factor
+	# Normalize + move whole world
+	move_vector = move_vector.normalized()
+	var adjusted_speed: float = float(pan_speed) / max(zoom_factor, 0.0001)
 
-	# ✅ Apply movement to `tile_container`
-	tile_container.position += move_vector * adjusted_speed * delta
+	# Debug once per press to confirm we're reading input
+	# print("PAN vec:", move_vector, " adj:", adjusted_speed, " pos(before):", world_view.position)
+
+	world_view.position -= move_vector * adjusted_speed * delta
+	# print("pos(after):", world_view.position)
+
 
 func update_time_label():
 	var time_label = get_node_or_null("UILayer/LocalPlayUI/Time")
@@ -817,7 +933,17 @@ func is_tile_walkable(pos: Vector2i) -> bool:
 	return cell.get("walkable", true)
 	
 func update_fov_from_player(grid_pos: Vector2i): 
+	# 🧠 Skip expensive FOV if player hasn't moved to a new tile
+	if _last_fov_grid == grid_pos:
+		return
+	_last_fov_grid = grid_pos
 	#print("🔦 FOV update from:", grid_pos)
+	
+	# 🕒 Limit FOV updates to at most 20 per second (~0.05s)
+	var now := Time.get_ticks_msec() / 1000.0
+	if now - _last_fov_update_time < 0.05:
+		return
+	_last_fov_update_time = now
 
 	var previous_visible_tiles := current_visible_tiles.keys()
 	visible_tiles.clear()
@@ -867,7 +993,7 @@ func update_fov_from_player(grid_pos: Vector2i):
 	update_object_visibility(grid_pos)
 
 	if light_overlay.is_ready:
-		update_light_map()
+		call_deferred("update_light_map")
 
 	# 🕒 Optional redraw (now uses is_ready flag)
 	var time_now: float = Time.get_ticks_msec() / 1000.0
@@ -884,7 +1010,10 @@ func update_fov_from_player(grid_pos: Vector2i):
 				)
 
 		_last_visibility_update_time = time_now
-
+		
+	_los_cache.clear()
+	
+	
 func update_light_map() -> void:
 	if not light_overlay or not light_overlay.is_ready:
 		#print("⏳ Skipping update_light_map() — LightOverlay not ready yet.")
@@ -1082,29 +1211,28 @@ func calculate_sunlight_levels() -> void:
 
 
 func has_line_of_sight(from: Vector2i, to: Vector2i, strict := false, allow_darkness_pass := false) -> bool:
-	var line = get_bresenham_line(from, to)
+	var key := str(from.x, "_", from.y, "_", to.x, "_", to.y)
+	if _los_cache.has(key):
+		return _los_cache[key]
 
+	var line = get_bresenham_line(from, to)
 	for point in line:
 		if not is_in_bounds(point):
+			_los_cache[key] = false
 			return false
-
 		var cell = walkability_grid[point.y][point.x]
 		var terrain_type: String = cell.get("terrain_type", "")
 		var object_type: String = cell.get("object_type", "")
 		var tile_state: Dictionary = cell.get("tile_state", {})
-
 		var blocks_vision = Constants.is_blocking_vision(terrain_type, object_type, tile_state)
-
-		# 👁️ Let light "pass" through darkness if requested
 		if allow_darkness_pass and not blocks_vision:
 			continue
-
 		if blocks_vision:
 			if strict or point != to:
+				_los_cache[key] = false
 				return false
-
+	_los_cache[key] = true
 	return true
-
 
 func get_bresenham_line(from: Vector2i, to: Vector2i) -> Array:
 	var points = []
@@ -1186,6 +1314,12 @@ func _apply_fov_to_npc_layer(layer: Node2D, is_underlay: bool) -> void:
 
 		var spr: Sprite2D = c
 		var gpos: Vector2i = Vector2i(int(round(spr.position.x / TILE_SIZE)), int(round(spr.position.y / TILE_SIZE)))
+
+		# 🧱 NEW: prevent out-of-bounds NPCs from being drawn at all
+		if not is_in_bounds(gpos):
+			spr.visible = false
+			continue
+
 		var visible: bool = current_visible_tiles.has(gpos)
 
 		if not visible:
@@ -1212,6 +1346,7 @@ func _apply_fov_to_npc_layer(layer: Node2D, is_underlay: bool) -> void:
 		tint.a = alpha
 		spr.modulate = tint
 
+
 func rebuild_walkability():
 	#print("🔁 Rebuilding walkability grid...")
 
@@ -1234,68 +1369,52 @@ func rebuild_walkability():
 
 
 func update_tile_at(pos: Vector2i):
-	if not has_node("TileContainer"):
-		#print("❌ No TileContainer found for tile update.")
+	if not has_node("WorldView/TileContainer"):
+		print("⚠️ No TileContainer found for tile update.")
 		return
 
-	var tile_container = $TileContainer
+	var tile_container: Node2D = $WorldView/TileContainer
 	var tile_dict = current_tile_chunk.get("tile_grid", {})
 	var object_dict = current_object_chunk
-
 	var key = "%d_%d" % [pos.x, pos.y]
-	var tile_node_name = "tile_%s" % key
-	var object_node_name = "obj_%s" % key
 
 	if not tile_dict.has(key):
-		#print("❌ Tile update failed — no tile data at:", key)
+		print("⚠️ Tile update failed — no tile data at:", key)
 		return
 
-	# 🧱 Update tile sprite
-	var tile_data = tile_dict[key]
-	var tile_name = tile_data.get("tile", "unknown")
-	var tile_texture = Constants.get_texture_from_name(tile_name)
+	# 🧱 Refresh tile texture
+	var tile_data: Dictionary = tile_dict[key]
+	var tile_name: String = tile_data.get("tile", "unknown")
+	var tile_texture: Texture2D = Constants.get_texture_from_name(tile_name)
 
-	var tile_node = tile_container.get_node_or_null(tile_node_name)
-	if tile_node and tile_node is Sprite2D:
+	var tile_node_name = "tile_%s" % key
+	var tile_node: Sprite2D = tile_container.get_node_or_null(tile_node_name)
+	if tile_node:
 		tile_node.texture = tile_texture
 	else:
-		print("⚠️ Tile sprite not found at", tile_node_name)
+		# if we somehow lost it, spawn a new tile
+		var new_tile := Sprite2D.new()
+		new_tile.name = tile_node_name
+		new_tile.texture = tile_texture
+		new_tile.position = Vector2(pos.x * TILE_SIZE, pos.y * TILE_SIZE)
+		tile_container.add_child(new_tile)
+		print("🎨 Reconstructed missing tile sprite at", pos)
 
-	# 🧹 Remove old object sprite (if any)
-	var old_object_node = tile_container.get_node_or_null(object_node_name)
-	if old_object_node:
-		old_object_node.queue_free()
+	# 🔦 Flag tile as dirty for lighting update
+	if light_overlay and "dirty_tiles" in light_overlay:
+		light_overlay.dirty_tiles[pos] = true
 
-	# 🕯️ Add updated object sprite if present
-	var result = Constants.find_object_at(object_dict, pos.x, pos.y, true)
-	if result.has("data"):
-		var obj = result["data"]
-		var obj_type = obj.get("type", "")
-		var obj_state = obj.get("state", {})
+	# 🧹 Object sync handled by update_object_at
+	if has_method("update_object_at"):
+		update_object_at(pos)
 
-		var obj_texture: Texture2D = null
-		if obj_type == "candelabra":
-			obj_texture = Constants.TILE_TEXTURES.get("candelabra_lit" if obj_state.get("is_lit", false) else "candelabra")
-		elif obj_type == "slum_streetlamp":
-			obj_texture = Constants.TILE_TEXTURES.get("slum_streetlamp" if obj_state.get("is_lit", false) else "slum_streetlamp_broken")
-		else:
-			obj_texture = Constants.get_object_texture(obj_type)
-
-		if obj_texture:
-			var sprite := Sprite2D.new()
-			sprite.name = object_node_name
-			sprite.texture = obj_texture
-			sprite.position = Vector2(pos.x * TILE_SIZE, pos.y * TILE_SIZE)
-			sprite.add_to_group("object_sprites")
-			tile_container.add_child(sprite)
-			print("🎨 Updated object at", pos, "→", obj_type)
 
 func update_object_at(pos: Vector2i):
 	if not has_node("TileContainer"):
 		#print("❌ No TileContainer found for object update.")
 		return
 
-	var tile_container = $TileContainer
+	var tile_container: Node2D = $WorldView/TileContainer
 	var object_dict = current_object_chunk
 	
 		# 🛠️ Unwrap if needed
@@ -1654,7 +1773,7 @@ func load_z_level(z: int):
 	load_and_render_local_map()
 
 	# Read the saved spawn position (if any)
-	var placement_data = LoadHandlerSingleton.load_temp_placement()
+	var placement_data: Dictionary = LoadHandlerSingleton.load_temp_localmap_placement()
 	var pos_data = placement_data.get("local_map", {}).get("spawn_pos", null)
 
 	if pos_data != null:
@@ -1685,52 +1804,48 @@ func _deferred_spawn_player(spawn_tile: Vector2i) -> void:
 	#print("🧭 Player spawned at:", spawn_tile)
 
 func get_egress_for_current_position(player_pos: Vector2i) -> Dictionary:
-	var placement = LoadHandlerSingleton.load_temp_placement()
-	var chunk_id = placement["local_map"].get("current_chunk_id", "")
-	var z_level = int(placement["local_map"].get("z_level", 0))
-	var biome_key = placement["local_map"].get("biome_key", "")
-	var biome = Constants.get_biome_name_from_key(biome_key)
+	var placement: Dictionary = LoadHandlerSingleton.load_temp_localmap_placement()
+	var chunk_id: String = placement.get("local_map", {}).get("current_chunk_id", "")
+	var z_raw: Variant = placement.get("local_map", {}).get("z_level", 0)
+	var z_int: int = LoadHandlerSingleton.z_to_int(z_raw)
+	var key: String = "%s|%s" % [chunk_id, LoadHandlerSingleton.z_key(z_int)]
 
-	var local_pos = {
-		"x": player_pos.x,
-		"y": player_pos.y,
-		"z": z_level
-	}
+	var biome_key: String = placement.get("local_map", {}).get("biome_key", "")
+	var biome_name: String = Constants.get_biome_name_from_key(biome_key)
 
-	var key = "%s|z%d" % [chunk_id, z_level]
+	var local_pos := {"x": player_pos.x, "y": player_pos.y, "z": z_int}
 	print("📦 Checking egress for key:", key)
-	print("🧭 Player global pos & z:", local_pos, "biome:", biome)
+	print("🧭 Player local pos & z:", local_pos, "biome:", biome_name)
 
 	LoadHandlerSingleton.clear_cached_egress_register()
-	var egress_data = LoadHandlerSingleton.load_global_egress_data(true)
+	var egress_data: Dictionary = LoadHandlerSingleton.load_global_egress_data(true)
 	if not egress_data.has(key):
-		print("❌ No egress data found under key:", key, "available keys:", egress_data.keys())
+		print("❌ No egress data under key:", key, "keys:", egress_data.keys())
 		return {}
 
-	var chunk_origin = LoadHandlerSingleton.get_chunk_origin(chunk_id)
+	var chunk_origin := LoadHandlerSingleton.get_chunk_origin(chunk_id)
 	print("💡 chunk_origin for chunk:", chunk_origin)
 
 	for egress in egress_data[key]:
-		var pos = egress["position"]
-		var biome_match = egress["biome"] == biome
-		if not biome_match:
+		var pos: Dictionary = egress.get("position", {})
+		if egress.get("biome", "") != biome_name:
 			continue
 
-		var local_x = pos["x"] - chunk_origin.x
-		var local_y = pos["y"] - chunk_origin.y
+		var local_x: int = int(pos.get("x", -999)) - chunk_origin.x
+		var local_y: int = int(pos.get("y", -999)) - chunk_origin.y
+		var pos_z: int = LoadHandlerSingleton.z_to_int(pos.get("z", 0))
 
-		# exact global match?
-		if pos["x"] == local_pos["x"] and pos["y"] == local_pos["y"] and pos["z"] == z_level:
+		if pos["x"] == player_pos.x + chunk_origin.x and pos["y"] == player_pos.y + chunk_origin.y and pos_z == z_int:
 			print("✅ Exact global match egress found:", egress)
 			return egress
 
-		# fallback: local match
-		if local_x == player_pos.x and local_y == player_pos.y and pos["z"] == z_level:
+		if local_x == player_pos.x and local_y == player_pos.y and pos_z == z_int:
 			print("✅ Fallback local match egress found:", egress)
 			return egress
 
 	print("🚫 No matching egress found in key:", key)
 	return {}
+
 
 
 func get_visible_chunks() -> Array:
@@ -1873,11 +1988,11 @@ func get_chunk_coords_from_tile(tile_pos: Vector2i) -> Vector2i:
 
 
 func get_current_z_level() -> int:
-	var placement := LoadHandlerSingleton.load_temp_placement()
+	var placement := LoadHandlerSingleton.load_temp_localmap_placement()
 	return placement.get("local_map", {}).get("z_level", 0)
 
 func is_valid_build_position(pos: Vector2i) -> bool:
-	var placement := LoadHandlerSingleton.load_temp_placement()
+	var placement := LoadHandlerSingleton.load_temp_localmap_placement()
 	var player_pos: Dictionary = placement.get("local_map", {}).get("grid_position_local", {})
 
 	if player_pos.get("x", -999) == pos.x and player_pos.get("y", -999) == pos.y:
@@ -2262,3 +2377,191 @@ func apply_fov_to_npc_layers() -> void:
 				var g := Vector2i(int(c.position.x / TILE_SIZE), int(c.position.y / TILE_SIZE))
 				# Slightly visible if both FOV and underlay; otherwise 0
 				c.modulate.a = 0.18 if current_visible_tiles.has(g) else 0.0
+
+func probe_egress_here(grid_pos: Vector2i) -> void:
+	# 🔑 Identify current biome and chunk folder (not short key!)
+	var placement: Dictionary = LoadHandlerSingleton.load_temp_localmap_placement()
+	var biome_ref: String = str(placement.get("local_map", {}).get("biome_key", "grassland_explore_fields"))
+
+	var biome_folder: String = ""
+	if biome_ref.contains("_"):  # already a folder
+		biome_folder = biome_ref
+	elif biome_ref.length() <= 3:  # short key
+		biome_folder = Constants.get_biome_folder_from_key(biome_ref)
+	else:  # plain biome name
+		biome_folder = biome_ref
+
+	var chunk_id: String = get_current_chunk_id()
+	var z: String = str(LoadHandlerSingleton.get_current_z_level())
+	var key: String = "%s|z%s" % [chunk_id, z]
+
+	# 🧾 Load egress register for this biome folder
+	var egress_data: Dictionary = LoadHandlerSingleton.load_egress_register(biome_folder)
+	if not egress_data.has(key):
+		return
+
+	var egress_list: Array = egress_data[key]
+
+	# 🔍 Check if we are standing on any egress tile
+	for entry in egress_list:
+		if typeof(entry) != TYPE_DICTIONARY or not entry.has("position"):
+			continue
+
+		var pos_dict: Dictionary = entry["position"]
+		var egress_pos := Vector2i(int(pos_dict.get("x", -999)), int(pos_dict.get("y", -999)))
+
+		if egress_pos == grid_pos:
+			# Grab egress target data
+			var target_z := int(entry.get("target_z", z))
+			var egress_type: String = str(entry.get("type", "unknown"))
+
+			print("🌀 Egress detected at:", grid_pos, "| type:", egress_type, "| target Z:", target_z)
+
+			# ✅ Update placement JSON so temp data reflects the new Z-level
+			var placement_data := LoadHandlerSingleton.load_temp_localmap_placement()
+			if placement_data.has("local_map"):
+				placement_data["local_map"]["z_level"] = str(target_z)
+				placement_data["local_map"]["grid_position_local"] = {
+					"x": grid_pos.x,
+					"y": grid_pos.y
+				}
+			LoadHandlerSingleton.save_temp_placement(placement_data)
+
+			# ✅ Update live in-memory state if available
+			if LoadHandlerSingleton.has_method("set_current_local_grid_pos"):
+				LoadHandlerSingleton.set_current_local_grid_pos(grid_pos)
+			if LoadHandlerSingleton.has_method("set_current_z_level"):
+				LoadHandlerSingleton.set_current_z_level(target_z)
+
+			# ✅ Only spawn popup for actual exits, not internal stairs/trapdoors
+			if has_method("spawn_area_exit_popup") and not egress_type.contains("stairs") and not egress_type.contains("trapdoor"):
+				spawn_area_exit_popup()
+
+			# ✅ Reload LocalMap for the new z-level (deferred for safety)
+			if has_method("_reload_z_level"):
+				call_deferred("_reload_z_level", target_z, grid_pos)
+
+			last_egress_pos = grid_pos
+			return
+
+	# ❌ No egress underfoot — close stale popup if it exists
+	if active_area_exit_popup:
+		active_area_exit_popup.queue_free()
+		active_area_exit_popup = null
+
+func _reload_z_level(new_z: int, entry_pos: Vector2i) -> void:
+	print("🔄 Reloading LocalMap for new Z-level:", new_z)
+	var old_z := int(current_z_level)  # previous level before reload
+	
+	# Normalize & set live state
+	var z_int := LoadHandlerSingleton.z_to_int(new_z)
+	LoadHandlerSingleton.set_current_z_level(z_int)
+	LoadHandlerSingleton.set_current_local_grid_pos(entry_pos)
+
+	# Persist temp placement (single source of truth)
+	var placement_data: Dictionary = LoadHandlerSingleton.load_temp_localmap_placement()
+	if not placement_data.has("local_map"):
+		placement_data["local_map"] = {}
+	placement_data["local_map"]["z_level"] = z_int
+	placement_data["local_map"]["grid_position_local"] = {"x": entry_pos.x, "y": entry_pos.y}
+	LoadHandlerSingleton.save_temp_placement(placement_data) # ✅ use save_temp_placement
+
+	# Resolve the actual containers under WorldView (null-safe)
+	var tile_container  : Node2D = get_node_or_null("WorldView/TileContainer")
+	var npc_container   : Node2D = get_node_or_null("WorldView/NPCContainer")
+	var npc_underlay    : Node2D = get_node_or_null("WorldView/NPCUnderlayContainer")
+
+	# Clear existing children safely (skip TargetingCursor)
+	for c in [tile_container, npc_container, npc_underlay]:
+		if c:
+			for child in c.get_children():
+				if c == tile_container and child.name == "TargetingCursor":
+					continue
+				child.queue_free()
+
+	# Let frees complete before rebuild
+	await get_tree().process_frame
+
+	# Rebuild the new Z level (uses your existing init path)
+	if has_method("load_z_level"):
+		load_z_level(z_int)
+	else:
+		load_and_render_local_map()
+	
+	if world_view:
+		var zf: float = zoom_factor if zoom_factor != 0 else 1.0
+		world_view.position = Vector2.ZERO
+		world_view.scale = Vector2.ONE * zf
+	
+	# Move player to correct tile and center camera smoothly after map loads
+	if player:
+		player.position = Vector2(entry_pos.x * TILE_SIZE, entry_pos.y * TILE_SIZE)
+		call_deferred("center_on_player_after_load", 0.2)
+		
+	# ♻️ Force LOS/FOV to recompute for this Z (same XY stairs case)
+	_last_fov_grid = Vector2i(-999, -999)   # invalidate the cache
+	current_visible_tiles.clear()
+	visible_tiles.clear()
+	_los_cache.clear()
+	if light_overlay and "dirty_tiles" in light_overlay:
+		light_overlay.dirty_tiles.clear()
+
+	# Ensure the map has finished building before FOV
+	await get_tree().process_frame
+
+	# Recompute FOV + lighting immediately
+	if has_method("update_fov_from_player"):
+		update_fov_from_player(entry_pos)
+	if has_method("apply_fov_to_npc_layers"):
+		apply_fov_to_npc_layers()
+	if has_method("update_light_map"):
+		call_deferred("update_light_map")
+
+	# Optional: pull light from lower z after FOV
+	if has_method("propagate_light_from_lower_z"):
+		propagate_light_from_lower_z()
+
+	print("✅ LocalMap reloaded cleanly for Z =", z_int)
+	
+	# 🪜 Travel log feedback for Z-level change (deferred to ensure UI is ready)
+
+	await get_tree().process_frame
+	await get_tree().process_frame
+
+	if travel_log and travel_log.has_method("add_message_to_log"):
+		if z_int > old_z:
+			travel_log.add_message_to_log("You ascend to an upper level.")
+		else:
+			travel_log.add_message_to_log("You descend to a lower level.")
+	else:
+		print("⚠️ Travel log not ready when trying to post Z-level message.")
+
+func force_update_fov_at(grid_pos: Vector2i) -> void:
+	# Invalidate caches & throttle so the next call recomputes immediately
+	_last_fov_grid = Vector2i(-999, -999)
+	_last_fov_update_time = 0.0
+
+	# If you want to guarantee a redraw delta, also mark current tiles dirty:
+	for pos in current_visible_tiles.keys():
+		if light_overlay and "dirty_tiles" in light_overlay:
+			light_overlay.dirty_tiles[pos] = true
+
+	# Now run the normal path
+	update_fov_from_player(grid_pos)
+
+	# Ensure lighting texture updates after visibility change
+	if has_method("update_light_map"):
+		call_deferred("update_light_map")
+
+func center_on_player_after_load(delay := 0.2) -> void:
+	if player == null or world_view == null:
+		return
+	await get_tree().create_timer(delay).timeout
+
+	var vp: Vector2 = get_viewport_rect().size
+	var target_pos: Vector2 = (vp * 0.5) - (player.position * zoom_factor)
+
+	var tween := create_tween()
+	tween.set_ease(Tween.EASE_OUT)
+	tween.set_trans(Tween.TRANS_CUBIC)
+	tween.tween_property(world_view, "position", target_pos, 0.25)

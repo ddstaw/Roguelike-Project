@@ -2,6 +2,7 @@ extends Panel
 
 #This is Left_Panel, a child of parent control node Inventory_LocalPlay in res://scenes/play/Inventory_LocalPlay.tscn
 
+const IconBuilder := preload("res://ui/scripts/IconBuilder.gd")
 const ITEM_DATA := preload("res://constants/item_data.gd")
 const SLOT_SCENE := preload("res://scenes/play/ItemSlot.tscn")
 
@@ -384,41 +385,13 @@ func _pass_filter(s: Dictionary) -> bool:
 			return true
 
 func _icon_for(item: Dictionary) -> Texture2D:
-	if !_inventory.has(item.get("unique_ID", "")):
+	if not _inventory.has(item.get("unique_ID", "")):
 		return null
 	if _icon_cache.has(item.get("unique_ID", "")):
 		return _icon_cache[item.get("unique_ID", "")]
 
-	var tex: Texture2D = null
-
-	if item.has("img_layers"):
-		var layers: Array = item["img_layers"]
-		
-		for i: String in layers:
-			if !ResourceLoader.exists(i):
-				push_warning("Missing image in img_layers: " + i)
-				continue
-
-			var layer_tex: Texture2D = ResourceLoader.load(i) as Texture2D
-			if layer_tex == null:
-				continue
-
-			if tex == null:
-				tex = layer_tex
-			else:
-				var base_img: Image = tex.get_image()
-				var layer_img: Image = layer_tex.get_image()
-				if base_img == null or layer_img == null:
-					continue
-
-				base_img.blend_rect(layer_img, Rect2(Vector2.ZERO, layer_tex.get_size()), Vector2.ZERO)
-				tex = ImageTexture.create_from_image(base_img)
-
-	else:
-		var def: Dictionary = ITEM_DATA.ITEM_PROPERTIES.get(str(item.get("item_ID", "")), {})
-		var fallback: String = str(def.get("img_path", ""))
-		if fallback != "" and ResourceLoader.exists(fallback):
-			tex = ResourceLoader.load(fallback) as Texture2D
+	# ✅ Use IconBuilder’s smart helper
+	var tex: Texture2D = IconBuilder.get_icon_for_item(item)
 
 	_icon_cache[item.get("unique_ID", "")] = tex
 	return tex
@@ -522,48 +495,3 @@ func _canonical_filter(label: String) -> String:
 		"MAT", "MATS", "MATERIALS": return "MATS"
 		"LOOT": return "LOOT"
 		_: return u
-
-func _generate_layered_icon(layer_paths: Array[String]) -> Texture2D:
-	if layer_paths.is_empty():
-		return null
-
-	var base_image: Image = null
-
-	for i in range(layer_paths.size()):
-		var path := layer_paths[i]
-		if !ResourceLoader.exists(path):
-			push_warning("Missing layer path: %s" % path)
-			continue
-
-		var tex := ResourceLoader.load(path) as Texture2D
-		if tex == null:
-			continue
-
-		var img: Image = tex.get_image()
-		if base_image == null:
-			base_image = img.duplicate()
-			continue
-
-		var is_overlay: bool = path.to_lower().find("overlay") != -1
-
-		for y in range(img.get_height()):
-			for x in range(img.get_width()):
-				var base_col := base_image.get_pixel(x, y)
-				var layer_col := img.get_pixel(x, y)
-
-				var final_col: Color = base_col
-
-				if is_overlay:
-					# Additive blend
-					final_col.r = clamp(base_col.r + layer_col.r * layer_col.a, 0.0, 1.0)
-					final_col.g = clamp(base_col.g + layer_col.g * layer_col.a, 0.0, 1.0)
-					final_col.b = clamp(base_col.b + layer_col.b * layer_col.a, 0.0, 1.0)
-					final_col.a = max(base_col.a, layer_col.a)
-				else:
-					# Normal alpha blend
-					final_col = layer_col.blend(base_col)
-
-				base_image.set_pixel(x, y, final_col)
-
-	var final_tex := ImageTexture.create_from_image(base_image)
-	return final_tex

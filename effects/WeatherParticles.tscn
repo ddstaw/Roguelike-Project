@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=3 uid="uid://ucugdf1odblj"]
+
+[ext_resource type="Texture2D" uid="uid://3ouc6ydr3ul7" path="res://effects/Assets/Weather/raindrop_average.png" id="1_jo0a7"]
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_2vjhn"]
+particle_flag_disable_z = true
+emission_shape_offset = Vector3(0, -540, 0)
+emission_shape_scale = Vector3(1, 1, 0)
+emission_shape = 3
+emission_box_extents = Vector3(960, 0, 0)
+angle_min = 80.0
+angle_max = 100.0
+direction = Vector3(1, 1, 0)
+spread = 10.0
+initial_velocity_min = 400.0
+initial_velocity_max = 600.0
+gravity = Vector3(0, 1200, 0)
+scale_max = 2.0
+color = Color(0.645824, 0.901336, 1, 1)
+
+[node name="WeatherParticles" type="GPUParticles2D"]
+position = Vector2(691, -51)
+scale = Vector2(5, 0.5)
+amount = 600
+process_material = SubResource("ParticleProcessMaterial_2vjhn")
+texture = ExtResource("1_jo0a7")
+lifetime = 1.6
+visibility_rect = Rect2(0, 0, 130, 290)

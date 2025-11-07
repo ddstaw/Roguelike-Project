@@ -1,6 +1,7 @@
 # res://scripts/HotBarPanel.gd
 extends Panel
 
+const IconBuilder := preload("res://ui/scripts/IconBuilder.gd")
 const ITEM_DATA := preload("res://constants/item_data.gd")
 const EMPTY_SLOT_ICON := preload("res://assets/ui/empty_hotbar_slot.png")
 
@@ -67,65 +68,15 @@ func _update_hotbar_slots():
 
 func _get_icon_for(item: Dictionary) -> Texture2D:
 	var uid := str(item.get("unique_ID", ""))
-	if !_icon_cache.has(uid):
-		var tex: Texture2D = null
+	if _icon_cache.has(uid):
+		return _icon_cache[uid]
 
-		if item.has("img_layers"):
-			var layers := item["img_layers"] as Array
-			tex = _generate_layered_icon(layers)
-		else:
-			var def: Dictionary = ITEM_DATA.ITEM_PROPERTIES.get(str(item.get("item_ID", "")), {})
-			var fallback: String = str(def.get("img_path", ""))
-			if fallback != "" and ResourceLoader.exists(fallback):
-				tex = ResourceLoader.load(fallback) as Texture2D
-
-		_icon_cache[uid] = tex
-	return _icon_cache.get(uid, null)
+	var tex: Texture2D = IconBuilder.get_icon_for_item(item)  # ✅ unified call
+	_icon_cache[uid] = tex
+	return tex
 
 
-func _generate_layered_icon(layer_paths: Array) -> Texture2D:
-	if layer_paths.is_empty():
-		return null
 
-	var base_image: Image = null
-
-	for i in range(layer_paths.size()):
-		var path: String = layer_paths[i]
-		if !ResourceLoader.exists(path):
-			push_warning("Missing layer path: %s" % path)
-			continue
-
-		var tex := ResourceLoader.load(path) as Texture2D
-		if tex == null:
-			continue
-
-		var img: Image = tex.get_image()
-		if base_image == null:
-			base_image = img.duplicate()
-			continue
-
-		var is_overlay: bool = path.to_lower().find("overlay") != -1
-
-		for y in range(img.get_height()):
-			for x in range(img.get_width()):
-				var base_col := base_image.get_pixel(x, y)
-				var layer_col := img.get_pixel(x, y)
-
-				var final_col: Color = base_col
-
-				if is_overlay:
-					final_col.r = clamp(base_col.r + layer_col.r * layer_col.a, 0.0, 1.0)
-					final_col.g = clamp(base_col.g + layer_col.g * layer_col.a, 0.0, 1.0)
-					final_col.b = clamp(base_col.b + layer_col.b * layer_col.a, 0.0, 1.0)
-					final_col.a = max(base_col.a, layer_col.a)
-				else:
-					final_col = layer_col.blend(base_col)
-
-				base_image.set_pixel(x, y, final_col)
-
-	var final_tex := ImageTexture.create_from_image(base_image)
-	return final_tex
-	
 func _next_hotbar():
 	var ids := _get_sorted_hotbar_ids()
 	if ids.is_empty():

@@ -2,18 +2,26 @@
 extends CharacterBody2D
 
 # 🕒 Held movement timing
-var is_moving := false
-var held_direction := Vector2i.ZERO
-var move_repeat_delay := 0.25  # Delay before repeat starts
-var move_repeat_rate := 0.1    # Time between repeated steps
-var move_timer := 0.0
 var last_grid_position := Vector2i(-1, -1)
 var travel_log_control: Node = null
 var interaction_mode := false
 var interaction_origin: Vector2i = Vector2i(-1, -1)  # where the player stood when entering mode
 
+var _is_auto_stepping := false
+var _auto_step_dir: Vector2i = Vector2i.ZERO
+var _turn_in_progress := false
+
+const HOLD_DELAY := 0.25  # seconds before auto-repeat begins
+const AUTO_STEP_INTERVAL := 0.15  # seconds between steps
 const BuildData = preload("res://constants/build_data.gd")
 
+var _last_camera_center_time: float = 0.0
+var _camera_step_counter: int = 0
+var _camera_recenter_threshold: float = 32.0  # distance in px before re-centering
+var _last_camera_anchor: Vector2 = Vector2.ZERO
+
+const CAMERA_CENTER_STEP_INTERVAL := 10  # ✅ change this number to test frequency
+const CAMERA_CENTER_INTERVAL := 0.3  # seconds between auto-centers (tweakable)
 
 signal fov_updated(tiles)
 
@@ -31,20 +39,21 @@ func _ready():
 	if local_map != null:
 		local_map.update_fov_from_player(current_grid_pos)
 		local_map.update_object_visibility(current_grid_pos)
-
+		call_deferred("_refresh_npc_visibility")
+		
 	# 🧪 Optional: auto-start build mode for debug purposes (remove or comment for prod)
 	# if local_map != null and local_map.has_method("enter_targeting"):
 	#     local_map.enter_targeting(local_map.TargetingMode.BUILD)
 
 
+func _process(_delta: float) -> void:
 
-func _process(delta):
-	if is_moving:
-		move_timer -= delta
-		if move_timer <= 0:
-			move_player(held_direction)
-			move_timer = move_repeat_rate
-			
+	if not _is_auto_stepping and not _turn_in_progress:
+		var dir := _get_input_direction()
+		if dir != Vector2i.ZERO:
+			_auto_step_dir = dir
+			_start_auto_step()
+
 func set_travel_log(log_node: Node):
 	travel_log_control = log_node
 
@@ -191,9 +200,26 @@ func _unhandled_input(event):
 				get_viewport().set_input_as_handled()
 				return
 
-	elif event.is_released():
-		is_moving = false
-		held_direction = Vector2.ZERO
+
+func _get_input_direction() -> Vector2i:
+	var dir := Vector2i.ZERO
+	if Input.is_action_pressed("up_move"):
+		dir.y -= 1
+	elif Input.is_action_pressed("down_move"):
+		dir.y += 1
+	elif Input.is_action_pressed("left_move"):
+		dir.x -= 1
+	elif Input.is_action_pressed("right_move"):
+		dir.x += 1
+	elif Input.is_action_pressed("upleft_move"):
+		dir = Vector2i(-1, -1)
+	elif Input.is_action_pressed("upright_move"):
+		dir = Vector2i(1, -1)
+	elif Input.is_action_pressed("downleft_move"):
+		dir = Vector2i(-1, 1)
+	elif Input.is_action_pressed("downright_move"):
+		dir = Vector2i(1, 1)
+	return dir
 
 
 func _dir_from_event(event) -> Vector2i:
@@ -337,20 +363,30 @@ func _get_tile_type_at(pos: Vector2i) -> String:
 
 
 func handle_inventory_toggle():
-	var placement_data = LoadHandlerSingleton.load_temp_placement()
+	# ✅ Step 1: get current true grid & z level
+	var current_grid_pos := Vector2i(round(position.x / TILE_SIZE), round(position.y / TILE_SIZE))
+	var current_z := int(LoadHandlerSingleton.get_current_z_level_mem())
 
+	# ✅ Step 2: write to in-memory cache (no file I/O needed for loop transitions)
+	LoadHandlerSingleton.set_current_local_grid_pos(current_grid_pos)
+	LoadHandlerSingleton.set_current_z_level(current_z)
+
+	# ✅ Step 3: sync to temp placement only if you want to preserve crash recovery
+	var placement_data := LoadHandlerSingleton.load_temp_placement()
 	if not placement_data.has("local_map"):
 		placement_data["local_map"] = {}
 
-	var grid_pos = Vector2i(position.x / TILE_SIZE, position.y / TILE_SIZE)
 	placement_data["local_map"]["grid_position_local"] = {
-		"x": grid_pos.x,
-		"y": grid_pos.y
+		"x": current_grid_pos.x,
+		"y": current_grid_pos.y
 	}
+	placement_data["local_map"]["z_level"] = str(current_z)
 
 	LoadHandlerSingleton.save_temp_placement(placement_data)
 
-	#print("💾 [Inventory Toggle] Saved grid_position_local:", grid_pos)
+	print("💾 [Inventory Toggle] Cached grid:", current_grid_pos, "| z:", current_z)
+
+	# ✅ Step 4: jump to inventory scene
 	get_tree().change_scene_to_file("res://scenes/play/Inventory_LocalPlay.tscn")
 
 
@@ -399,8 +435,56 @@ func move_player(dir: Vector2i):
 	for pos in local_map.current_visible_tiles.keys():
 		local_map.light_overlay.dirty_tiles[pos] = true
 
-	# 🔁 Update FOV if needed
+	# 🧭 SMART CAMERA — recenter only if player leaves visible viewport
+	if get_tree().root.has_node("LocalMap"):
+		var world_view: Node2D = local_map.get_node_or_null("WorldView")
+		if world_view:
+			var player_pos: Vector2 = position
+			var zoom_factor: float = float(local_map.zoom_factor)
+			var vp_size: Vector2 = get_viewport_rect().size
+
+			# Camera center in *world* coords
+			var camera_center: Vector2 = (-world_view.position / zoom_factor) + ((vp_size * 0.5) / zoom_factor)
+
+			# Visible rect in world units
+			var half_vp: Vector2 = (vp_size * 0.5) / zoom_factor
+			var visible_left: float = camera_center.x - half_vp.x
+			var visible_right: float = camera_center.x + half_vp.x
+			var visible_top: float = camera_center.y - half_vp.y
+			var visible_bottom: float = camera_center.y + half_vp.y
+
+			var tile_px: float = float(local_map.TILE_SIZE)
+			var margin: float = tile_px * 2.0  # safe zone buffer
+
+			var out_of_bounds: bool = (
+				player_pos.x < visible_left + margin or
+				player_pos.x > visible_right - margin or
+				player_pos.y < visible_top + margin or
+				player_pos.y > visible_bottom - margin
+			)
+
+			if out_of_bounds:
+				# Use your tweened center helper if you have one; otherwise anchor directly.
+				if local_map.has_method("center_on_player_after_load"):
+					local_map.center_on_player_after_load(0.0) # duration 0 = snap
+				elif local_map.has_method("_center_on_anchor"):
+					local_map._center_on_anchor(player_pos)
+
+
+
+	# 🔎 POST-MOVE PROBES (new)
 	var current_grid_pos = Vector2i(round(position.x / TILE_SIZE), round(position.y / TILE_SIZE))
+
+	# Re-check chunk edge so exit popup shows when you step ON the edge
+	if local_map.has_method("check_for_chunk_transition"):
+		local_map.check_for_chunk_transition(current_grid_pos)
+
+	# Probe z-egress (stairs, ladders) on the tile you are standing on
+	if local_map.has_method("probe_egress_here"):
+		local_map.probe_egress_here(current_grid_pos)
+
+	
+	# 🔁 Update FOV if needed
 	if current_grid_pos != last_grid_position:
 		last_grid_position = current_grid_pos
 		local_map.update_fov_from_player(current_grid_pos)
@@ -434,12 +518,63 @@ func move_player(dir: Vector2i):
 	}
 	LoadHandlerSingleton.save_temp_placement(placement_data)
 
-func start_held_move(dir: Vector2i):
-	move_player(dir)  # Immediate step
-	held_direction = dir
-	is_moving = true
-	move_timer = move_repeat_delay  # Wait before repeat kicks in
+func start_held_move(dir: Vector2i) -> void:
+	if _turn_in_progress:
+		return
 
+	_auto_step_dir = dir
+	_is_auto_stepping = true
+
+	# Immediate first step (for tap movement)
+	_perform_single_step(dir)
+
+	# Start checking for hold after a short delay
+	await get_tree().create_timer(HOLD_DELAY).timeout
+	if Input.is_action_pressed("move_any"):
+		_start_auto_step()  # begin repeat if still held
+
+func _start_auto_step() -> void:
+	while _auto_step_dir != Vector2i.ZERO and Input.is_action_pressed("move_any"):
+		if _turn_in_progress:
+			await get_tree().process_frame
+			continue
+
+		await get_tree().create_timer(AUTO_STEP_INTERVAL).timeout
+		if not Input.is_action_pressed("move_any"):
+			break
+
+		_perform_single_step(_auto_step_dir)
+
+	_is_auto_stepping = false
+
+func _smooth_move_to(target: Vector2) -> void:
+	if not is_inside_tree():
+		return
+	var tween := create_tween()
+	tween.tween_property(self, "position", target, 0.08) \
+		.set_trans(Tween.TRANS_SINE) \
+		.set_ease(Tween.EASE_OUT)
+
+
+func _perform_single_step(dir: Vector2i) -> void:
+	if _turn_in_progress:
+		return
+
+	_turn_in_progress = true
+
+	var old_pos := position
+
+	# 🧭 Perform the move (handles collisions, doors, etc.)
+	move_player(dir)
+
+	# ✅ Check if move_player actually changed our position
+	if position != old_pos:
+		_smooth_move_to(position)  # smooth between the two valid tiles
+
+	await get_tree().process_frame
+	_turn_in_progress = false
+
+	
 func rest_player():
 	var stats_data = LoadHandlerSingleton.get_combat_stats()
 	var stats = stats_data.get("combat_stats", {})
@@ -527,9 +662,15 @@ func open_door_at(pos: Vector2i):
 	LoadHandlerSingleton.save_chunked_tile_chunk(local_map.get_current_chunk_id(), tile_chunk)
 
 	local_map.rebuild_walkability()
-	local_map.update_tile_at(pos)
-
-	#print("🚪 Door opened at:", pos)
+	if local_map.has_method("update_tile_visual_at"):
+		local_map.update_tile_visual_at(pos)
+	elif local_map.has_method("update_tile_at"):
+		local_map.update_tile_at(pos)
+		
+	var grid_pos := Vector2i(round(position.x / TILE_SIZE), round(position.y / TILE_SIZE))
+	if local_map.has_method("force_update_fov_at"):
+		local_map.force_update_fov_at(grid_pos)
+		#print("🚪 Door opened at:", pos)
 
 func close_door_at(pos: Vector2i):
 	var local_map = get_tree().root.get_node("LocalMap")
@@ -564,8 +705,10 @@ func close_door_at(pos: Vector2i):
 
 	local_map.rebuild_walkability()
 	local_map.update_tile_at(pos)
-
-	#print("🚪 Door closed at:", pos)
+	
+	var grid_pos := Vector2i(round(position.x / TILE_SIZE), round(position.y / TILE_SIZE))
+	if local_map.has_method("force_update_fov_at"):
+		local_map.force_update_fov_at(grid_pos)
 
 func toggle_door_at(pos: Vector2i) -> bool:
 	var local_map = get_tree().root.get_node("LocalMap")
@@ -628,49 +771,52 @@ func toggle_candelabra_at(pos: Vector2i) -> bool:
 
 				
 func change_z_level(new_z: int, new_pos: Vector2i):
-	# Load and prepare temp placement
-	var placement_data = LoadHandlerSingleton.load_temp_placement()
-
+	var placement_data: Dictionary = LoadHandlerSingleton.load_temp_placement()
 	if not placement_data.has("local_map"):
 		placement_data["local_map"] = {}
-	
-	placement_data["local_map"]["z_level"] = new_z
-	placement_data["local_map"]["spawn_pos"] = { "x": new_pos.x, "y": new_pos.y }
-	placement_data["local_map"]["grid_position_local"] = { "x": new_pos.x, "y": new_pos.y }  # ✅ Sync actual position
+
+	var z_int: int = LoadHandlerSingleton.z_to_int(new_z)
+	placement_data["local_map"]["z_level"] = z_int
+	placement_data["local_map"]["spawn_pos"] = {"x": new_pos.x, "y": new_pos.y}
+	placement_data["local_map"]["grid_position_local"] = {"x": new_pos.x, "y": new_pos.y}
 
 	LoadHandlerSingleton.save_temp_placement(placement_data)
 
-	# Debug confirmation
-	var confirm_data = LoadHandlerSingleton.load_temp_placement()
-	print("💾 Z-level set to:", confirm_data.get("local_map", {}).get("z_level", "missing"))
-	print("📍 Intended spawn point:", confirm_data.get("local_map", {}).get("spawn_pos", "missing"))
-	print("📍 Grid position set to:", confirm_data.get("local_map", {}).get("grid_position_local", "missing"))
+	# ✅ Update in-memory cache for instant sync
+	LoadHandlerSingleton.set_current_z_level(z_int)
+	LoadHandlerSingleton.set_current_local_grid_pos(new_pos)
 
-	# Trigger smooth transition
-	var SceneManager = get_node("/root/SceneManager")
-	SceneManager.current_play_scene_path = "res://scenes/play/LocalMap.tscn"
-	SceneManager.change_scene_to_file("res://scenes/play/ChunkToChunkRefresh.tscn")
+	print("💾 [Egress] Z-level set to:", z_int, "Spawn:", new_pos)
+
+	
+	var scene_manager: Node = get_node("/root/SceneManager")
+	scene_manager.current_play_scene_path = "res://scenes/play/LocalMap.tscn"
+	scene_manager.change_scene_to_file("res://scenes/play/ChunkToChunkRefresh.tscn")
+
 
 func handle_egress_check():
-	var local_map = get_tree().root.get_node("LocalMap")
+	var local_map: Node = get_tree().root.get_node_or_null("LocalMap")
 	if local_map == null:
 		print("❌ Cannot find LocalMap!")
 		return
 
-	var egress_data = local_map.get_egress_for_current_position(last_grid_position)
+	var egress_data: Dictionary = local_map.get_egress_for_current_position(last_grid_position)
 	if egress_data.is_empty():
 		print("🚫 No egress point found at current tile.")
 		return
 
-	var new_z = egress_data.get("target_z", null)
-	var pos = egress_data.get("position", null)
-
-	if new_z == null or pos == null:
-		print("⚠️ Egress data incomplete. target_z or position missing.")
+	var new_z_variant: Variant = egress_data.get("target_z", null)
+	var pos: Variant = egress_data.get("position", null)
+	if new_z_variant == null or pos == null:
+		print("⚠️ Egress data incomplete.")
 		return
 
-	var new_pos = Vector2i(pos["x"], pos["y"])
+	var new_z: int = LoadHandlerSingleton.z_to_int(new_z_variant)
+	var new_pos := Vector2i(int(pos["x"]), int(pos["y"]))
+
 	change_z_level(new_z, new_pos)
+
+
 
 func attempt_build_placement():
 	var local_map = get_tree().root.get_node_or_null("LocalMap")
@@ -709,7 +855,23 @@ func attempt_build_placement():
 		LoadHandlerSingleton.emit_signal("inventory_changed")
 
 
-
-	# PlayerVisual does NOT re-enter targeting. That is managed by LocalMap logic.
-
-		
+func _refresh_npc_visibility() -> void:
+	var local_map = get_tree().root.get_node_or_null("LocalMap")
+	if local_map == null:
+		return
+	if local_map.has_method("_apply_fov_to_npc_layer"):
+		var npc_layer = local_map.get_node_or_null("NPCLayer")
+		var npc_under = local_map.get_node_or_null("NPCUnderlayLayer")
+		if npc_layer:
+			local_map._apply_fov_to_npc_layer(npc_layer, false)
+		if npc_under:
+			local_map._apply_fov_to_npc_layer(npc_under, true)
+			
+func _refresh_npc_visibility_safe() -> void:
+	var local_map := get_tree().root.get_node_or_null("LocalMap")
+	if not local_map:
+		return
+	if local_map.has_method("refresh_npc_visibility"):
+		local_map.refresh_npc_visibility()
+	elif local_map.has_method("redraw_npcs"):
+		local_map.redraw_npcs()
